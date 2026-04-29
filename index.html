@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LaguLease — Login</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f1117">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LaguLease">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Outfit',sans-serif;
+  min-height:100vh;
+  background:#0f1117;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  position:relative;
+}
+.bg-glow{
+  position:fixed;
+  border-radius:50%;
+  filter:blur(80px);
+  opacity:0.15;
+  pointer-events:none;
+}
+.bg-glow-1{width:500px;height:500px;background:#22c55e;top:-100px;left:-100px;}
+.bg-glow-2{width:400px;height:400px;background:#3b82f6;bottom:-100px;right:-100px;}
+.bg-glow-3{width:300px;height:300px;background:#f59e0b;top:50%;left:50%;transform:translate(-50%,-50%);}
+
+.login-container{
+  position:relative;
+  z-index:10;
+  width:100%;
+  max-width:440px;
+  padding:20px;
+}
+.login-card{
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:24px;
+  padding:48px 40px;
+  box-shadow:0 32px 64px rgba(0,0,0,0.4);
+}
+.login-logo{
+  text-align:center;
+  margin-bottom:40px;
+}
+.login-logo-mark{
+  width:72px;height:72px;
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  border-radius:20px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:2rem;
+  margin:0 auto 16px;
+  box-shadow:0 8px 32px rgba(34,197,94,0.3);
+}
+.login-title{
+  font-size:1.8rem;
+  font-weight:800;
+  color:#fff;
+  letter-spacing:-0.5px;
+}
+.login-title span{color:#22c55e;}
+.login-sub{
+  font-size:0.85rem;
+  color:rgba(255,255,255,0.4);
+  margin-top:4px;
+}
+.form-group{margin-bottom:16px;}
+.form-label{
+  display:block;
+  font-size:0.72rem;
+  font-weight:700;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.5);
+  margin-bottom:8px;
+}
+.form-input{
+  width:100%;
+  padding:14px 16px;
+  background:rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:12px;
+  color:#fff;
+  font-family:'Outfit',sans-serif;
+  font-size:0.95rem;
+  outline:none;
+  transition:all .2s;
+}
+.form-input::placeholder{color:rgba(255,255,255,0.25);}
+.form-input:focus{
+  border-color:#22c55e;
+  background:rgba(34,197,94,0.05);
+  box-shadow:0 0 0 3px rgba(34,197,94,0.1);
+}
+.btn-login{
+  width:100%;
+  padding:15px;
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  border:none;
+  border-radius:12px;
+  color:#fff;
+  font-family:'Outfit',sans-serif;
+  font-size:1rem;
+  font-weight:700;
+  cursor:pointer;
+  margin-top:8px;
+  transition:all .2s;
+  box-shadow:0 4px 20px rgba(34,197,94,0.3);
+}
+.btn-login:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(34,197,94,0.4);}
+.btn-login:active{transform:translateY(0);}
+.login-err{
+  color:#f87171;
+  font-size:0.8rem;
+  margin-top:12px;
+  text-align:center;
+  min-height:18px;
+}
+.login-footer{
+  text-align:center;
+  margin-top:32px;
+  font-size:0.75rem;
+  color:rgba(255,255,255,0.2);
+}
+.loading-dots{display:none;}
+.loading-dots span{
+  display:inline-block;
+  width:6px;height:6px;
+  background:#fff;
+  border-radius:50%;
+  margin:0 2px;
+  animation:bounce .6s infinite alternate;
+}
+.loading-dots span:nth-child(2){animation-delay:.2s;}
+.loading-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-6px)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.login-card{animation:fadeIn .5s ease;}
+</style>
+</head>
+<body>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+<div class="bg-glow bg-glow-3"></div>
+
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-mark">🚗</div>
+      <div class="login-title">Lagu<span>Lease</span></div>
+      <div class="login-sub">Sistema de administración de flota</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Correo electrónico</label>
+      <input class="form-input" id="login-email" type="email" placeholder="tu@correo.com" autocomplete="email">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Contraseña</label>
+      <input class="form-input" id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn-login" id="btn-login" onclick="doLogin()">
+      <span id="btn-login-text">Entrar al sistema</span>
+      <span class="loading-dots" id="login-loading"><span></span><span></span><span></span></span>
+    </button>
+    <div class="login-err" id="login-err"></div>
+    <div class="login-footer">LaguLease © 2026 · Monterrey, N.L.</div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDYb4YywzBh6EUAAQSDf7SJMzuPrDduEcE",
+  authDomain: "flotamax-2994b.firebaseapp.com",
+  projectId: "flotamax-2994b",
+  storageBucket: "flotamax-2994b.firebasestorage.app",
+  messagingSenderId: "160535924045",
+  appId: "1:160535924045:web:7d69b52db7182d5f473b04"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// If already logged in, redirect
+onAuthStateChanged(auth, async user => {
+  if (user) {
+    window.location.href = 'app.html';
+  }
+});
+
+window.doLogin = async function() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-err');
+  const btnText = document.getElementById('btn-login-text');
+  const loading = document.getElementById('login-loading');
+  err.textContent = '';
+  btnText.style.display = 'none';
+  loading.style.display = 'inline';
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+    window.location.href = 'app.html';
+  } catch(e) {
+    btnText.style.display = 'inline';
+    loading.style.display = 'none';
+    err.textContent = 'Correo o contraseña incorrectos';
+  }
+};
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') window.doLogin();
+});
+</script>
+</body>
+</html>

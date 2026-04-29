@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>LaguLease Admin</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f1117">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="LaguLease">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="nav-logo-icon">🚗</div>
+    Lagu<span>Lease</span>
+  </div>
+  <div class="nav-right">
+    <div class="nav-user">
+      <div class="nav-user-avatar" id="nav-avatar">SL</div>
+      <div class="nav-user-name" id="nav-email">—</div>
+      <span class="nav-role-badge" id="nav-role-badge">—</span>
+    </div>
+    <button class="btn-logout" onclick="doLogout()">Salir</button>
+  </div>
+</nav>
+
+<!-- ═══ TABS ═══ -->
+<div class="tabs-wrapper">
+  <div class="tabs" id="tabs-container">
+    <div class="tab active" data-tab="resumen" onclick="switchTab('resumen')">📊 Resumen</div>
+    <div class="tab" data-tab="choferes" onclick="switchTab('choferes')">🚗 Choferes</div>
+    <div class="tab" data-tab="cobros" onclick="switchTab('cobros')">💰 Cobros</div>
+    <div class="tab admin-only" data-tab="flota" onclick="switchTab('flota')">🚙 Flota</div>
+    <div class="tab" data-tab="documentos" onclick="switchTab('documentos')">📄 Docs <span class="tab-badge" id="tab-docs-badge" style="display:none">!</span></div>
+    <div class="tab" data-tab="servicios" onclick="switchTab('servicios')">🔧 Servicios</div>
+    <div class="tab admin-only" data-tab="inventario" onclick="switchTab('inventario')">📦 Inventario</div>
+    <div class="tab admin-only" data-tab="financiero" onclick="switchTab('financiero')">📈 Financiero</div>
+    <div class="tab admin-only" data-tab="contratos" onclick="switchTab('contratos')">📝 Contratos</div>
+    <div class="tab admin-only" data-tab="reportes" onclick="switchTab('reportes')">📊 Reportes</div>
+  </div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<main>
+
+  <!-- RESUMEN -->
+  <div class="page active" id="page-resumen">
+    <div style="height:16px"></div>
+    <div class="kpi-grid kpi-grid-5" id="kpi-row">
+      <div class="kpi-card"><div class="kpi-label">Flota activa</div><div class="kpi-value" id="kpi-flota">—</div><div class="kpi-card-accent" style="background:var(--blue)"></div></div>
+      <div class="kpi-card"><div class="kpi-label">Al corriente</div><div class="kpi-value green" id="kpi-corriente">—</div><div class="kpi-card-accent" style="background:var(--green)"></div></div>
+      <div class="kpi-card"><div class="kpi-label">Con deuda</div><div class="kpi-value red" id="kpi-pendientes">—</div><div class="kpi-card-accent" style="background:var(--red)"></div></div>
+      <div class="kpi-card"><div class="kpi-label">Cobrado semana</div><div class="kpi-value green" style="font-size:1.1rem" id="kpi-cobrado">—</div><div class="kpi-card-accent" style="background:var(--green)"></div></div>
+      <div class="kpi-card"><div class="kpi-label">Deuda acumulada</div><div class="kpi-value red" style="font-size:1.1rem" id="kpi-deuda">—</div><div class="kpi-card-accent" style="background:var(--red)"></div></div>
+    </div>
+    <div class="week-banner">
+      <div class="week-banner-title">Semana actual</div>
+      <div class="week-numbers">
+        <div><div class="week-num-label">Cobrado</div><div class="week-num-val" id="week-cobrado">—</div></div>
+        <div><div class="week-num-label">Por cobrar</div><div class="week-num-val warn" id="week-falta">—</div></div>
+        <div><div class="week-num-label">Meta semanal</div><div class="week-num-val dim" id="week-meta">—</div></div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="week-bar"></div></div>
+      <div class="progress-label" id="week-pct">0% del objetivo</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div>
+        <div class="label" style="margin-bottom:12px">⚠️ Alertas de cobranza</div>
+        <div id="alertas-list"></div>
+      </div>
+      <div>
+        <div class="label" style="margin-bottom:12px">Últimos pagos</div>
+        <div id="ultimos-pagos"></div>
+      </div>
+    </div>
+    <!-- CHART - admin only -->
+    <div class="admin-only" style="margin-top:24px">
+      <div class="label" style="margin-bottom:12px">📈 Tendencia de ingresos</div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px">
+        <canvas id="chart-ingresos" height="80"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHOFERES -->
+  <div class="page" id="page-choferes">
+    <div style="height:16px"></div>
+    <div class="action-bar">
+      <div class="search-box"><span class="search-icon">🔍</span><input class="search-input" placeholder="Buscar chofer o placa..." id="search-choferes" oninput="renderChoferes()"></div>
+      <button class="btn btn-primary" onclick="openAddChofer()">+ Agregar chofer</button>
+    </div>
+    <div class="pills">
+      <div class="pill active" onclick="setFilter('todos',this)">Todos</div>
+      <div class="pill" onclick="setFilter('al_corriente',this)">✅ Al corriente</div>
+      <div class="pill" onclick="setFilter('pendiente',this)">⏳ Pendiente</div>
+      <div class="pill" onclick="setFilter('atrasado',this)">🔴 Atrasado</div>
+      <div class="pill" onclick="setFilter('parcial',this)">🟡 Parcial</div>
+    </div>
+    <div id="choferes-list"></div>
+  </div>
+
+  <!-- COBROS -->
+  <div class="page" id="page-cobros">
+    <div style="height:16px"></div>
+    <div class="label" style="margin-bottom:12px">Pendientes de cobro</div>
+    <div id="cobros-pendientes"></div>
+    <div class="label" style="margin-top:24px;margin-bottom:12px">Historial de pagos</div>
+    <div id="historial-pagos"></div>
+  </div>
+
+  <!-- FLOTA -->
+  <div class="page admin-only" id="page-flota">
+    <div style="height:16px"></div>
+    <div class="kpi-grid kpi-grid-4" style="margin-bottom:20px">
+      <div class="kpi-card"><div class="kpi-label">Total carros</div><div class="kpi-value" id="flota-total">—</div></div>
+      <div class="kpi-card"><div class="kpi-label">Rentados</div><div class="kpi-value blue" id="flota-rentados">—</div></div>
+      <div class="kpi-card"><div class="kpi-label">Disponibles</div><div class="kpi-value green" id="flota-disponibles">—</div></div>
+      <div class="kpi-card"><div class="kpi-label">⚠️ Seguros por vencer</div><div class="kpi-value red" id="flota-seguros">—</div></div>
+    </div>
+    <div class="action-bar">
+      <div class="search-box"><span class="search-icon">🔍</span><input class="search-input" placeholder="Buscar placa o modelo..." id="search-flota" oninput="renderFlota()"></div>
+      <select class="form-select" id="flota-filtro" style="width:auto" onchange="renderFlota()">
+        <option value="todos">Todos</option><option value="rentado">Rentados</option><option value="disponible">Disponibles</option><option value="servicio">En servicio</option><option value="baja">Baja</option>
+      </select>
+      <button class="btn btn-primary" onclick="openAddCarro()">+ Agregar carro</button>
+    </div>
+    <div id="flota-list"></div>
+  </div>
+
+  <!-- DOCUMENTOS -->
+  <div class="page" id="page-documentos">
+    <div style="height:16px"></div>
+    <div class="kpi-grid kpi-grid-4" style="margin-bottom:20px">
+      <div class="kpi-card"><div class="kpi-label">Choferes activos</div><div class="kpi-value" id="doc-total">—</div></div>
+      <div class="kpi-card"><div class="kpi-label">⛔ Vencidos</div><div class="kpi-value red" id="doc-vencidos">—</div></div>
+      <div class="kpi-card"><div class="kpi-label">⚠️ Por vencer</div><div class="kpi-value yellow" id="doc-porvencer">—</div></div>
+      <div class="kpi-card"><div class="kpi-label">Sin registrar</div><div class="kpi-value" style="color:var(--text3)" id="doc-sindoc">—</div></div>
+    </div>
+    <div class="label" style="margin-bottom:12px">⚠️ Alertas urgentes</div>
+    <div id="doc-alertas"></div>
+    <div class="action-bar" style="margin-top:20px">
+      <div class="search-box"><span class="search-icon">🔍</span><input class="search-input" placeholder="Buscar chofer..." id="search-docs" oninput="renderDocumentos()"></div>
+    </div>
+    <div id="doc-list"></div>
+  </div>
+
+  <!-- SERVICIOS -->
+  <div class="page" id="page-servicios">
+    <div style="height:16px"></div>
+    <div class="info-box info-blue">💡 Registra servicios realizados a cada carro. Si usaste refacciones del inventario, selecciónalas y se descuenta automático del stock.</div>
+    <div class="action-bar">
+      <div class="search-box"><span class="search-icon">🔍</span><input class="search-input" placeholder="Buscar por placa o tipo..." id="search-servicios" oninput="renderServicios()"></div>
+      <button class="btn btn-primary" onclick="openAddServicio()">+ Registrar servicio</button>
+    </div>
+    <div id="servicios-list"></div>
+  </div>
+
+  <!-- INVENTARIO -->
+  <div class="page admin-only" id="page-inventario">
+    <div style="height:16px"></div>
+    <div class="info-box info-blue">💡 <strong>📥 Entrada</strong> = compraste refacciones → sale del financiero automático. <strong>📤 Usar</strong> = salió del inventario → no afecta el financiero.</div>
+    <div class="kpi-grid kpi-grid-4" style="margin-bottom:20px">
+      <div class="kpi-card"><div class="kpi-label">Productos</div><div class="kpi-value" id="inv-total">—</div></div>
+      <div class="kpi-card"><div class="kpi-label">Valor en stock</div><div class="kpi-value green" style="font-size:1.1rem" id="inv-valor">—</div></div>
+      <div class="kpi-card"><div class="kpi-label">⚠️ Stock bajo</div><div class="kpi-value yellow" id="inv-bajo">—</div></div>
+      <div class="kpi-card"><div class="kpi-label">⛔ Agotados</div><div class="kpi-value red" id="inv-agotado">—</div></div>
+    </div>
+    <div class="action-bar">
+      <div class="search-box"><span class="search-icon">🔍</span><input class="search-input" placeholder="Buscar producto..." id="search-inv" oninput="renderInventario()"></div>
+      <select class="form-select" id="inv-filtro" style="width:auto" onchange="renderInventario()"><option value="todos">Todos</option><option value="bajo">Stock bajo</option><option value="agotado">Agotados</option></select>
+      <button class="btn btn-primary" onclick="openAddProducto()">+ Agregar producto</button>
+    </div>
+    <div id="inv-list"></div>
+    <div class="label" style="margin-top:24px;margin-bottom:12px">Últimos movimientos</div>
+    <div id="inv-movimientos"></div>
+  </div>
+
+  <!-- FINANCIERO -->
+  <div class="page admin-only" id="page-financiero">
+    <div style="height:16px"></div>
+    <div class="action-bar">
+      <label class="label" style="margin-bottom:0">Mes a analizar</label>
+      <input type="month" class="form-input" id="fin-month" style="width:auto" oninput="renderFinanciero()">
+      <button class="btn btn-secondary btn-sm" onclick="renderFinanciero()">Actualizar</button>
+      <button class="btn btn-primary btn-sm" onclick="openGastoModal()">+ Registrar gasto</button>
+    </div>
+    <div class="fin-layout">
+      <div class="fin-card">
+        <div class="fin-card-header">📋 ¿Cuánto te quedó este mes?</div>
+        <div class="fin-card-body">
+          <div class="er-row"><span class="er-label fw7">✅ Rentas cobradas</span><span class="er-val green fw7" id="er-ingresos">—</span></div>
+          <div class="er-row"><span class="er-label" style="color:var(--blue)">💼 (+) Aportaciones a capital</span><span class="er-val text-blue" id="er-aportaciones">—</span></div>
+          <div style="height:4px"></div>
+          <div class="label" style="margin:8px 0 4px">Lo que salió</div>
+          <div class="er-row"><span class="er-label indent">(-) Compras de inventario</span><span class="er-val red" id="er-inv">—</span></div>
+          <div class="er-row"><span class="er-label indent">(-) Nómina y gastos fijos</span><span class="er-val red" id="er-gastos-fijos">—</span></div>
+          <div class="er-row"><span class="er-label indent">(-) Leasing (pagos de carros)</span><span class="er-val red" id="er-leasing">—</span></div>
+          <div class="er-row"><span class="er-label indent">(-) Impuestos pagados</span><span class="er-val red" id="er-impuestos">—</span></div>
+          <div class="er-row"><span class="er-label indent">(-) Otros gastos</span><span class="er-val red" id="er-otros">—</span></div>
+          <div class="er-row subtotal"><span>Total salidas</span><span class="er-val red" id="er-total-gastos">—</span></div>
+          <div class="er-row total"><span>💰 LO QUE TE QUEDÓ</span><span id="er-neta" class="er-val fw7">—</span></div>
+          <div class="er-margen" id="er-margen"></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="fin-card">
+          <div class="fin-card-header">💵 Flujo de Caja</div>
+          <div class="fin-card-body">
+            <div class="er-row"><span class="er-label">Entradas</span><span class="er-val green" id="fc-ingresos">—</span></div>
+            <div class="er-row"><span class="er-label">Salidas</span><span class="er-val red" id="fc-egresos">—</span></div>
+            <div class="er-row total"><span>Flujo neto</span><span id="fc-flujo" class="er-val fw7">—</span></div>
+          </div>
+        </div>
+        <div class="fin-card">
+          <div class="fin-card-header">💼 Aportaciones a Capital <button onclick="openAportacionModal()" class="btn btn-sm btn-secondary" style="margin-left:auto">+ Agregar</button></div>
+          <div class="fin-card-body" id="aportaciones-list"><div class="empty-small">Sin aportaciones este mes</div></div>
+        </div>
+        <div class="fin-card">
+          <div class="fin-card-header">🏢 Gastos Fijos <span style="font-size:0.72rem;color:var(--text3)">(automático cada mes)</span></div>
+          <div class="fin-card-body">
+            <div class="gf-add">
+              <input class="form-input" id="gf-nombre" placeholder="Nómina, renta, seguro...">
+              <input class="form-input" id="gf-monto" type="number" placeholder="$">
+              <select class="form-select" id="gf-categoria"><option>Nómina</option><option>Renta local</option><option>Seguros</option><option>Servicios</option><option>Contabilidad</option><option>Otro</option></select>
+              <button class="btn btn-primary btn-sm" onclick="saveGastoFijo()">+ Agregar</button>
+            </div>
+            <div id="gastos-fijos-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fin-layout" style="margin-top:16px">
+      <div class="fin-card"><div class="fin-card-header">📦 Gastos variables del mes</div><div class="fin-card-body"><div id="gastos-var-list"></div></div></div>
+      <div class="fin-card"><div class="fin-card-header">🚗 Leasing e impuestos</div><div class="fin-card-body"><div id="leasing-list"></div></div></div>
+    </div>
+  </div>
+
+  <!-- CONTRATOS -->
+  <div class="page admin-only" id="page-contratos">
+    <div style="height:16px"></div>
+    <div class="info-box info-green">💡 Selecciona un chofer para generar su contrato de arrendamiento con opción a compra en PDF. Los datos se llenan automáticamente del sistema.</div>
+    <div class="label" style="margin-bottom:12px">Selecciona el chofer</div>
+    <div id="contratos-list"></div>
+  </div>
+
+  <!-- REPORTES -->
+  <div class="page admin-only" id="page-reportes">
+    <div style="height:16px"></div>
+    <div class="action-bar">
+      <label class="label" style="margin-bottom:0">Mes para reportes</label>
+      <input type="month" class="form-input" id="rep-mes" style="width:auto" oninput="renderReportes()">
+    </div>
+    <div id="rep-preview" style="margin-bottom:24px"></div>
+    <div class="label" style="margin-bottom:16px">Descargar reportes en Excel (.csv)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" id="rep-grid">
+      <div class="rep-card" onclick="descargarCobranza()"><div class="rep-icon">💰</div><div><div class="rep-title">Cobranza semanal</div><div class="rep-desc">Quién pagó, quién debe, deuda acumulada</div></div><div class="rep-dl">⬇️</div></div>
+      <div class="rep-card" onclick="descargarFinanciero()"><div class="rep-icon">📈</div><div><div class="rep-title">Estado financiero del mes</div><div class="rep-desc">Ingresos, gastos y detalle de cobros</div></div><div class="rep-dl">⬇️</div></div>
+      <div class="rep-card" onclick="descargarDeudores()"><div class="rep-icon">⚠️</div><div><div class="rep-title">Reporte de deudores</div><div class="rep-desc">Choferes con deuda ordenados por monto</div></div><div class="rep-dl">⬇️</div></div>
+      <div class="rep-card" onclick="descargarFlota()"><div class="rep-icon">🚙</div><div><div class="rep-title">Reporte de flota</div><div class="rep-desc">Carros con estatus, seguro y leasing</div></div><div class="rep-dl">⬇️</div></div>
+      <div class="rep-card" onclick="descargarServicios()"><div class="rep-icon">🔧</div><div><div class="rep-title">Servicios del mes</div><div class="rep-desc">Historial de servicios y refacciones</div></div><div class="rep-dl">⬇️</div></div>
+      <div class="rep-card" onclick="descargarDocumentos()"><div class="rep-icon">📄</div><div><div class="rep-title">Documentos de choferes</div><div class="rep-desc">Licencias e INE con vencimientos</div></div><div class="rep-dl">⬇️</div></div>
+    </div>
+    <div class="info-box info-blue" style="margin-top:16px">💡 Los archivos .csv abren directamente en Excel, Google Sheets o Numbers con doble clic.</div>
+  </div>
+
+</main>
+
+<!-- ═══ WEEKLY CHECKLIST ═══ -->
+<div class="weekly-checklist-overlay" id="checklist-overlay">
+  <div class="weekly-checklist-box">
+    <div class="checklist-header">
+      <div class="checklist-day">📋</div>
+      <div class="checklist-title">Checklist semanal</div>
+      <div class="checklist-sub" id="checklist-fecha">Semana del lunes</div>
+    </div>
+    <div id="checklist-items"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:20px" onclick="closeChecklist()">Entrar al sistema ✓</button>
+  </div>
+</div>
+
+<!-- ═══ MODALS ═══ -->
+
+<!-- Modal Chofer -->
+<div class="modal-overlay" id="modal-chofer">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-chofer-title">Agregar chofer</div>
+    <div class="form-row"><div class="form-group"><label class="label">Nombre completo</label><input class="form-input" id="f-nombre" placeholder="Juan García López"></div><div class="form-group"><label class="label">Teléfono</label><input class="form-input" id="f-tel" placeholder="81 1234 5678" type="tel"></div></div>
+    <div class="form-row"><div class="form-group"><label class="label">Placa del carro</label><input class="form-input" id="f-placa" placeholder="ABC-1234" style="text-transform:uppercase"></div><div class="form-group"><label class="label">Renta semanal ($)</label><input class="form-input" id="f-renta" type="number" placeholder="5000"></div></div>
+    <div class="form-row"><div class="form-group"><label class="label">Depósito en garantía ($)</label><input class="form-input" id="f-deposito" type="number" placeholder="0"><div class="form-check" style="margin-top:8px"><input type="checkbox" id="f-dep-devuelto"><label for="f-dep-devuelto">Depósito devuelto</label></div></div><div class="form-group"><label class="label">Fecha de inicio</label><input class="form-input" id="f-inicio" type="date"></div></div>
+    <div class="form-row"><div class="form-group"><label class="label">Plataforma</label><select class="form-select" id="f-plataforma"><option>Uber</option><option>DiDi</option><option>Uber + DiDi</option><option>Otro</option></select></div><div class="form-group"><label class="label">Notas</label><input class="form-input" id="f-notas" placeholder="Observaciones..."></div></div>
+    <div class="modal-actions"><button class="btn btn-primary" style="flex:1" onclick="saveChofer()">Guardar</button><button class="btn btn-secondary" onclick="closeModalById('modal-chofer')">Cancelar</button></div>
+  </div>
+</div>
+
+<!-- Modal Pago -->
+<div class="modal-overlay" id="modal-pago">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-pago-title">Registrar pago</div>
+    <div id="modal-pago-info" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:16px;font-size:0.85rem;"></div>
+    <div class="form-row"><div class="form-group"><label class="label">Monto ($)</label><input class="form-input" id="p-monto" type="number"></div><div class="form-group"><label class="label">Método</label><select class="form-select" id="p-metodo"><option>Transferencia</option><option>Efectivo</option><option>CoDi</option><option>Otro</option></select></div></div>
+    <div class="form-group"><label class="label">Nota (opcional)</label><input class="form-input" id="p-nota" placeholder="Pago parcial, abono, etc."></div>
+    <div class="modal-actions"><button class="btn btn-primary" style="flex:1" onclick="savePago()">✓ Confirmar pago</button><button class="btn btn-secondary" onclick="closeModalById('modal-pago')">Cancelar</button></div>
+  </div>
+</div>
+
+<!-- Modal Detalle Chofer -->
+<div class="modal-overlay" id="modal-detalle">
+  <div class="modal"><div class="modal-handle"></div><div id="detalle-content"></div>
+    <div class="modal-actions" style="margin-top:12px"><button class="btn btn-primary" style="flex:1" id="btn-pagar-detalle">💰 Registrar pago</button><button class="btn btn-secondary" onclick="closeModalById('modal-detalle')">Cerrar</button></div>
+  </div>
+</div>
+
+<!-- Modal Carro -->
+<div class="modal-overlay" id="modal-carro">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-carro-title">Agregar carro</div>
+    <div class="form-row"><div class="form-group"><label class="label">Placa *</label><input class="form-input" id="fc-placa" style="text-transform:uppercase" placeholder="ABC-1234"></div><div class="form-group"><label class="label">Modelo *</label><input class="form-input" id="fc-modelo" placeholder="Renault Kwid"></div></div>
+    <div class="form-row"><div class="form-group"><label class="label">Año</label><input class="form-input" id="fc-anio" type="number" placeholder="2026"></div><div class="form-group"><label class="label">Color</label><input class="form-input" id="fc-color" placeholder="Blanco"></div></div>
+    <div class="form-row"><div class="form-group"><label class="label">No. Serie / VIN</label><input class="form-input" id="fc-serie" placeholder="3VWFE21C04M000001"></div><div class="form-group"><label class="label">Estatus</label><select class="form-select" id="fc-estatus"><option value="disponible">✅ Disponible</option><option value="rentado">🔑 Rentado</option><option value="servicio">🔧 En servicio</option><option value="baja">⛔ Baja</option></select></div></div>
+    <div class="form-group"><label class="label">Chofer asignado</label><select class="form-select" id="fc-chofer"></select></div>
+    <div class="form-divider">🛡️ Seguro</div>
+    <div class="form-row"><div class="form-group"><label class="label">No. de póliza</label><input class="form-input" id="fc-poliza" placeholder="POL-123456"></div><div class="form-group"><label class="label">Fecha vencimiento</label><input class="form-input" id="fc-seguro-vence" type="date"></div></div>
+    <div class="form-divider">💳 Leasing</div>
+    <div class="form-row"><div class="form-group"><label class="label">Fecha inicio</label><input class="form-input" id="fc-leasing-inicio" type="date"></div><div class="form-group"><label class="label">Fecha fin</label><input class="form-input" id="fc-leasing-fin" type="date"></div></div>
+    <div class="form-group"><label class="label">Pagos restantes</label><input class="form-input" id="fc-leasing-pagos" type="number" placeholder="36"></div>
+    <div class="form-group"><label class="label">Notas</label><input class="form-input" id="fc-notas-carro" placeholder="Observaciones..."></div>
+    <div class="modal-actions"><button class="btn btn-primary" style="flex:1" onclick="saveCarro()">Guardar</button><button class="btn btn-secondary" onclick="closeModalById('modal-carro')">Cancelar</button></div>
+  </div>
+</div>
+
+<!-- Modal Detalle Flota -->
+<div class="modal-overlay" id="modal-flota-detalle">
+  <div class="modal"><div class="modal-handle"></div><div id="flota-detalle-content"></div>
+    <div class="modal-actions" style="margin-top:12px"><button class="btn btn-primary" style="flex:1" id="btn-editar-carro">✏️ Editar</button><button class="btn btn-ghost" id="btn-baja-carro">Dar de baja</button><button class="btn btn-secondary" onclick="closeModalById('modal-flota-detalle')">Cerrar</button></div>
+  </div>
+</div>
+
+<!-- Modal Documentos -->
+<div class="modal-overlay" id="modal-docs">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📄 Documentos del chofer</div>
+    <div id="doc-chofer-nombre" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:16px;font-weight:700;"></div>
+    <div class="form-divider">🪪 Licencia de conducir</div>
+    <div class="form-row"><div class="form-group"><label class="label">No. de licencia</label><input class="form-input" id="doc-lic-num" placeholder="NL-1234567"></div><div class="form-group"><label class="label">Vencimiento</label><input class="form-input" id="doc-lic-vence" type="date"></div></div>
+    <div class="form-divider">🆔 INE / Identificación</div>
+    <div class="form-row"><div class="form-group"><label class="label">No. de INE</label><input class="form-input" id="doc-ine-num" placeholder="LOAM800101HNT..."></div><div class="form-group"><label class="label">Vencimiento</label><input class="form-input" id="doc-ine-vence" type="date"></div></div>
+    <div class="form-divider">🏠 Comprobante de domicilio</div>
+    <div class="form-group"><label class="label">Válido hasta</label><input class="form-input" id="doc-dom-vence" type="date"></div>
+    <div class="form-group"><label class="label">Notas</label><input class="form-input" id="doc-notas" placeholder="Observaciones..."></div>
+    <div class="modal-actions"><button class="btn btn-primary" style="flex:1" onclick="saveDocs()">Guardar documentos</button><button class="btn btn-secondary" onclick="closeModalById('modal-docs')">Cancelar</button></div>
+  </div>
+</div>
+
+<!-- Modal Servicio -->
+<div class="modal-overlay" id="modal-servicio">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🔧 Registrar servicio</div>
+    <div class="form-row"><div class="form-group"><label class="label">Chofer / Carro</label><select class="form-select" id="svc-chofer"></select></div><div class="form-group"><label class="label">Tipo de servicio</label><input class="form-input" id="svc-tipo" placeholder="Cambio aceite, frenos..." list="svc-tipos-list"><datalist id="svc-tipos-list"><option>Cambio de aceite</option><option>Cambio de llantas</option><option>Frenos</option><option>Afinación</option><option>Revisión general</option><option>Hojalatería y pintura</option><option>Suspensión</option></datalist></div></div>
+    <div class="form-row"><div class="form-group"><label class="label">Kilometraje actual (opcional)</label><input class="form-input" id="svc-km" type="number" placeholder="45000"></div><div class="form-group"><label class="label">Próximo servicio en km</label><input class="form-input" id="svc-proxkm" type="number" placeholder="50000"></div></div>
+    <div class="form-group"><label class="label">¿Usaste refacción del inventario? <span style="color:var(--text3);font-weight:400">(opcional)</span></label><select class="form-select" id="svc-refaccion" onchange="document.getElementById('svc-cant-row').style.display=this.value?'block':'none'"></select></div>
+    <div class="form-group" id="svc-cant-row" style="display:none"><label class="label">Cantidad usada</label><input class="form-input" id="svc-cantidad" type="number" value="1"></div>
+    <div class="form-group"><label class="label">Notas</label><input class="form-input" id="svc-notas" placeholder="Proveedor, observaciones..."></div>
+    <div class="modal-actions"><button class="btn btn-primary" style="flex:1" onclick="saveServicio()">Guardar servicio</button><button class="btn btn-secondary" onclick="closeModalById('modal-servicio')">Cancelar</button></div>
+  </div>
+</div>
+
+<!-- Modal Producto Inventario -->
+<div class="modal-overlay" id="modal-producto">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📦 Agregar producto al inventario</div>
+    <div class="form-row"><div class="form-group"><label class="label">Nombre del producto</label><input class="form-input" id="np-nombre" placeholder="Aceite 5W30, Filtro de aceite..."></div><div class="form-group"><label class="label">Categoría</label><select class="form-select" id="np-categoria"><option>Aceites y lubricantes</option><option>Filtros</option><option>Frenos</option><option>Llantas</option><option>Suspensión</option><option>Eléctrico</option><option>Carrocería</option><option>Consumibles</option><option>Herramientas</option><option>Otro</option></select></div></div>
+    <div class="form-row"><div class="form-group"><label class="label">Costo unitario ($)</label><input class="form-input" id="np-costo" type="number"></div><div class="form-group"><label class="label">Unidad</label><select class="form-select" id="np-unidad"><option value="pzas">Piezas</option><option value="lts">Litros</option><option value="kgs">Kilos</option><option value="mts">Metros</option><option value="cajas">Cajas</option><option value="juegos">Juegos</option></select></div></div>
+    <div class="form-row"><div class="form-group"><label class="label">Stock inicial</label><input class="form-input" id="np-stock" type="number" placeholder="0"></div><div class="form-group"><label class="label">Stock mínimo (alerta)</label><input class="form-input" id="np-stockmin" type="number" placeholder="5"></div></div>
+    <div class="modal-actions"><button class="btn btn-primary" style="flex:1" onclick="saveProducto()">Guardar producto</button><button class="btn btn-secondary" onclick="closeModalById('modal-producto')">Cancelar</button></div>
+  </div>
+</div>
+
+<!-- Modal Movimiento Inventario -->
+<div class="modal-overlay" id="modal-movimiento">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-mov-title">Movimiento</div>
+    <input type="hidden" id="mov-producto-id">
+    <input type="hidden" id="mov-tipo">
+    <div class="form-group"><label class="label">Cantidad</label><input class="form-input" id="mov-cantidad" type="number" placeholder="0"></div>
+    <div class="form-group" id="mov-costo-row"><label class="label">Costo unitario en esta compra ($)</label><input class="form-input" id="mov-costo" type="number"><div class="info-box info-blue" style="margin-top:8px;padding:8px 12px;font-size:0.75rem">La compra se registrará automáticamente en gastos del mes</div></div>
+    <div class="form-group" id="mov-driver-row" style="display:none"><label class="label">¿Para qué carro? (opcional)</label><select class="form-select" id="mov-driver"></select></div>
+    <div class="form-group"><label class="label">Notas (opcional)</label><input class="form-input" id="mov-notas" placeholder="Proveedor, factura..."></div>
+    <div class="modal-actions"><button class="btn btn-primary" style="flex:1" onclick="saveMovimiento()">Confirmar</button><button class="btn btn-secondary" onclick="closeModalById('modal-movimiento')">Cancelar</button></div>
+  </div>
+</div>
+
+<!-- Modal Gasto -->
+<div class="modal-overlay" id="modal-gasto">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Registrar gasto del mes</div>
+    <div class="form-row"><div class="form-group"><label class="label">Concepto</label><input class="form-input" id="gv-concepto" placeholder="Ej: Pago leasing mayo"></div><div class="form-group"><label class="label">Monto ($)</label><input class="form-input" id="gv-monto" type="number"></div></div>
+    <div class="form-row"><div class="form-group"><label class="label">Tipo</label><select class="form-select" id="gv-tipo"><option value="variable">Gasto variable</option><option value="leasing">Leasing / pago de carro</option><option value="impuesto">Impuesto (IVA, ISR)</option></select></div><div class="form-group"><label class="label">Categoría</label><select class="form-select" id="gv-categoria"><option>Combustible</option><option>Multas</option><option>Publicidad</option><option>Seguro</option><option>Herramientas</option><option>Otro</option></select></div></div>
+    <div class="modal-actions"><button class="btn btn-primary" style="flex:1" onclick="saveGasto()">Guardar gasto</button><button class="btn btn-secondary" onclick="closeModalById('modal-gasto')">Cancelar</button></div>
+  </div>
+</div>
+
+<!-- Modal Aportación -->
+<div class="modal-overlay" id="modal-aportacion">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">💼 Aportación a capital</div>
+    <div class="info-box info-blue">Usa esto cuando metes dinero propio al negocio. Aparece separado de los ingresos por rentas.</div>
+    <div class="form-row"><div class="form-group"><label class="label">Monto ($)</label><input class="form-input" id="ap-monto" type="number"></div><div class="form-group"><label class="label">Concepto</label><input class="form-input" id="ap-concepto" placeholder="Aportación para carros nuevos..." list="ap-list"><datalist id="ap-list"><option>Aportación para carros nuevos</option><option>Capital inicial</option><option>Reinversión de utilidades</option></datalist></div></div>
+    <div class="form-group"><label class="label">Nota (opcional)</label><input class="form-input" id="ap-nota"></div>
+    <div class="modal-actions"><button class="btn btn-primary" style="flex:1" onclick="saveAportacion()">Guardar</button><button class="btn btn-secondary" onclick="closeModalById('modal-aportacion')">Cancelar</button></div>
+  </div>
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
