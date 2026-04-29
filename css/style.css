@@ -958,28 +958,3 @@ main { padding: 24px; max-width: 1100px; margin: 0 auto; }
   .dash-kpi-val { font-size: 1.1rem; }
 }
 
-/* ── BACK BUTTON ── */
-.btn-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--text3);
-  font-family: 'Outfit', sans-serif;
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 8px 14px;
-  border-radius: var(--radius);
-  cursor: pointer;
-  margin-bottom: 20px;
-  transition: all .15s;
-}
-.btn-back:hover {
-  border-color: var(--green);
-  color: var(--green);
-  background: var(--green-bg);
-}
-
-/* Hide tabs */
-.tabs-wrapper { display: none !important; }
