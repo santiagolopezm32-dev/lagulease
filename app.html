@@ -18,7 +18,7 @@
 <nav class="nav">
   <div class="nav-logo">
     <div class="nav-logo-icon">🚗</div>
-    LAGU<span>LEASE</span>
+    LAGULEASE
   </div>
   <div class="nav-right">
     <div class="nav-user">
@@ -49,8 +49,9 @@
 <!-- ═══ MAIN ═══ -->
 <main>
 
-  <!-- RESUMEN - DASHBOARD GRID -->
+  <!-- RESUMEN - DASHBOARD -->
   <div class="page active" id="page-resumen">
+    <!-- HEADER CON LOGO Y KPIs -->
     <div class="dashboard-header">
       <div class="dashboard-logo">LAGULEASE</div>
       <div class="dashboard-sub">Sistema de Administración de Flota</div>
@@ -66,6 +67,43 @@
         <div class="dash-kpi"><div class="dash-kpi-val red" id="kpi-deuda">—</div><div class="dash-kpi-label">Deuda acumulada</div></div>
       </div>
     </div>
+
+    <!-- RESUMEN OPERATIVO -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px">
+      <!-- Semana actual -->
+      <div class="week-banner">
+        <div class="week-banner-title">Semana actual</div>
+        <div class="week-numbers">
+          <div><div class="week-num-label">Cobrado</div><div class="week-num-val" id="week-cobrado">—</div></div>
+          <div><div class="week-num-label">Por cobrar</div><div class="week-num-val warn" id="week-falta">—</div></div>
+          <div><div class="week-num-label">Meta</div><div class="week-num-val dim" id="week-meta">—</div></div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="week-bar"></div></div>
+        <div class="progress-label" id="week-pct">0% del objetivo</div>
+      </div>
+      <!-- Alertas -->
+      <div>
+        <div class="label" style="margin-bottom:10px">⚠️ Alertas de cobranza</div>
+        <div id="alertas-list"></div>
+      </div>
+    </div>
+
+    <!-- ÚLTIMOS PAGOS + GRÁFICA -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px">
+      <div>
+        <div class="label" style="margin-bottom:10px">Últimos pagos</div>
+        <div id="ultimos-pagos"></div>
+      </div>
+      <div class="admin-only">
+        <div class="label" style="margin-bottom:10px">📈 Tendencia de ingresos</div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px">
+          <canvas id="chart-ingresos" height="120"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- MÓDULOS DE NAVEGACIÓN -->
+    <div class="label" style="margin-bottom:16px">Módulos del sistema</div>
     <div class="module-grid">
       <div class="module-card" onclick="switchTab('choferes')">
         <div class="module-icon">🚗</div>
@@ -113,28 +151,6 @@
         <div class="module-name">Reportes</div>
         <div class="module-desc">Exportar a Excel</div>
       </div>
-    </div>
-    <!-- Alertas debajo del grid -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px">
-      <div>
-        <div class="label" style="margin-bottom:12px">⚠️ Alertas de cobranza</div>
-        <div id="alertas-list"></div>
-      </div>
-      <div>
-        <div class="label" style="margin-bottom:12px">Últimos pagos</div>
-        <div id="ultimos-pagos"></div>
-      </div>
-    </div>
-    <div class="admin-only" style="margin-top:24px">
-      <div class="label" style="margin-bottom:12px">📈 Tendencia de ingresos</div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px">
-        <canvas id="chart-ingresos" height="80"></canvas>
-      </div>
-    </div>
-    <!-- Hidden KPI elements needed by JS -->
-    <div style="display:none">
-      <div id="week-cobrado"></div><div id="week-falta"></div><div id="week-meta"></div>
-      <div id="week-bar"></div><div id="week-pct"></div>
     </div>
   </div>
 
@@ -489,3 +505,4 @@ document.addEventListener('DOMContentLoaded', function() {
 <script type="module" src="js/app.js"></script>
 </body>
 </html>
+
