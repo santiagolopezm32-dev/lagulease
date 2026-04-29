@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LAGULEASE v2 — Choferes</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#C9A84C;--gold2:#F5D78E;--gold3:#8B6914;
+  --gold-bg:rgba(201,168,76,0.08);--gold-border:rgba(201,168,76,0.18);
+  --bg:#080808;--s1:#0f0f0f;--s2:#161616;--s3:#1e1e1e;
+  --border:rgba(255,255,255,0.06);--border2:rgba(201,168,76,0.15);
+  --text:#f0ede8;--text2:#8a8680;--text3:#4a4845;
+  --red:#e05252;--red-bg:rgba(224,82,82,0.08);--red-border:rgba(224,82,82,0.2);
+  --green:#52c472;--green-bg:rgba(82,196,114,0.08);--green-border:rgba(82,196,114,0.2);
+  --yellow:#e8a020;--yellow-bg:rgba(232,160,32,0.08);--yellow-border:rgba(232,160,32,0.2);
+  --blue:#6b9fd4;--blue-bg:rgba(107,159,212,0.08);
+  --r:10px;--r-lg:14px;--r-xl:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px;}
+
+/* SHELL */
+.shell{display:flex;min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{width:220px;flex-shrink:0;background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;}
+.sidebar-logo{padding:24px 20px;border-bottom:1px solid var(--border);}
+.logo-text{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:4px;background:linear-gradient(135deg,var(--gold),var(--gold2),var(--gold3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;display:block;}
+.logo-sub{font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-top:3px;}
+.sidebar-nav{flex:1;padding:10px 0;overflow-y:auto;}
+.nav-sec{padding:14px 20px 5px;font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--text3);}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:0.82rem;font-weight:600;color:var(--text2);cursor:pointer;transition:all .15s;border-left:2px solid transparent;}
+.nav-item:hover{color:var(--text);background:var(--s2);}
+.nav-item.active{color:var(--gold);background:var(--gold-bg);border-left-color:var(--gold);}
+.nav-icon{font-size:0.95rem;width:20px;text-align:center;flex-shrink:0;}
+.nav-soon{margin-left:auto;font-size:0.58rem;color:var(--text3);background:var(--s3);padding:2px 6px;border-radius:4px;}
+.sidebar-bottom{padding:14px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.user-av{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--gold3));display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;color:#000;flex-shrink:0;}
+.user-name{font-size:0.78rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-role{font-size:0.6rem;color:var(--gold);letter-spacing:0.5px;}
+
+/* MAIN */
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{height:54px;background:var(--s1);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:50;}
+.topbar-left{display:flex;align-items:center;gap:12px;}
+.topbar-title{font-size:0.95rem;font-weight:800;}
+.topbar-sub{font-size:0.72rem;color:var(--text3);}
+.content{padding:22px 24px;flex:1;}
+
+/* BUTTONS */
+.btn{padding:9px 16px;border-radius:var(--r);font-family:'Outfit',sans-serif;font-weight:700;font-size:0.8rem;cursor:pointer;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold3));color:#000;}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(201,168,76,0.25);}
+.btn-outline{background:transparent;border:1px solid var(--border2);color:var(--text2);}
+.btn-outline:hover{background:var(--gold-bg);color:var(--gold);border-color:var(--gold-border);}
+.btn-ghost{background:var(--s2);border:1px solid var(--border);color:var(--text2);}
+.btn-ghost:hover{background:var(--s3);color:var(--text);}
+.btn-danger{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red);}
+.btn-danger:hover{background:rgba(224,82,82,0.15);}
+.btn-sm{padding:6px 12px;font-size:0.75rem;border-radius:8px;}
+.btn-xs{padding:4px 9px;font-size:0.7rem;border-radius:6px;}
+.btn-icon{width:32px;height:32px;padding:0;justify-content:center;border-radius:8px;}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;}
+.kpi{background:var(--s1);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px 16px;position:relative;overflow:hidden;}
+.kpi::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;}
+.kpi.gold::after{background:linear-gradient(90deg,var(--gold),var(--gold2));}
+.kpi.red::after{background:var(--red);}
+.kpi.green::after{background:var(--green);}
+.kpi.blue::after{background:var(--blue);}
+.kpi-label{font-size:0.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+.kpi-val{font-size:1.4rem;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1;}
+.kpi-val.gold{color:var(--gold);}
+.kpi-val.red{color:var(--red);}
+.kpi-val.green{color:var(--green);}
+.kpi-val.blue{color:var(--blue);}
+.kpi-sub{font-size:0.66rem;color:var(--text3);margin-top:4px;}
+
+/* ACTION BAR */
+.action-bar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
+.search-wrap{position:relative;flex:1;min-width:200px;}
+.search-icon-el{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:0.8rem;pointer-events:none;}
+.search-input{width:100%;padding:9px 12px 9px 32px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:'Outfit',sans-serif;font-size:0.83rem;outline:none;transition:all .15s;}
+.search-input::placeholder{color:var(--text3);}
+.search-input:focus{border-color:var(--gold-border);background:var(--s3);}
+
+/* PILLS */
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.pill{padding:5px 12px;border-radius:20px;font-size:0.7rem;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--s2);color:var(--text3);transition:all .15s;}
+.pill:hover{border-color:var(--gold-border);color:var(--text2);}
+.pill.active{background:var(--gold);color:#000;border-color:var(--gold);}
+
+/* CHOFER CARD */
+.chofer-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 18px;display:grid;grid-template-columns:auto 1fr auto auto;gap:14px;align-items:center;cursor:pointer;margin-bottom:8px;transition:all .15s;}
+.chofer-card:hover{border-color:var(--gold-border);box-shadow:0 2px 20px rgba(0,0,0,.3);}
+.chofer-card.urgent{border-color:var(--red-border);background:rgba(224,82,82,0.03);}
+.chofer-card.partial{border-color:var(--yellow-border);background:rgba(232,160,32,0.03);}
+.av{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.88rem;flex-shrink:0;}
+.chofer-name{font-weight:800;font-size:0.92rem;margin-bottom:4px;}
+.chofer-meta{display:flex;gap:12px;flex-wrap:wrap;font-size:0.68rem;color:var(--text3);font-family:'JetBrains Mono',monospace;}
+.debt-warn{font-size:0.68rem;color:var(--red);font-weight:700;margin-top:3px;}
+
+/* SCORE CIRCLE */
+.score-circle{width:44px;height:44px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;border:2px solid;}
+.score-num{font-size:0.82rem;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1;}
+.score-lbl{font-size:0.5rem;text-transform:uppercase;letter-spacing:0.5px;opacity:.7;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:20px;font-size:0.63rem;font-weight:700;letter-spacing:0.3px;white-space:nowrap;}
+.badge-gold{background:var(--gold-bg);color:var(--gold);border:1px solid var(--gold-border);}
+.badge-red{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);}
+.badge-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
+.badge-yellow{background:var(--yellow-bg);color:var(--yellow);border:1px solid var(--yellow-border);}
+.badge-blue{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(107,159,212,0.2);}
+.badge-gray{background:rgba(255,255,255,0.05);color:var(--text3);border:1px solid var(--border);}
+
+/* MODALS */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:500;align-items:flex-end;justify-content:center;padding:0;}
+.overlay.open{display:flex;}
+.modal{background:var(--s1);border:1px solid var(--border2);border-radius:22px 22px 0 0;padding:26px 22px;width:100%;max-width:660px;max-height:92vh;overflow-y:auto;animation:slideUp .25s cubic-bezier(.34,1.56,.64,1);}
+.modal-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:-6px auto 18px;}
+.modal-title{font-size:1.05rem;font-weight:800;margin-bottom:18px;letter-spacing:-.2px;}
+.modal-actions{display:flex;gap:10px;margin-top:18px;}
+
+/* FORMS */
+.fg{margin-bottom:14px;}
+.fg label{display:block;font-size:0.65rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+.fi,.fs{width:100%;padding:10px 13px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:'Outfit',sans-serif;font-size:0.86rem;outline:none;transition:all .15s;}
+.fi::placeholder{color:var(--text3);}
+.fi:focus,.fs:focus{border-color:var(--gold-border);background:var(--s3);}
+.fs option{background:var(--s2);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-divider{font-size:0.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin:16px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.form-check{display:flex;align-items:center;gap:8px;margin-top:6px;}
+.form-check input{width:15px;height:15px;accent-color:var(--gold);}
+.form-check label{font-size:0.8rem;color:var(--text2);cursor:pointer;}
+
+/* DETAIL PANEL */
+.detail-panel{background:var(--s1);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden;margin-top:16px;animation:fadeIn .2s ease;}
+.dp-header{background:var(--s2);padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;}
+.dp-av{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.05rem;flex-shrink:0;}
+.dp-name{font-size:1.05rem;font-weight:800;margin-bottom:3px;}
+.dp-meta{font-size:0.7rem;color:var(--text3);font-family:'JetBrains Mono',monospace;}
+.dp-actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;}
+.inner-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);overflow-x:auto;}
+.inner-tabs::-webkit-scrollbar{display:none;}
+.itab{padding:12px 18px;font-size:0.76rem;font-weight:700;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;}
+.itab:hover{color:var(--text2);}
+.itab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.itab-content{display:none;padding:20px;}
+.itab-content.active{display:block;animation:fadeIn .15s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* STAT BOXES */
+.stat-grid{display:grid;gap:10px;}
+.stat-grid-3{grid-template-columns:repeat(3,1fr);}
+.stat-grid-4{grid-template-columns:repeat(4,1fr);}
+.stat-box{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:12px;text-align:center;}
+.stat-box.gold{border-color:var(--gold-border);background:var(--gold-bg);}
+.stat-box.red{border-color:var(--red-border);background:var(--red-bg);}
+.stat-box.green{border-color:var(--green-border);background:var(--green-bg);}
+.stat-lbl{font-size:0.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:4px;}
+.stat-val{font-size:1rem;font-weight:800;font-family:'JetBrains Mono',monospace;}
+
+/* PAY ITEMS */
+.pay-item{display:flex;justify-content:space-between;align-items:center;padding:10px 13px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:6px;font-size:0.8rem;gap:10px;transition:all .15s;}
+.pay-item:hover{border-color:var(--border2);}
+.pay-info{font-size:0.67rem;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-top:2px;}
+.pay-amount{font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--gold);white-space:nowrap;}
+.pay-amount.red{color:var(--red);}
+.del-btn{background:none;border:none;cursor:pointer;color:var(--text3);padding:3px 6px;border-radius:5px;font-size:0.78rem;transition:all .1s;}
+.del-btn:hover{background:var(--red-bg);color:var(--red);}
+
+/* INFO BOX */
+.info-box{border-radius:var(--r);padding:11px 14px;font-size:0.78rem;line-height:1.6;margin-bottom:14px;border:1px solid;}
+.info-gold{background:var(--gold-bg);border-color:var(--gold-border);color:#d4b86a;}
+.info-red{background:var(--red-bg);border-color:var(--red-border);color:#e88080;}
+.info-blue{background:var(--blue-bg);border-color:rgba(107,159,212,0.2);color:#90b8d8;}
+
+/* SCORE BAR */
+.score-bar-wrap{margin:12px 0;}
+.score-bar-header{display:flex;justify-content:space-between;margin-bottom:5px;font-size:0.75rem;}
+.score-bar-track{background:rgba(255,255,255,0.05);border-radius:4px;height:6px;overflow:hidden;}
+.score-bar-fill{height:100%;border-radius:4px;transition:width .8s ease;}
+
+/* LIQUIDAR */
+.liquidar-box{background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(201,168,76,0.02));border:1px solid var(--gold-border);border-radius:var(--r-lg);padding:18px;}
+.liq-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:0.85rem;}
+.liq-row:last-child{border-bottom:none;}
+.liq-total{background:var(--gold);color:#000;border-radius:var(--r);padding:12px 16px;display:flex;justify-content:space-between;font-weight:800;margin-top:12px;}
+
+
+/* UPLOAD */
+.upload-area{background:var(--s2);border:1.5px dashed var(--border2);border-radius:var(--r);padding:18px;text-align:center;cursor:pointer;transition:all .2s;}
+.upload-area:hover{border-color:var(--gold);background:var(--gold-bg);}
+.upload-icon{font-size:1.6rem;margin-bottom:6px;}
+.upload-text{font-size:0.78rem;font-weight:600;color:var(--text2);margin-bottom:2px;}
+.upload-sub{font-size:0.65rem;color:var(--text3);}
+.upload-area.has-file{border-color:var(--green);border-style:solid;background:var(--green-bg);}
+.doc-preview{display:flex;align-items:center;gap:10px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:10px 13px;}
+.doc-preview img{width:52px;height:52px;object-fit:cover;border-radius:6px;border:1px solid var(--border);}
+.doc-preview-name{font-size:0.75rem;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.doc-preview-size{font-size:0.65rem;color:var(--text3);}
+.doc-view-link{font-size:0.72rem;color:var(--gold);text-decoration:none;font-weight:600;}
+.doc-view-link:hover{text-decoration:underline;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--s1);border:1px solid var(--gold-border);border-radius:var(--r-lg);padding:14px 18px;font-size:0.82rem;font-weight:600;color:var(--gold);z-index:9999;display:none;animation:fadeIn .2s ease;box-shadow:0 8px 32px rgba(0,0,0,.4);}
+
+/* EMPTY */
+.empty{text-align:center;padding:56px 20px;color:var(--text3);}
+.empty-icon{font-size:2.8rem;margin-bottom:12px;opacity:.3;}
+
+/* UTILS */
+.mono{font-family:'JetBrains Mono',monospace;}
+.fw7{font-weight:700;}.fw8{font-weight:800;}
+.text-gold{color:var(--gold);}.text-red{color:var(--red);}.text-green{color:var(--green);}
+.text-muted{color:var(--text3);}
+.fs85{font-size:0.85rem;}.fs75{font-size:0.75rem;}.fs70{font-size:0.7rem;}
+.mt16{margin-top:16px;}.mb16{margin-bottom:16px;}.mb8{margin-bottom:8px;}
+.flex{display:flex;align-items:center;}.gap8{gap:8px;}.gap12{gap:12px;}
+.label{font-size:0.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;display:block;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+
+@media(max-width:700px){
+  .sidebar{display:none;}
+  .main{margin-left:0;}
+  .kpi-row{grid-template-columns:1fr 1fr;}
+  .form-row{grid-template-columns:1fr;}
+  .chofer-card{grid-template-columns:auto 1fr;}
+  .chofer-card .score-circle,.chofer-card .chofer-right{display:none;}
+  .stat-grid-3,.stat-grid-4{grid-template-columns:1fr 1fr;}
+  .grid2{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <span class="logo-text">LAGULEASE</span>
+    <div class="logo-sub">Administración de Flota</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-sec">Principal</div>
+    <div class="nav-item" onclick="alert('Próximamente en v2')"><span class="nav-icon">🏠</span>Dashboard<span class="nav-soon">pronto</span></div>
+    <div class="nav-sec">Operación</div>
+    <div class="nav-item" onclick="alert('Próximamente en v2')"><span class="nav-icon">📣</span>Ventas<span class="nav-soon">pronto</span></div>
+    <div class="nav-item active"><span class="nav-icon">👤</span>Choferes</div>
+    <div class="nav-item" onclick="alert('Próximamente en v2')"><span class="nav-icon">🚙</span>Flota<span class="nav-soon">pronto</span></div>
+    <div class="nav-item" onclick="alert('Próximamente en v2')"><span class="nav-icon">🔧</span>Taller<span class="nav-soon">pronto</span></div>
+    <div class="nav-sec">Administración</div>
+    <div class="nav-item" onclick="alert('Próximamente en v2')"><span class="nav-icon">💼</span>Finanzas<span class="nav-soon">pronto</span></div>
+    <div class="nav-item" onclick="alert('Próximamente en v2')"><span class="nav-icon">📊</span>Reportes<span class="nav-soon">pronto</span></div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="user-av">SL</div>
+    <div style="flex:1;min-width:0">
+      <div class="user-name">Santiago Lopez</div>
+      <div class="user-role">ADMIN</div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div>
+        <div class="topbar-title">Choferes</div>
+      </div>
+    </div>
+    <div class="flex gap8">
+      <button class="btn btn-ghost btn-sm" onclick="openModal('modal-blacklist')">⛔ Blacklist</button>
+      <button class="btn btn-gold btn-sm" onclick="openAddChofer()">+ Agregar chofer</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- KPIs -->
+    <div class="kpi-row" id="kpi-row" style="grid-template-columns:repeat(6,1fr)"></div>
+
+    <!-- Action bar -->
+    <div class="action-bar">
+      <div class="search-wrap">
+        <span class="search-icon-el">🔍</span>
+        <input class="search-input" id="search-input" placeholder="Buscar por nombre, placa, teléfono..." oninput="renderChoferes()">
+      </div>
+      <select class="fi" id="sort-select" style="width:auto" onchange="renderChoferes()">
+        <option value="deuda">Mayor deuda primero</option>
+        <option value="nombre">Nombre A-Z</option>
+        <option value="score">Menor score primero</option>
+        <option value="fecha">Más reciente</option>
+      </select>
+    </div>
+
+    <div class="pills" id="filter-pills">
+      <div class="pill active" onclick="setFilter('todos',this)">Todos</div>
+      <div class="pill" onclick="setFilter('al_corriente',this)">✅ Al corriente</div>
+      <div class="pill" onclick="setFilter('pendiente',this)">⏳ Pendiente</div>
+      <div class="pill" onclick="setFilter('atrasado',this)">🔴 Atrasado</div>
+      <div class="pill" onclick="setFilter('parcial',this)">🟡 Parcial</div>
+      <div class="pill" onclick="setFilter('tiempo_completo',this)">🟢 Tiempo completo</div>
+      <div class="pill" onclick="setFilter('medio_tiempo',this)">🟡 Medio tiempo</div>
+      <div class="pill" onclick="setFilter('particular',this)">⚪ Uso particular</div>
+      <div class="pill" onclick="setFilter('inactivos',this)">📁 Inactivos</div>
+    </div>
+
+    <!-- List -->
+    <div id="choferes-list"></div>
+
+    <!-- Detail panel -->
+    <div id="detail-panel" style="display:none"></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ MODALS ═══ -->
+
+<!-- AGREGAR/EDITAR CHOFER -->
+<div class="overlay" id="modal-chofer">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-chofer-title">Agregar chofer</div>
+
+    <!-- Step indicator -->
+    <div id="step-indicator" style="display:flex;gap:0;margin-bottom:20px;border-radius:8px;overflow:hidden;border:1px solid var(--border)">
+      <div id="step1-btn" style="flex:1;padding:10px;text-align:center;font-size:0.78rem;font-weight:700;background:var(--gold);color:#000;cursor:pointer" onclick="goToStep(1)">① Datos básicos</div>
+      <div id="step2-btn" style="flex:1;padding:10px;text-align:center;font-size:0.78rem;font-weight:700;background:var(--s2);color:var(--text3);cursor:pointer" onclick="goToStep(2)">② Documentos y fotos</div>
+    </div>
+    <div id="step1-content">
+    <div class="form-row">
+      <div class="fg"><label>Nombre completo *</label><input class="fi" id="f-nombre" placeholder="Juan García López"></div>
+      <div class="fg"><label>Teléfono *</label><input class="fi" id="f-tel" placeholder="81 1234 5678" type="tel"></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Placa del carro *</label><input class="fi" id="f-placa" placeholder="ABC-1234" style="text-transform:uppercase"></div>
+      <div class="fg"><label>Renta semanal ($) *</label><input class="fi" id="f-renta" type="number" placeholder="5000"></div>
+    </div>
+    <div class="form-row">
+      <div class="fg">
+        <label>Fecha de entrega del carro *</label>
+        <input class="fi" id="f-inicio" type="date">
+        <div style="font-size:0.68rem;color:var(--text3);margin-top:4px" id="f-inicio-hint">El primer pago es el lunes siguiente a la entrega</div>
+      </div>
+      <div class="fg"><label>Uso del vehículo</label>
+        <select class="fs" id="f-tipo">
+          <option value="tiempo_completo">🟢 Tiempo completo (Uber/DiDi)</option>
+          <option value="medio_tiempo">🟡 Medio tiempo (Uber/DiDi)</option>
+          <option value="particular">⚪ Uso particular</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="fg">
+        <label>Depósito acordado ($)</label>
+        <input class="fi" id="f-deposito-acordado" type="number" placeholder="0" oninput="updateDepHint()">
+      </div>
+      <div class="fg">
+        <label>Depósito pagado ($)</label>
+        <input class="fi" id="f-deposito-pagado" type="number" placeholder="0" oninput="updateDepHint()">
+        <div id="dep-hint" style="font-size:0.68rem;margin-top:5px;color:var(--red)"></div>
+        <div class="form-check" style="margin-top:8px"><input type="checkbox" id="f-dep-devuelto"><label for="f-dep-devuelto">Depósito ya devuelto</label></div>
+      </div>
+      <div class="fg"><label>Viajes realizados (Uber/DiDi)</label><input class="fi" id="f-viajes" type="number" placeholder="1020"></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Ingreso semanal comprobado ($)</label><input class="fi" id="f-ingresos" type="number" placeholder="6300"></div>
+      <div class="fg"><label>Plataforma</label>
+        <select class="fs" id="f-plataforma">
+          <option>Uber</option><option>DiDi</option><option>Uber + DiDi</option><option>Otro</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg"><label>Notas</label><input class="fi" id="f-notas" placeholder="Referido de, observaciones..."></div>
+
+    </div><!-- end step1 -->
+    <div id="step2-content" style="display:none">
+    <div class="form-divider" style="color:var(--gold)">📄 Documentos obligatorios</div>
+    <div class="info-box info-gold" style="margin-bottom:14px">Todos los documentos y fotos son obligatorios para guardar al chofer.</div>
+
+    <div style="font-size:0.72rem;font-weight:700;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">🪪 Licencia de conducir</div>
+    <div class="form-row">
+      <div class="fg"><label>No. de licencia *</label><input class="fi" id="f-lic-num" placeholder="NL-1234567"></div>
+      <div class="fg"><label>Vencimiento *</label><input class="fi" id="f-lic-vence" type="date"></div>
+    </div>
+    <div class="fg">
+      <label>Foto de licencia *</label>
+      <div class="upload-area" onclick="document.getElementById('uf-lic').click()" id="uf-lic-area">
+        <div class="upload-icon">📷</div><div class="upload-text">Toca para tomar foto o subir archivo</div><div class="upload-sub">JPG, PNG o PDF</div>
+      </div>
+      <input type="file" id="uf-lic" accept="image/*,application/pdf" capture="environment" style="display:none" onchange="previewInlineDoc('lic',this)">
+      <div id="uf-lic-preview" style="display:none;margin-top:6px"></div>
+    </div>
+
+    <div style="font-size:0.72rem;font-weight:700;color:var(--text3);margin-bottom:8px;margin-top:8px;text-transform:uppercase;letter-spacing:1px">🆔 INE / Identificación</div>
+    <div class="form-row">
+      <div class="fg"><label>No. de INE *</label><input class="fi" id="f-ine-num" placeholder="LOAM800101..."></div>
+      <div class="fg"><label>Vencimiento *</label><input class="fi" id="f-ine-vence" type="date"></div>
+    </div>
+    <div class="fg">
+      <label>Foto de INE *</label>
+      <div class="upload-area" onclick="document.getElementById('uf-ine').click()" id="uf-ine-area">
+        <div class="upload-icon">📷</div><div class="upload-text">Toca para tomar foto o subir archivo</div><div class="upload-sub">JPG, PNG o PDF</div>
+      </div>
+      <input type="file" id="uf-ine" accept="image/*,application/pdf" capture="environment" style="display:none" onchange="previewInlineDoc('ine',this)">
+      <div id="uf-ine-preview" style="display:none;margin-top:6px"></div>
+    </div>
+
+    <div style="font-size:0.72rem;font-weight:700;color:var(--text3);margin-bottom:8px;margin-top:8px;text-transform:uppercase;letter-spacing:1px">🏠 Comprobante de domicilio</div>
+    <div class="fg">
+      <label>Válido hasta *</label><input class="fi" id="f-dom-vence" type="date">
+    </div>
+    <div class="fg">
+      <label>Foto del comprobante *</label>
+      <div class="upload-area" onclick="document.getElementById('uf-dom').click()" id="uf-dom-area">
+        <div class="upload-icon">📷</div><div class="upload-text">Toca para tomar foto o subir archivo</div><div class="upload-sub">JPG, PNG o PDF</div>
+      </div>
+      <input type="file" id="uf-dom" accept="image/*,application/pdf" capture="environment" style="display:none" onchange="previewInlineDoc('dom',this)">
+      <div id="uf-dom-preview" style="display:none;margin-top:6px"></div>
+    </div>
+
+    <div style="font-size:0.72rem;font-weight:700;color:var(--text3);margin-bottom:8px;margin-top:8px;text-transform:uppercase;letter-spacing:1px">💵 Capturas de ingresos</div>
+    <div class="fg">
+      <label>Estado *</label>
+      <select class="fs" id="f-ing-status">
+        <option value="">Sin validar</option>
+        <option value="validado">✅ Validadas y correctas</option>
+        <option value="invalido">❌ No válidas</option>
+        <option value="pendiente">⏳ Pendiente revisión</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>Foto de capturas *</label>
+      <div class="upload-area" onclick="document.getElementById('uf-ing').click()" id="uf-ing-area">
+        <div class="upload-icon">📷</div><div class="upload-text">Toca para tomar foto o subir archivo</div><div class="upload-sub">JPG o PNG</div>
+      </div>
+      <input type="file" id="uf-ing" accept="image/*" capture="environment" style="display:none" onchange="previewInlineDoc('ing',this)">
+      <div id="uf-ing-preview" style="display:none;margin-top:6px"></div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-gold" style="flex:1" onclick="saveChofer()">Guardar chofer</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-chofer')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- REGISTRAR PAGO -->
+<div class="overlay" id="modal-pago">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-pago-title">Registrar pago</div>
+    <div id="modal-pago-info" style="background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:13px;margin-bottom:15px;font-size:0.83rem;"></div>
+    <div class="form-row">
+      <div class="fg"><label>Monto ($)</label><input class="fi" id="p-monto" type="number"></div>
+      <div class="fg"><label>Método</label>
+        <select class="fs" id="p-metodo"><option>Transferencia</option><option>Efectivo</option><option>CoDi</option><option>Otro</option></select>
+      </div>
+    </div>
+    <div class="fg"><label>Nota (opcional)</label><input class="fi" id="p-nota" placeholder="Pago parcial, abono, etc."></div>
+    <div class="modal-actions">
+      <button class="btn btn-gold" style="flex:1" onclick="savePago()">✓ Confirmar pago</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-pago')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- DÍAS SIN COBRO -->
+<div class="overlay" id="modal-diassc">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📅 Autorizar días sin cobro</div>
+    <div class="info-box info-gold">Solo Admin puede autorizar. Los días se descuentan de la deuda acumulada del chofer.</div>
+    <div id="modal-diassc-info" style="background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:13px;margin-bottom:15px;font-size:0.83rem;"></div>
+    <div class="form-row">
+      <div class="fg"><label>Fecha inicio</label><input class="fi" id="dsc-inicio" type="date"></div>
+      <div class="fg"><label>Fecha fin</label><input class="fi" id="dsc-fin" type="date"></div>
+    </div>
+    <div class="fg"><label>Motivo *</label>
+      <select class="fs" id="dsc-motivo">
+        <option>Correctivo en taller</option><option>Accidente</option><option>Espera de refacciones</option><option>Problema mecánico</option><option>Otro</option>
+      </select>
+    </div>
+    <div class="fg"><label>Notas adicionales</label><input class="fi" id="dsc-notas" placeholder="Detalle del motivo..."></div>
+    <div class="modal-actions">
+      <button class="btn btn-gold" style="flex:1" onclick="saveDiasSinCobro()">✓ Autorizar</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-diassc')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIQUIDAR CHOFER -->
+<div class="overlay" id="modal-liquidar">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">💼 Liquidar chofer</div>
+    <div class="info-box info-red">Al liquidar, el chofer pasa a Inactivo y el carro queda Disponible.</div>
+    <div id="modal-liq-content"></div>
+    <div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-top:12px">
+      <div class="form-check">
+        <input type="checkbox" id="liq-blacklist" checked>
+        <label for="liq-blacklist" style="font-size:0.82rem;color:var(--text2)">⛔ Agregar a blacklist <span style="color:var(--text3);font-size:0.72rem">(recomendado si quedó con deuda)</span></label>
+      </div>
+      <div class="form-check" style="margin-top:8px">
+        <input type="checkbox" id="liq-recontrataria">
+        <label for="liq-recontrataria" style="font-size:0.82rem;color:var(--text2)">✅ Lo recontratarías en el futuro</label>
+      </div>
+      <div class="fg" style="margin-top:10px;margin-bottom:0">
+        <label>Motivo de salida</label>
+        <select class="fs" id="liq-motivo">
+          <option value="no_pago">No pagó</option>
+          <option value="voluntario">Salida voluntaria</option>
+          <option value="accidente">Accidente</option>
+          <option value="conducta">Conducta inapropiada</option>
+          <option value="documentos">Documentos irregulares</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-danger" style="flex:1" onclick="confirmarLiquidar()">Confirmar liquidación</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-liquidar')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- BLACKLIST -->
+<div class="overlay" id="modal-blacklist">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">⛔ Blacklist — Choferes bloqueados</div>
+    <div class="info-box info-red">Si un prospecto en Ventas coincide con alguien en esta lista, el sistema lanza una alerta automática.</div>
+    <div id="blacklist-content"></div>
+    <button class="btn btn-ghost btn-sm mt-8" onclick="closeModal('modal-blacklist')" style="margin-top:14px">Cerrar</button>
+  </div>
+</div>
+
+<!-- DOCS -->
+<div class="overlay" id="modal-docs">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📄 Documentos del chofer</div>
+    <div id="modal-docs-nombre" style="background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:14px;font-weight:700;font-size:0.88rem;"></div>
+
+    <div class="form-divider">🪪 Licencia de conducir</div>
+    <div class="form-row">
+      <div class="fg"><label>No. de licencia</label><input class="fi" id="doc-lic-num" placeholder="NL-1234567"></div>
+      <div class="fg"><label>Vencimiento</label><input class="fi" id="doc-lic-vence" type="date"></div>
+    </div>
+    <div class="fg">
+      <label>Foto de licencia</label>
+      <div class="upload-area" onclick="document.getElementById('upload-lic').click()" id="upload-lic-area">
+        <div class="upload-icon">📷</div>
+        <div class="upload-text">Toca para tomar foto o subir archivo</div>
+        <div class="upload-sub">JPG, PNG o PDF</div>
+      </div>
+      <input type="file" id="upload-lic" accept="image/*,application/pdf" capture="environment" style="display:none" onchange="previewDoc('lic',this)">
+      <div id="preview-lic" style="display:none;margin-top:8px"></div>
+    </div>
+
+    <div class="form-divider">🆔 INE / Identificación</div>
+    <div class="form-row">
+      <div class="fg"><label>No. de INE</label><input class="fi" id="doc-ine-num" placeholder="LOAM800101..."></div>
+      <div class="fg"><label>Vencimiento</label><input class="fi" id="doc-ine-vence" type="date"></div>
+    </div>
+    <div class="fg">
+      <label>Foto de INE (frente)</label>
+      <div class="upload-area" onclick="document.getElementById('upload-ine').click()" id="upload-ine-area">
+        <div class="upload-icon">📷</div>
+        <div class="upload-text">Toca para tomar foto o subir archivo</div>
+        <div class="upload-sub">JPG, PNG o PDF</div>
+      </div>
+      <input type="file" id="upload-ine" accept="image/*,application/pdf" capture="environment" style="display:none" onchange="previewDoc('ine',this)">
+      <div id="preview-ine" style="display:none;margin-top:8px"></div>
+    </div>
+
+    <div class="form-divider">🏠 Comprobante de domicilio</div>
+    <div class="fg"><label>Válido hasta</label><input class="fi" id="doc-dom-vence" type="date"></div>
+    <div class="fg">
+      <label>Foto del comprobante</label>
+      <div class="upload-area" onclick="document.getElementById('upload-dom').click()" id="upload-dom-area">
+        <div class="upload-icon">📷</div>
+        <div class="upload-text">Toca para tomar foto o subir archivo</div>
+        <div class="upload-sub">JPG, PNG o PDF</div>
+      </div>
+      <input type="file" id="upload-dom" accept="image/*,application/pdf" capture="environment" style="display:none" onchange="previewDoc('dom',this)">
+      <div id="preview-dom" style="display:none;margin-top:8px"></div>
+    </div>
+
+    <div class="form-divider">💵 Capturas de ingresos</div>
+    <div class="fg">
+      <label>Estado de capturas</label>
+      <select class="fs" id="doc-ingresos-status">
+        <option value="">Sin validar</option>
+        <option value="validado">✅ Validados</option>
+        <option value="invalido">❌ No válidos</option>
+        <option value="pendiente">⏳ Pendiente revisión</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>Foto de capturas de ingresos</label>
+      <div class="upload-area" onclick="document.getElementById('upload-ing').click()" id="upload-ing-area">
+        <div class="upload-icon">📷</div>
+        <div class="upload-text">Toca para tomar foto o subir archivo</div>
+        <div class="upload-sub">JPG o PNG</div>
+      </div>
+      <input type="file" id="upload-ing" accept="image/*" capture="environment" style="display:none" onchange="previewDoc('ing',this)">
+      <div id="preview-ing" style="display:none;margin-top:8px"></div>
+    </div>
+
+    <div id="upload-progress" style="display:none" class="info-box info-gold">⏳ Subiendo documentos...</div>
+
+    <div class="modal-actions">
+      <button class="btn btn-gold" style="flex:1" id="btn-save-docs" onclick="saveDocs()">💾 Guardar documentos</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-docs')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+const fb = { apiKey:"AIzaSyDYb4YywzBh6EUAAQSDf7SJMzuPrDduEcE",authDomain:"flotamax-2994b.firebaseapp.com",projectId:"flotamax-2994b",storageBucket:"flotamax-2994b.firebasestorage.app",messagingSenderId:"160535924045",appId:"1:160535924045:web:7d69b52db7182d5f473b04" };
+const app = initializeApp(fb);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const storage = getStorage(app);
+
+// STATE
+let drivers=[], payments=[], diasSinCobro=[], blacklist=[];
+let currentFilter='todos', editingId=null, payingId=null, liquidarId=null, docsId=null, diasscId=null;
+const COLORS=[['#1a1500','#C9A84C'],['#0f1a14','#52c472'],['#0f1420','#6b9fd4'],['#1a0f14','#e05252'],['#14101a','#a78bfa'],['#001a1a','#34d399']];
+
+// AUTH
+onAuthStateChanged(auth, user => {
+  if (!user) { window.location.href='index.html'; return; }
+  document.querySelector('.user-name').textContent = user.email.split('@')[0];
+  startListeners();
+});
+
+function startListeners() {
+  onSnapshot(collection(db,'drivers'), s => { drivers=s.docs.map(d=>({id:d.id,...d.data()})); renderAll(); });
+  onSnapshot(query(collection(db,'payments'),orderBy('createdAt','desc')), s => { payments=s.docs.map(d=>({id:d.id,...d.data()})); renderAll(); });
+  onSnapshot(query(collection(db,'dias_sin_cobro'),orderBy('createdAt','desc')), s => { diasSinCobro=s.docs.map(d=>({id:d.id,...d.data()})); renderAll(); });
+  onSnapshot(collection(db,'blacklist'), s => { blacklist=s.docs.map(d=>({id:d.id,...d.data()})); });
+}
+
+// HELPERS
+const fmt = n => '$'+Number(n||0).toLocaleString('es-MX');
+const fmtDate = ts => { if(!ts) return ''; const d=ts.toDate?ts.toDate():new Date(ts); return d.toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'}); };
+const initials = n => (n||'').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+const getColor = i => COLORS[i%COLORS.length];
+
+
+function getMondayOf(date) {
+  const d = new Date(date); const day = d.getDay();
+  d.setDate(d.getDate() - day + (day===0?-6:1)); d.setHours(0,0,0,0); return d;
+}
+
+function getDriverDebt(driver) {
+  if (!driver.inicio) return { status:'pendiente', paid:0, due:Number(driver.renta||0), weeksOwed:0, totalDebt:0, firstPayDate:null };
+  const renta = Number(driver.renta||0);
+  const rentaDia = renta / 7;
+  const entrega = new Date(driver.inicio+'T12:00:00');
+  const diaEntrega = entrega.getDay(); // 0=dom,1=lun,...,6=sab
+  const hoy = new Date(); hoy.setHours(23,59,59,0);
+  const hoyMonday = getMondayOf(new Date());
+
+  let totalDue = 0;
+
+  // 1. Primera semana proporcional: días desde el día siguiente a la entrega hasta el domingo
+  // Sin contar el día de entrega. Si entrega domingo -> 0 días proporcionales.
+  const diasProp = diaEntrega === 0 ? 0 : 7 - diaEntrega;
+
+  if (diasProp > 0) {
+    // Días cobrables = desde día siguiente a entrega hasta domingo (sin contar día de entrega)
+    // Usamos fecha al mediodía para evitar errores de hora
+    const MS_DIA = 1000 * 60 * 60 * 24;
+    const entregaNoon = new Date(entrega); entregaNoon.setHours(12,0,0,0);
+    const hoyNoon = new Date(); hoyNoon.setHours(12,0,0,0);
+    const domingoNoon = new Date(entregaNoon);
+    domingoNoon.setDate(domingoNoon.getDate() + diasProp);
+    // Primer día cobrable = día siguiente a entrega
+    const primerDiaCobrable = new Date(entregaNoon);
+    primerDiaCobrable.setDate(primerDiaCobrable.getDate() + 1);
+    if (primerDiaCobrable <= hoyNoon) {
+      const finCobro = domingoNoon < hoyNoon ? domingoNoon : hoyNoon;
+      // Días = diferencia en días enteros entre primer día cobrable y fin de cobro
+      const diasCobrar = Math.round((finCobro - primerDiaCobrable) / MS_DIA) + 1;
+      totalDue += Math.max(0, Math.min(diasCobrar, diasProp)) * rentaDia;
+    }
+  }
+
+  // 2. Semanas completas: desde el lunes siguiente a la semana de entrega hasta hoy
+  const lunesDeEntrega = getMondayOf(entrega);
+  const primerLunesCompleto = new Date(lunesDeEntrega);
+  primerLunesCompleto.setDate(lunesDeEntrega.getDate() + 7);
+  primerLunesCompleto.setHours(0,0,0,0);
+
+  let cursor = new Date(primerLunesCompleto);
+  while (cursor <= hoyMonday && cursor <= hoy) {
+    totalDue += renta;
+    cursor = new Date(cursor);
+    cursor.setDate(cursor.getDate() + 7);
+  }
+
+  // 3. Restar días sin cobro autorizados
+  const dscDriver = diasSinCobro.filter(d => d.driverId === driver.id);
+  dscDriver.forEach(dsc => {
+    if (!dsc.inicio || !dsc.fin) return;
+    const s = new Date(dsc.inicio+'T12:00:00');
+    const e = new Date(dsc.fin+'T12:00:00');
+    const dias = Math.ceil((e - s) / (1000*60*60*24)) + 1;
+    totalDue -= dias * rentaDia;
+  });
+  totalDue = Math.max(0, totalDue);
+
+  // 4. Agregar depósito pendiente a la deuda
+  const depAcordado = Number(driver.depositoAcordado||driver.deposito||0);
+  const depPagado = Number(driver.depositoPagado!==undefined?driver.depositoPagado:driver.deposito||0);
+  const depPendiente = Math.max(0, depAcordado - depPagado);
+  totalDue += depPendiente;
+
+  // 5. Calcular deuda
+  const totalPaid = payments.filter(p => p.driverId === driver.id).reduce((s,p) => s + Number(p.monto||0), 0);
+  const totalDebt = Math.max(0, totalDue - totalPaid);
+  const weeksOwed = Math.floor(totalDebt / renta);
+
+  // 6. Lo que pagó esta semana
+  const thisWeekMs = hoyMonday.getTime();
+  const thisWeekPaid = payments.filter(p => {
+    if (p.driverId !== driver.id) return false;
+    const pd = p.createdAt?.toDate ? p.createdAt.toDate() : new Date(p.createdAt||0);
+    return pd.getTime() >= thisWeekMs;
+  }).reduce((s,p) => s + Number(p.monto||0), 0);
+
+  // 7. Fin de primera semana (domingo)
+  const finPrimeraSemana = new Date(entrega);
+  finPrimeraSemana.setDate(entrega.getDate() + (diaEntrega === 0 ? 7 : 7 - diaEntrega));
+
+  let status = 'pendiente';
+  if (totalDebt === 0) status = 'al_corriente';
+  else if (thisWeekPaid > 0 && thisWeekPaid < renta) status = 'parcial';
+  else if (weeksOwed >= 2) status = 'atrasado';
+
+  return { status, paid: thisWeekPaid, due: renta - thisWeekPaid, weeksOwed, totalDebt, firstPayDate: finPrimeraSemana };
+}
+
+function calcScore(driver) {
+  let score = 60; // base score
+
+  const st = getDriverDebt(driver);
+  const driverPays = payments.filter(p=>p.driverId===driver.id);
+
+  // ── Historial de pagos (hasta +30 pts) ──
+  if(driverPays.length > 0) {
+    if(st.weeksOwed === 0) score += 30;
+    else if(st.weeksOwed === 1) score += 15;
+    else if(st.weeksOwed === 2) score += 5;
+    else score -= Math.min(30, st.weeksOwed * 8);
+  } else if(driver.inicio) {
+    // Nuevo sin pagos aún
+    const entrega = new Date(driver.inicio+'T12:00:00');
+    const diasDesdeEntrega = Math.floor((new Date()-entrega)/(1000*60*60*24));
+    if(diasDesdeEntrega > 7) score -= 10; // lleva más de 7 días sin pagar
+  }
+
+  // ── Tiempo como cliente (hasta +10 pts) ──
+  if(driver.inicio) {
+    const meses = Math.floor((new Date()-new Date(driver.inicio+'T12:00:00'))/(1000*60*60*24*30));
+    if(meses >= 6) score += 10;
+    else if(meses >= 3) score += 6;
+    else if(meses >= 1) score += 3;
+  }
+
+  // ── Viajes realizados (hasta +10 pts) ──
+  const viajes = Number(driver.viajes||0);
+  if(viajes >= 5000) score += 10;
+  else if(viajes >= 3000) score += 7;
+  else if(viajes >= 2000) score += 5;
+  else if(viajes >= 1020) score += 2;
+  else score -= 10;
+
+  // ── Ingresos comprobados (hasta +8 pts) ──
+  const ing = Number(driver.ingresos||0);
+  if(ing >= 12000) score += 8;
+  else if(ing >= 9000) score += 6;
+  else if(ing >= 7000) score += 4;
+  else if(ing >= 6300) score += 2;
+  else score -= 15;
+
+  // ── Depósito pagado completo (+5 pts) ──
+  const depAc = Number(driver.depositoAcordado||driver.deposito||0);
+  const depPa = Number(driver.depositoPagado!==undefined?driver.depositoPagado:(driver.deposito||0));
+  if(depAc > 0 && depPa >= depAc) score += 5;
+  else if(depAc > 0 && depPa === 0) score -= 5;
+
+  // ── Documentos completos (+5 pts) ──
+  if(driver.licenciaVence && driver.ineVence && driver.domicilioVence) score += 3;
+  if(driver.licenciaUrl && driver.ineUrl && driver.domicilioUrl) score += 2;
+
+  // ── Incidentes registrados ──
+  if(driver.incidentes > 0) score -= driver.incidentes * 5;
+
+  return Math.max(0, Math.min(100, Math.round(score)));
+}
+
+function scoreColor(s) {
+  if(s>=80) return 'var(--green)';
+  if(s>=60) return 'var(--gold)';
+  if(s>=40) return 'var(--yellow)';
+  return 'var(--red)';
+}
+
+function statusBadge(s) {
+  return {
+    al_corriente:`<span class="badge badge-green">✅ Al corriente</span>`,
+    pendiente:`<span class="badge badge-blue">⏳ Pendiente</span>`,
+    parcial:`<span class="badge badge-yellow">🟡 Parcial</span>`,
+    atrasado:`<span class="badge badge-red">🔴 Atrasado</span>`,
+  }[s]||`<span class="badge badge-gray">—</span>`;
+}
+
+// RENDER
+function renderAll() {
+  renderKPIs();
+  renderChoferes();
+  if(editingId) renderDetailPanel(editingId);
+}
+
+function renderKPIs() {
+  const active = drivers.filter(d=>d.activo!==false);
+  const sts = active.map(d=>getDriverDebt(d));
+  const corriente = sts.filter(s=>s.status==='al_corriente').length;
+  const cobrado = sts.reduce((s,st)=>s+st.paid,0);
+  const deuda = sts.reduce((s,st)=>s+st.totalDebt,0);
+  document.getElementById('kpi-row').innerHTML = `
+    <div class="kpi blue"><div class="kpi-label">Flota activa</div><div class="kpi-val blue">${active.length}</div><div class="kpi-sub">choferes</div></div>
+    <div class="kpi" style=""><div class="kpi-label">Inactivos</div><div class="kpi-val" style="color:var(--text3)">${drivers.filter(d=>d.activo===false).length}</div><div class="kpi-sub">historial</div></div>
+    <div class="kpi green"><div class="kpi-label">Al corriente</div><div class="kpi-val green">${corriente}</div></div>
+    <div class="kpi red"><div class="kpi-label">Con deuda</div><div class="kpi-val red">${active.length-corriente}</div></div>
+    <div class="kpi gold"><div class="kpi-label">Cobrado semana</div><div class="kpi-val gold" style="font-size:1.1rem">${fmt(cobrado)}</div></div>
+    <div class="kpi red"><div class="kpi-label">Deuda acumulada</div><div class="kpi-val red" style="font-size:1.1rem">${fmt(deuda)}</div></div>
+  `;
+}
+
+window.renderChoferes = function() {
+  const q=(document.getElementById('search-input')?.value||'').toLowerCase();
+  const sort=document.getElementById('sort-select')?.value||'deuda';
+  const showInactivos = currentFilter==='inactivos';
+  let list=drivers.filter(d=>showInactivos?(d.activo===false):(d.activo!==false));
+  if(q) list=list.filter(d=>(d.nombre||'').toLowerCase().includes(q)||(d.placa||'').toLowerCase().includes(q)||(d.tel||'').includes(q));
+  if(currentFilter==='inactivos') { /* already filtered above */ }
+  else if(['tiempo_completo','medio_tiempo','particular'].includes(currentFilter)) list=list.filter(d=>d.tipo===currentFilter);
+  else if(currentFilter!=='todos') list=list.filter(d=>getDriverDebt(d).status===currentFilter);
+
+  if(sort==='deuda') list.sort((a,b)=>getDriverDebt(b).totalDebt-getDriverDebt(a).totalDebt);
+  else if(sort==='nombre') list.sort((a,b)=>(a.nombre||'').localeCompare(b.nombre||''));
+  else if(sort==='score') list.sort((a,b)=>calcScore(a)-calcScore(b));
+  else if(sort==='fecha') list.sort((a,b)=>{ const da=b.createdAt?.toDate?b.createdAt.toDate():new Date(0); const db2=a.createdAt?.toDate?a.createdAt.toDate():new Date(0); return da-db2; });
+
+  const el=document.getElementById('choferes-list');
+  if(list.length===0){ el.innerHTML=`<div class="empty"><div class="empty-icon">👤</div><div>No hay choferes en este filtro</div></div>`; return; }
+
+  el.innerHTML=list.map((d,i)=>{
+    const st=getDriverDebt(d); const sc=calcScore(d);
+    const ci=getColor(i); const isSelected=editingId===d.id;
+    const inactivoBadge=d.activo===false?`<span class="badge badge-gray">📁 Inactivo</span>${d.motivoSalida?` <span class="badge badge-red">${d.motivoSalida==='no_pago'?'No pagó':d.motivoSalida==='conducta'?'Conducta':d.motivoSalida==='voluntario'?'Voluntario':d.motivoSalida}</span>`:''}`:''
+    const tipoBadge=d.tipo==='tiempo_completo'?`<span class="badge badge-green">🟢 Tiempo completo</span>`:d.tipo==='medio_tiempo'?`<span class="badge badge-yellow">🟡 Medio tiempo</span>`:`<span class="badge badge-gray">⚪ Uso particular</span>`;
+    return `<div class="chofer-card ${st.status==='atrasado'?'urgent':st.status==='parcial'?'partial':''} ${isSelected?'':''}
+      " style="${isSelected?'border-color:var(--gold);background:rgba(201,168,76,0.04)':''}" onclick="toggleDetail('${d.id}')">
+      <div class="av" style="background:${ci[0]};color:${ci[1]}">${initials(d.nombre)}</div>
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+          <div class="chofer-name">${d.nombre}</div>
+          ${tipoBadge}
+          ${inactivoBadge}
+          ${d.activo!==false?statusBadge(st.status):''}
+        </div>
+        <div class="chofer-meta">
+          <span>🚗 ${d.placa}</span>
+          ${d.tel?`<span>📱 ${d.tel}</span>`:''}
+          <span>${fmt(d.renta)}/sem</span>
+          ${d.inicio?`<span>Desde ${d.inicio}</span>`:''}
+        </div>
+        ${st.weeksOwed>0?`<div class="debt-warn">⚠️ ${st.weeksOwed} sem adeudadas · Total: ${fmt(st.totalDebt)}</div>`:''}
+      </div>
+      <div class="score-circle" style="border-color:${scoreColor(sc)};color:${scoreColor(sc)}">
+        <div class="score-num">${sc}</div>
+        <div class="score-lbl">score</div>
+      </div>
+      <div class="chofer-right" style="text-align:right">
+        ${st.totalDebt>0?`<div class="mono fw7 text-red" style="font-size:0.88rem">${fmt(st.totalDebt)}</div><div style="font-size:0.65rem;color:var(--text3)">deuda total</div>`:`<div style="font-size:0.72rem;color:var(--green)">Al corriente ✓</div>`}
+        ${d.deposito>0?`<div style="font-size:0.65rem;color:var(--text3);margin-top:2px">Dep: ${fmt(d.deposito)}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+};
+
+window.setFilter = function(f,el) {
+  currentFilter=f;
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  renderChoferes();
+};
+
+window.toggleDetail = function(id) {
+  if(editingId===id) {
+    editingId=null;
+    document.getElementById('detail-panel').style.display='none';
+    renderChoferes();
+    return;
+  }
+  editingId=id;
+  renderDetailPanel(id);
+  renderChoferes();
+};
+
+function renderDetailPanel(driverId) {
+  const d=drivers.find(dr=>dr.id===driverId); if(!d) return;
+  const st=getDriverDebt(d); const sc=calcScore(d);
+  const ci=getColor(0);
+  const panel=document.getElementById('detail-panel');
+  panel.style.display='block';
+
+  panel.innerHTML=`
+    <div class="detail-panel">
+      <div class="dp-header">
+        <div class="dp-av" style="background:${ci[0]};color:${ci[1]}">${initials(d.nombre)}</div>
+        <div style="flex:1">
+          <div class="dp-name">${d.nombre}</div>
+          <div class="dp-meta">${d.placa} · ${d.plataforma||''} · ${d.tipo||''} · Desde ${d.inicio||'—'}</div>
+          ${d.ingresos?`<div style="font-size:0.7rem;color:var(--green);margin-top:2px">${fmt(d.ingresos)}/sem comprobados · ${d.viajes||0} viajes</div>`:''}
+        </div>
+        <div class="dp-actions">
+          <button class="btn btn-gold btn-sm" onclick="openPayModal('${d.id}')">💰 Cobrar</button>
+          <button class="btn btn-ghost btn-sm" onclick="openEditChofer('${d.id}')">✏️ Editar</button>
+          <button class="btn btn-ghost btn-sm" onclick="openDocsModal('${d.id}')">📄 Docs</button>
+          <button class="btn btn-ghost btn-sm" onclick="openDiasSinCobro('${d.id}')">📅 Días s/cobro</button>
+          <button class="btn btn-danger btn-sm" onclick="openLiquidar('${d.id}')">💼 Liquidar</button>
+          <button class="btn btn-danger btn-sm" onclick="eliminarChofer('${d.id}')">🗑️ Eliminar</button>
+          ${d.tel?`<button class="btn btn-ghost btn-sm" onclick="sendWA('${d.tel}','${d.nombre}',${st.totalDebt||st.due},'${d.id}')">📱 WA</button>`:''}
+        </div>
+      </div>
+
+      <div class="inner-tabs">
+        <div class="itab active" onclick="switchItab(this,'itab-perfil-${d.id}')">Perfil</div>
+        <div class="itab" onclick="switchItab(this,'itab-pagos-${d.id}')">Pagos</div>
+        <div class="itab" onclick="switchItab(this,'itab-docs-${d.id}')">Documentos</div>
+        <div class="itab" onclick="switchItab(this,'itab-score-${d.id}')">Score de riesgo</div>
+        <div class="itab" onclick="switchItab(this,'itab-dsc-${d.id}')">Días sin cobro</div>
+        <div class="itab" onclick="switchItab(this,'itab-liq-${d.id}')">Liquidación</div>
+        <div class="itab" onclick="switchItab(this,'itab-carros-${d.id}')">🚗 Carros asignados</div>
+        <div class="itab" onclick="switchItab(this,'itab-wa-${d.id}')">📱 Mensajes WA</div>
+      </div>
+
+      <!-- PERFIL -->
+      <div class="itab-content active" id="itab-perfil-${d.id}">
+        <div class="stat-grid stat-grid-4 mb16">
+          <div class="stat-box gold"><div class="stat-lbl">Renta semanal</div><div class="stat-val text-gold">${fmt(d.renta)}</div></div>
+          <div class="stat-box ${(d.depositoAcordado||d.deposito||0)>0?((d.depositoPagado||d.deposito||0)>=(d.depositoAcordado||d.deposito||0)?'green':'red'):'red'}">
+      <div class="stat-lbl">Depósito</div>
+      <div class="stat-val" style="font-size:0.82rem;color:${(d.depositoPagado||d.deposito||0)>=(d.depositoAcordado||d.deposito||0)?'var(--green)':'var(--red)'}">
+        ${fmt(d.depositoPagado!==undefined?d.depositoPagado:d.deposito||0)} / ${fmt(d.depositoAcordado||d.deposito||0)}
+      </div>
+      <div style="font-size:0.6rem;color:var(--text3)">${d.depositoDevuelto?'Devuelto':((d.depositoAcordado||0)>(d.depositoPagado||0)?'⚠️ Pendiente':'En garantía')}</div>
+    </div>
+          <div class="stat-box ${st.totalDebt>0?'red':'green'}"><div class="stat-lbl">Deuda total</div><div class="stat-val" style="color:${st.totalDebt>0?'var(--red)':'var(--green)'}">${st.totalDebt>0?fmt(st.totalDebt):'$0'}</div>${st.weeksOwed>0?`<div style="font-size:0.6rem;color:var(--red)">${st.weeksOwed} sem</div>`:''}</div>
+          <div class="stat-box"><div class="stat-lbl">Primer día cobrado</div><div class="stat-val" style="font-size:0.72rem">${st.firstPayDate?st.firstPayDate.toLocaleDateString('es-MX',{day:'numeric',month:'short'}):'—'}</div></div>
+        </div>
+        <div class="grid2">
+          <div>
+            <div class="label">Información de contacto</div>
+            <div class="pay-item"><span class="text-muted">Teléfono</span><span class="mono">${d.tel||'—'}</span></div>
+            <div class="pay-item"><span class="text-muted">Plataforma</span><span>${d.plataforma||'—'}</span></div>
+            <div class="pay-item"><span class="text-muted">Tipo cuenta</span><span class="badge ${d.tipo==='tiempo_completo'?'badge-green':d.tipo==='medio_tiempo'?'badge-yellow':'badge-gray'}">${d.tipo==='tiempo_completo'?'🟢 Tiempo completo':d.tipo==='medio_tiempo'?'🟡 Medio tiempo':'⚪ Uso particular'}</span></div>
+          </div>
+          <div>
+            <div class="label">Perfil financiero</div>
+            <div class="pay-item"><span class="text-muted">Viajes realizados</span><span class="mono">${d.viajes||'—'}</span></div>
+            <div class="pay-item"><span class="text-muted">Ingresos/sem</span><span class="mono ${Number(d.ingresos)>=6300?'text-green':'text-red'}">${d.ingresos?fmt(d.ingresos):'—'}</span></div>
+          </div>
+        </div>
+        ${d.notas?`<div class="info-box info-blue mt16">📝 ${d.notas}</div>`:''}
+      </div>
+
+      <!-- PAGOS -->
+      <div class="itab-content" id="itab-pagos-${d.id}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div class="label" style="margin-bottom:0">Historial de pagos</div>
+          <button class="btn btn-gold btn-sm" onclick="openPayModal('${d.id}')">+ Registrar pago</button>
+        </div>
+        ${renderPagosList(d.id)}
+      </div>
+
+      <!-- DOCUMENTOS -->
+      <div class="itab-content" id="itab-docs-${d.id}">
+        ${renderDocsView(d)}
+        <button class="btn btn-outline btn-sm mt16" onclick="openDocsModal('${d.id}')">✏️ Actualizar documentos</button>
+      </div>
+
+      <!-- SCORE -->
+      <div class="itab-content" id="itab-score-${d.id}">
+        ${renderScoreView(d, sc)}
+      </div>
+
+      <!-- DÍAS SIN COBRO -->
+      <div class="itab-content" id="itab-dsc-${d.id}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div class="label" style="margin-bottom:0">Días sin cobro autorizados</div>
+          <button class="btn btn-gold btn-sm" onclick="openDiasSinCobro('${d.id}')">+ Autorizar días</button>
+        </div>
+        ${renderDscList(d.id)}
+      </div>
+
+      <!-- CARROS ASIGNADOS -->
+      <div class="itab-content" id="itab-carros-${d.id}">
+        <div class="label" style="margin-bottom:12px">Historial de carros asignados</div>
+        <div class="pay-item"><div><div class="fw7 fs85">🚗 ${d.placa||'Sin placa'}</div><div class="pay-info">Carro actual · Desde ${d.inicio||'—'}</div></div><span class="badge badge-green">Actual</span></div>
+        <div class="info-box info-blue mt16">El historial completo de rotación de carros estará disponible en el módulo de Flota v2.</div>
+      </div>
+
+      <!-- WA LOG -->
+      <div class="itab-content" id="itab-wa-${d.id}">
+        <div class="label" style="margin-bottom:12px">Mensajes de WhatsApp enviados</div>
+        <div id="wa-log-${d.id}"><div class="empty" style="padding:20px"><div class="empty-icon">📱</div><div>Sin mensajes registrados</div></div></div>
+      </div>
+
+      <!-- LIQUIDACIÓN -->
+      <div class="itab-content" id="itab-liq-${d.id}">
+        ${renderLiqView(d, st)}
+      </div>
+    </div>
+  `;
+  panel.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function renderPagosList(driverId) {
+  const dp=payments.filter(p=>p.driverId===driverId);
+  if(dp.length===0) return `<div class="empty" style="padding:30px"><div class="empty-icon">💰</div><div>Sin pagos registrados</div></div>`;
+  return dp.map(p=>`<div class="pay-item"><div><div class="fw7 fs85">${fmt(p.monto)}</div><div class="pay-info">${fmtDate(p.createdAt)} · ${p.metodo||''}${p.nota?' · '+p.nota:''}</div></div><button onclick="deletePago('${p.id}')" class="del-btn">✕</button></div>`).join('');
+}
+
+function renderDocsView(d) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  function docStatus(fechaStr) {
+    if(!fechaStr) return `<span class="badge badge-gray">Sin registrar</span>`;
+    const f=new Date(fechaStr+'T12:00:00');
+    const dias=Math.ceil((f-today)/(1000*60*60*24));
+    if(dias<0) return `<span class="badge badge-red">⛔ Vencida</span>`;
+    if(dias<=30) return `<span class="badge badge-yellow">⚠️ ${dias} días</span>`;
+    return `<span class="badge badge-green">✅ ${dias} días</span>`;
+  }
+  function fotoBtn(url, label) {
+    if(!url) return `<div style="font-size:0.65rem;color:var(--text3);margin-top:4px">Sin foto</div>`;
+    return `<a class="doc-view-link" href="${url}" target="_blank">📎 Ver ${label} →</a>`;
+  }
+  return `
+    <div class="stat-grid stat-grid-3">
+      <div class="stat-box">
+        <div class="stat-lbl">🪪 Licencia</div>
+        <div style="font-size:0.78rem;font-weight:700;margin:6px 0">${d.licenciaVence||'No registrada'}</div>
+        ${docStatus(d.licenciaVence)}
+        <div style="margin-top:6px">${fotoBtn(d.licenciaUrl,'licencia')}</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-lbl">🆔 INE</div>
+        <div style="font-size:0.78rem;font-weight:700;margin:6px 0">${d.ineVence||'No registrada'}</div>
+        ${docStatus(d.ineVence)}
+        <div style="margin-top:6px">${fotoBtn(d.ineUrl,'INE')}</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-lbl">🏠 Domicilio</div>
+        <div style="font-size:0.78rem;font-weight:700;margin:6px 0">${d.domicilioVence||'No registrado'}</div>
+        ${docStatus(d.domicilioVence)}
+        <div style="margin-top:6px">${fotoBtn(d.domicilioUrl,'comprobante')}</div>
+      </div>
+    </div>
+    <div class="pay-item mt16">
+      <span class="text-muted">Capturas de ingresos</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="badge ${d.ingresosStatus==='validado'?'badge-green':d.ingresosStatus==='invalido'?'badge-red':'badge-gray'}">${d.ingresosStatus==='validado'?'✅ Validadas':d.ingresosStatus==='invalido'?'❌ No válidas':'Sin validar'}</span>
+        ${d.ingresosUrl?`<a class="doc-view-link" href="${d.ingresosUrl}" target="_blank">📎 Ver capturas →</a>`:''}
+      </div>
+    </div>
+  `;
+}
+
+function renderScoreView(d, sc) {
+  const factors = [
+    { label:'Historial de pagos', val: Math.max(0,40-Math.floor(getDriverDebt(d).weeksOwed)*12), max:40, desc:'Semanas adeudadas' },
+    { label:'Viajes realizados', val: Number(d.viajes||0)>=3000?10:Number(d.viajes||0)>=2000?7:Number(d.viajes||0)>=1000?3:0, max:10, desc:`${d.viajes||0} viajes` },
+    { label:'Ingresos comprobados', val: Number(d.ingresos||0)>=10000?8:Number(d.ingresos||0)>=7000?5:Number(d.ingresos||0)>=6300?2:0, max:8, desc:`${d.ingresos?fmt(d.ingresos):'-'}/sem` },
+  ];
+  return `
+    <div style="display:flex;align-items:center;gap:20px;margin-bottom:20px;padding:16px;background:var(--s2);border-radius:var(--r-lg);border:1px solid var(--border)">
+      <div style="text-align:center">
+        <div style="font-size:3rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:${scoreColor(sc)};line-height:1">${sc}</div>
+        <div style="font-size:0.65rem;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-top:4px">Score de riesgo</div>
+      </div>
+      <div style="flex:1">
+        <div style="font-size:0.88rem;font-weight:700;margin-bottom:4px;color:${scoreColor(sc)}">${sc>=80?'Excelente chofer':sc>=60?'Buen chofer':sc>=40?'Riesgo medio':'Alto riesgo'}</div>
+        <div style="font-size:0.75rem;color:var(--text3)">${sc>=80?'Historial de pago consistente, perfil confiable':sc>=60?'Buen perfil con algunos pendientes':sc>=40?'Monitorear de cerca, algunos indicadores negativos':'Considera revisar continuidad del contrato'}</div>
+      </div>
+    </div>
+    ${factors.map(f=>`
+      <div class="score-bar-wrap">
+        <div class="score-bar-header"><span>${f.label}</span><span class="mono text-muted">${f.val}/${f.max} pts · ${f.desc}</span></div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:${f.max>0?(f.val/f.max*100):0}%;background:${scoreColor(sc)}"></div></div>
+      </div>
+    `).join('')}
+  `;
+}
+
+function renderDscList(driverId) {
+  const list=diasSinCobro.filter(d=>d.driverId===driverId);
+  if(list.length===0) return `<div class="empty" style="padding:30px"><div class="empty-icon">📅</div><div>Sin días sin cobro registrados</div></div>`;
+  const total=list.reduce((s,d)=>{
+    if(!d.inicio||!d.fin) return s;
+    return s+Math.ceil((new Date(d.fin+'T12:00:00')-new Date(d.inicio+'T12:00:00'))/(1000*60*60*24))+1;
+  },0);
+  return `
+    <div class="info-box info-gold mb16">Total acumulado: <strong>${total} días sin cobro</strong> = ${fmt(total*(getDriverDebt(drivers.find(d=>d.id===driverId)||{renta:0}).due/7||0))} descontados de deuda</div>
+    ${list.map(dsc=>`<div class="pay-item"><div><div class="fw7 fs85">${dsc.motivo||'Correctivo'}</div><div class="pay-info">${dsc.inicio} al ${dsc.fin}${dsc.notas?' · '+dsc.notas:''}</div></div><div style="display:flex;align-items:center;gap:8px"><span class="badge badge-gold">${Math.ceil((new Date(dsc.fin+'T12:00:00')-new Date(dsc.inicio+'T12:00:00'))/(1000*60*60*24))+1} días</span><button onclick="deleteDsc('${dsc.id}')" class="del-btn">✕</button></div></div>`).join('')}
+  `;
+}
+
+function renderLiqView(d, st) {
+  const dep = Number(d.depositoPagado!==undefined?d.depositoPagado:(d.deposito||0));
+  const deuda = st.totalDebt;
+  const saldo = deuda - dep;
+  return `
+    <div class="liquidar-box">
+      <div class="label" style="margin-bottom:12px">Resumen de liquidación</div>
+      <div class="liq-row"><span class="text-muted">Deuda total acumulada</span><span class="mono fw7 text-red">${fmt(deuda)}</span></div>
+      <div class="liq-row"><span class="text-muted">(-) Depósito en garantía</span><span class="mono fw7 text-green">-${fmt(dep)}</span></div>
+      <div class="liq-total"><span>Saldo final del chofer</span><span class="mono">${saldo>0?fmt(saldo)+' debe':'$0 — Saldado con depósito'}</span></div>
+      ${saldo>0?`<div class="info-box info-red" style="margin-top:12px">El depósito no alcanza a cubrir la deuda. Saldo pendiente: ${fmt(saldo)}</div>`:saldo<0?`<div class="info-box info-gold" style="margin-top:12px">El depósito cubre la deuda. Devolver ${fmt(Math.abs(saldo))} al chofer.</div>`:`<div class="info-box info-blue" style="margin-top:12px">El depósito cubre exactamente la deuda. Sin saldo pendiente.</div>`}
+      <button class="btn btn-danger" style="width:100%;margin-top:14px" onclick="openLiquidar('${d.id}')">💼 Proceder a liquidar</button>
+    </div>
+  `;
+}
+
+window.switchItab = function(el, contentId) {
+  const panel = el.closest('.detail-panel');
+  panel.querySelectorAll('.itab').forEach(t=>t.classList.remove('active'));
+  panel.querySelectorAll('.itab-content').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(contentId).classList.add('active');
+};
+
+// CHOFER CRUD
+// Inline doc preview in add chofer form
+
+// ── STEP NAVIGATION ──────────────────────────────────────
+window.goToStep = function(step) {
+  const s1 = document.getElementById('step1-content');
+  const s2 = document.getElementById('step2-content');
+  const btn1 = document.getElementById('step1-btn');
+  const btn2 = document.getElementById('step2-btn');
+  const actionBtn = document.getElementById('btn-chofer-next');
+  // Guard - if elements don't exist, skip
+  if(!s1 || !s2 || !btn1 || !btn2 || !actionBtn) return;
+
+  if(step === 2) {
+    // Validate step 1 before proceeding
+    const nombre = document.getElementById('f-nombre').value.trim();
+    const tel = document.getElementById('f-tel').value.trim().replace(/\D/g,'');
+    const placa = document.getElementById('f-placa').value.trim();
+    const renta = Number(document.getElementById('f-renta').value);
+    const inicio = document.getElementById('f-inicio').value;
+    const viajes = Number(document.getElementById('f-viajes').value||0);
+    const ingresos = Number(document.getElementById('f-ingresos').value||0);
+
+    if(!nombre) { toast('⚠️ Falta el nombre','red'); return; }
+    if(tel.length!==10) { toast('⚠️ El teléfono debe tener 10 dígitos','red'); return; }
+    if(!placa) { toast('⚠️ Falta la placa','red'); return; }
+    if(!renta||renta<=0) { toast('⚠️ Falta la renta semanal','red'); return; }
+    if(!inicio) { toast('⚠️ Falta la fecha de entrega','red'); return; }
+    if(viajes < 1020) { toast('⚠️ Mínimo 1,020 viajes (tiene '+viajes+')','red'); return; }
+    if(ingresos < 6300) { toast('⚠️ Ingresos mínimos $6,300/sem','red'); return; }
+
+    s1.style.display='none'; s2.style.display='block';
+    btn1.style.background='var(--s2)'; btn1.style.color='var(--text3)';
+    btn2.style.background='var(--gold)'; btn2.style.color='#000';
+    actionBtn.textContent='💾 Guardar chofer';
+    actionBtn.onclick = () => saveChofer();
+  } else {
+    s1.style.display='block'; s2.style.display='none';
+    btn1.style.background='var(--gold)'; btn1.style.color='#000';
+    btn2.style.background='var(--s2)'; btn2.style.color='var(--text3)';
+    actionBtn.textContent='Siguiente → Documentos';
+    actionBtn.onclick = () => goToStep(2);
+  }
+};
+
+window._pendingDocFiles = {};
+window._savedDocUrls = {};
+
+window.previewInlineDoc = function(tipo, input) {
+  const file = input.files[0]; if(!file) return;
+  window._pendingDocFiles[tipo] = file;
+  const area = document.getElementById('uf-'+tipo+'-area');
+  const preview = document.getElementById('uf-'+tipo+'-preview');
+  area.classList.add('has-file');
+  area.querySelector('.upload-text').textContent = '✅ '+file.name;
+  area.querySelector('.upload-sub').textContent = (file.size/1024).toFixed(0)+' KB';
+  if(file.type.startsWith('image/')) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      preview.style.display='block';
+      preview.innerHTML=`<div class="doc-preview"><img src="${e.target.result}" style="width:52px;height:52px;object-fit:cover;border-radius:6px"><div><div class="doc-preview-name">${file.name}</div></div></div>`;
+    };
+    reader.readAsDataURL(file);
+  } else {
+    preview.style.display='block';
+    preview.innerHTML=`<div class="doc-preview"><div style="font-size:2rem">📄</div><div class="doc-preview-name">${file.name}</div></div>`;
+  }
+};
+
+window.updateDepHint = function() {
+  const acordado = Number(document.getElementById('f-deposito-acordado').value||0);
+  const pagado = Number(document.getElementById('f-deposito-pagado').value||0);
+  const hint = document.getElementById('dep-hint');
+  if(!hint) return;
+  const pendiente = acordado - pagado;
+  if(pendiente > 0) hint.textContent = `⚠️ $${pendiente.toLocaleString('es-MX')} pendiente → entra como deuda`;
+  else if(pendiente < 0) hint.textContent = `⚠️ El pagado supera el acordado`;
+  else if(acordado > 0) hint.textContent = `✅ Depósito completo`;
+  else hint.textContent = '';
+};
+
+window.openAddChofer = function() {
+  editingId=null;
+  document.getElementById('modal-chofer-title').textContent='Agregar chofer';
+  ['f-nombre','f-tel','f-placa','f-notas'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-renta').value='5000';
+  document.getElementById('f-deposito-acordado').value='0';
+  document.getElementById('f-deposito-pagado').value='0';
+  document.getElementById('dep-hint').textContent='';
+  document.getElementById('f-dep-devuelto').checked=false;
+  document.getElementById('f-inicio').value=new Date().toISOString().split('T')[0];
+  document.getElementById('f-tipo').value='flotilla';
+  document.getElementById('f-plataforma').value='Uber';
+  document.getElementById('f-viajes').value='';
+  document.getElementById('f-ingresos').value='';
+  openModal('modal-chofer');
+};
+
+document.getElementById('f-inicio').addEventListener('change', function() {
+  const fechaVal = this.value;
+  if(!fechaVal) return;
+  const fechaEntrega = new Date(fechaVal+'T12:00:00');
+  const diaNum = fechaEntrega.getDay();
+  const diasProp = diaNum === 0 ? 0 : 7 - diaNum;
+  const rentaSem = Number(document.getElementById('f-renta').value||5000);
+  const finSemana = new Date(fechaEntrega);
+  finSemana.setDate(finSemana.getDate() + (diaNum===0?7:7-diaNum));
+  const hintMsg = diasProp === 0
+    ? 'Entrega domingo — primera semana completa desde el lunes'
+    : `Primera semana: ${diasProp} días x $${Math.round(rentaSem/7)}/día = $${Math.round(diasProp*rentaSem/7)} (hasta ${finSemana.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'})})`;
+  document.getElementById('f-inicio-hint').textContent = hintMsg;
+});
+
+window.openEditChofer = function(id) {
+  editingId=id;
+  const d=drivers.find(dr=>dr.id===id); if(!d) return;
+  document.getElementById('modal-chofer-title').textContent='Editar chofer';
+  window._saving=false;
+  document.getElementById('f-nombre').value=d.nombre||'';
+  document.getElementById('f-tel').value=d.tel||'';
+  document.getElementById('f-placa').value=d.placa||'';
+  document.getElementById('f-renta').value=d.renta||5000;
+  document.getElementById('f-deposito-acordado').value=d.depositoAcordado||d.deposito||0;
+  document.getElementById('f-deposito-pagado').value=d.depositoPagado!==undefined?d.depositoPagado:(d.deposito||0);
+  window.updateDepHint();
+  document.getElementById('f-dep-devuelto').checked=d.depositoDevuelto||false;
+  document.getElementById('f-inicio').value=d.inicio||'';
+  document.getElementById('f-tipo').value=d.tipo||'flotilla';
+  document.getElementById('f-plataforma').value=d.plataforma||'Uber';
+  document.getElementById('f-notas').value=d.notas||'';
+  document.getElementById('f-viajes').value=d.viajes||'';
+  document.getElementById('f-ingresos').value=d.ingresos||'';
+  openModal('modal-chofer');
+};
+
+window.saveChofer = async function() {
+  const nombre=document.getElementById('f-nombre').value.trim();
+  const placa=document.getElementById('f-placa').value.trim().toUpperCase();
+  const renta=Number(document.getElementById('f-renta').value);
+  const tel=document.getElementById('f-tel').value.trim().replace(/\D/g,'');
+  const viajes=Number(document.getElementById('f-viajes').value||0);
+  const ingresos=Number(document.getElementById('f-ingresos').value||0);
+  const inicio=document.getElementById('f-inicio').value;
+
+  // Validaciones básicas
+  if(!nombre) { toast('⚠️ Falta el nombre del chofer','red'); return; }
+  if(tel.length!==10) { toast('⚠️ El teléfono debe tener 10 dígitos','red'); return; }
+  if(!placa) { toast('⚠️ Falta la placa del carro','red'); return; }
+  if(!renta||renta<=0) { toast('⚠️ Falta la renta semanal','red'); return; }
+  if(!inicio) { toast('⚠️ Falta la fecha de entrega','red'); return; }
+  if(!document.getElementById('f-tipo').value) { toast('⚠️ Selecciona el uso del vehículo','red'); return; }
+
+  // Validaciones de perfil
+  if(viajes<1020) { toast('⚠️ Mínimo 1,020 viajes requeridos (tiene '+viajes+')','red'); return; }
+  if(ingresos<6300) { toast('⚠️ Ingresos mínimos $6,300/sem requeridos','red'); return; }
+  if(!document.getElementById('f-plataforma').value) { toast('⚠️ Selecciona la plataforma','red'); return; }
+
+  // Validaciones de documentos
+  const licNum=document.getElementById('doc-lic-num-inline')?.value.trim()||document.getElementById('f-lic-num')?.value.trim()||'';
+  const licVence=document.getElementById('doc-lic-vence-inline')?.value||document.getElementById('f-lic-vence')?.value||'';
+  const ineNum=document.getElementById('doc-ine-num-inline')?.value.trim()||document.getElementById('f-ine-num')?.value.trim()||'';
+  const ineVence=document.getElementById('doc-ine-vence-inline')?.value||document.getElementById('f-ine-vence')?.value||'';
+  const domVence=document.getElementById('doc-dom-vence-inline')?.value||document.getElementById('f-dom-vence')?.value||'';
+  const ingStatus=document.getElementById('doc-ingresos-status-inline')?.value||document.getElementById('f-ing-status')?.value||'';
+
+  if(!licNum) { toast('⚠️ Falta el número de licencia','red'); return; }
+  if(!licVence) { toast('⚠️ Falta la fecha de vencimiento de licencia','red'); return; }
+  if(!ineNum) { toast('⚠️ Falta el número de INE','red'); return; }
+  if(!ineVence) { toast('⚠️ Falta la fecha de vencimiento de INE','red'); return; }
+  if(!domVence) { toast('⚠️ Falta la fecha del comprobante de domicilio','red'); return; }
+  if(ingStatus!=='validado') { toast('⚠️ Las capturas de ingresos deben estar validadas','red'); return; }
+
+  // Validaciones de fotos
+  const pendingFiles = window._pendingDocFiles || {};
+  const savedDocs = window._savedDocUrls || {};
+  if(!pendingFiles['lic'] && !savedDocs['lic']) { toast('⚠️ Falta la foto de licencia','red'); return; }
+  if(!pendingFiles['ine'] && !savedDocs['ine']) { toast('⚠️ Falta la foto de INE','red'); return; }
+  if(!pendingFiles['dom'] && !savedDocs['dom']) { toast('⚠️ Falta la foto del comprobante de domicilio','red'); return; }
+  if(!pendingFiles['ing'] && !savedDocs['ing']) { toast('⚠️ Falta la foto de capturas de ingresos','red'); return; }
+  const data={nombre,placa,renta,tel,
+    inicio:document.getElementById('f-inicio').value,
+    tipo:document.getElementById('f-tipo').value,
+    plataforma:document.getElementById('f-plataforma').value,
+    notas:document.getElementById('f-notas').value.trim(),
+    depositoAcordado:Number(document.getElementById('f-deposito-acordado').value||0),
+    depositoPagado:Number(document.getElementById('f-deposito-pagado').value||0),
+    deposito:Number(document.getElementById('f-deposito-acordado').value||0),
+    depositoDevuelto:document.getElementById('f-dep-devuelto').checked,
+    viajes:Number(document.getElementById('f-viajes').value||0),
+    ingresos:Number(document.getElementById('f-ingresos').value||0),
+    activo:true,updatedAt:serverTimestamp(),
+    licenciaNum:document.getElementById('f-lic-num').value.trim(),
+    licenciaVence:document.getElementById('f-lic-vence').value,
+    ineNum:document.getElementById('f-ine-num').value.trim(),
+    ineVence:document.getElementById('f-ine-vence').value,
+    domicilioVence:document.getElementById('f-dom-vence').value,
+    ingresosStatus:document.getElementById('f-ing-status').value};
+  
+  // Disable button immediately to prevent double save
+  const btnSave=document.getElementById('btn-chofer-next');
+  if(btnSave){ btnSave.disabled=true; btnSave.textContent='⏳ Subiendo fotos 1/4...'; }
+  if(window._saving){ toast('⚠️ Ya se está guardando, espera...','red'); return; }
+  window._saving = true;
+  try{
+    const pf=window._pendingDocFiles||{};
+    const tempId='doc_'+Date.now();
+    if(pf['lic']){ if(btnSave) btnSave.textContent='⏳ Subiendo licencia...'; data.licenciaUrl=await uploadDoc(tempId,'licencia',pf['lic']); }
+    if(pf['ine']){ if(btnSave) btnSave.textContent='⏳ Subiendo INE...'; data.ineUrl=await uploadDoc(tempId,'ine',pf['ine']); }
+    if(pf['dom']){ if(btnSave) btnSave.textContent='⏳ Subiendo domicilio...'; data.domicilioUrl=await uploadDoc(tempId,'domicilio',pf['dom']); }
+    if(pf['ing']){ if(btnSave) btnSave.textContent='⏳ Subiendo capturas...'; data.ingresosUrl=await uploadDoc(tempId,'ingresos',pf['ing']); }
+  }catch(e){
+    window._saving=false;
+    if(btnSave){btnSave.disabled=false;btnSave.textContent='💾 Guardar chofer';}
+    toast('Error subiendo fotos: '+e.message,'red'); return;
+  }
+  try{
+    if(btnSave) btnSave.textContent='⏳ Guardando datos...';
+    if(editingId){ await updateDoc(doc(db,'drivers',editingId),data); toast('✓ Chofer actualizado'); }
+    else{ data.createdAt=serverTimestamp(); await addDoc(collection(db,'drivers'),data); toast('✓ Chofer agregado'); }
+    window._saving=false;
+    closeModal('modal-chofer'); editingId=null;
+  }catch(e){window._saving=false;if(btnSave){btnSave.disabled=false;btnSave.textContent='💾 Guardar chofer';}toast('Error: '+e.message,'red');}
+};
+
+// PAYMENTS
+window.openPayModal = function(driverId) {
+  payingId=driverId;
+  const d=drivers.find(dr=>dr.id===driverId); const st=getDriverDebt(d);
+  document.getElementById('modal-pago-title').textContent=`Cobro — ${d.nombre}`;
+  document.getElementById('modal-pago-info').innerHTML=`<div class="fw7">${d.nombre} · <span class="mono">${d.placa}</span></div><div style="font-size:0.72rem;color:var(--text3);margin-top:4px">Renta: ${fmt(d.renta)}/sem · Deuda total: <span class="${st.totalDebt>0?'text-red':'text-green'} fw7">${fmt(st.totalDebt)}</span>${st.weeksOwed>0?` · <span style="color:var(--red)">${st.weeksOwed} sem adeudadas</span>`:''}</div>`;
+  document.getElementById('p-monto').value=st.totalDebt||d.renta;
+  document.getElementById('p-nota').value='';
+  openModal('modal-pago');
+};
+
+window.savePago = async function() {
+  const monto=Number(document.getElementById('p-monto').value);
+  if(!monto||monto<=0){ toast('⚠️ Ingresa un monto válido','red'); return; }
+  try{
+    await addDoc(collection(db,'payments'),{driverId:payingId,monto,metodo:document.getElementById('p-metodo').value,nota:document.getElementById('p-nota').value.trim(),createdAt:serverTimestamp()});
+    closeModal('modal-pago'); toast('✓ Pago registrado');
+    if(editingId) renderDetailPanel(editingId);
+  }catch(e){window._saving=false;if(btnSave){btnSave.disabled=false;btnSave.textContent='💾 Guardar chofer';}toast('Error: '+e.message,'red');}
+};
+
+window.deletePago = async function(id){ if(!confirm('¿Eliminar este pago?'))return; await deleteDoc(doc(db,'payments',id)); toast('✓ Pago eliminado'); if(editingId) renderDetailPanel(editingId); };
+
+// DÍAS SIN COBRO
+window.openDiasSinCobro = function(id) {
+  diasscId=id;
+  const d=drivers.find(dr=>dr.id===id);
+  document.getElementById('modal-diassc-info').innerHTML=`<div class="fw7">${d.nombre} · ${d.placa}</div><div style="font-size:0.72rem;color:var(--text3);margin-top:3px">Deuda actual: <span class="text-red mono">${fmt(getDriverDebt(d).totalDebt)}</span></div>`;
+  document.getElementById('dsc-inicio').value='';
+  document.getElementById('dsc-fin').value='';
+  document.getElementById('dsc-notas').value='';
+  openModal('modal-diassc');
+};
+
+window.saveDiasSinCobro = async function() {
+  const inicio=document.getElementById('dsc-inicio').value;
+  const fin=document.getElementById('dsc-fin').value;
+  if(!inicio||!fin){ toast('⚠️ Selecciona fechas inicio y fin','red'); return; }
+  if(new Date(fin)<new Date(inicio)){ toast('⚠️ La fecha fin no puede ser antes del inicio','red'); return; }
+  try{
+    await addDoc(collection(db,'dias_sin_cobro'),{driverId:diasscId,inicio,fin,motivo:document.getElementById('dsc-motivo').value,notas:document.getElementById('dsc-notas').value.trim(),autorizadoPor:'Admin',createdAt:serverTimestamp()});
+    closeModal('modal-diassc'); toast('✓ Días sin cobro autorizados');
+    if(editingId) renderDetailPanel(editingId);
+  }catch(e){window._saving=false;if(btnSave){btnSave.disabled=false;btnSave.textContent='💾 Guardar chofer';}toast('Error: '+e.message,'red');}
+};
+
+window.deleteDsc = async function(id){ if(!confirm('¿Eliminar este registro?'))return; await deleteDoc(doc(db,'dias_sin_cobro',id)); toast('✓ Eliminado'); if(editingId) renderDetailPanel(editingId); };
+
+
+// PREVIEW DOCS
+const docFiles = {}; // store pending files
+window.previewDoc = function(tipo, input) {
+  const file = input.files[0]; if(!file) return;
+  docFiles[tipo] = file;
+  const area = document.getElementById('upload-'+tipo+'-area');
+  const preview = document.getElementById('preview-'+tipo);
+  area.classList.add('has-file');
+  area.querySelector('.upload-text').textContent = '✅ '+file.name;
+  area.querySelector('.upload-sub').textContent = (file.size/1024).toFixed(0)+' KB';
+
+  if(file.type.startsWith('image/')) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      preview.style.display='block';
+      preview.innerHTML=`<div class="doc-preview"><img src="${e.target.result}"><div><div class="doc-preview-name">${file.name}</div><div class="doc-preview-size">${(file.size/1024).toFixed(0)} KB</div></div></div>`;
+    };
+    reader.readAsDataURL(file);
+  } else {
+    preview.style.display='block';
+    preview.innerHTML=`<div class="doc-preview"><div style="font-size:2rem">📄</div><div><div class="doc-preview-name">${file.name}</div><div class="doc-preview-size">${(file.size/1024).toFixed(0)} KB · PDF</div></div></div>`;
+  }
+};
+
+async function uploadDoc(driverId, tipo, file) {
+  if(!file) return null;
+  const ext = file.name.split('.').pop();
+  const path = `docs/${driverId}/${tipo}_${Date.now()}.${ext}`;
+  const storageRef = ref(storage, path);
+  await uploadBytes(storageRef, file);
+  return await getDownloadURL(storageRef);
+}
+
+// DOCS
+window.openDocsModal = function(id) {
+  docsId=id;
+  const d=drivers.find(dr=>dr.id===id);
+  document.getElementById('modal-docs-nombre').textContent=d.nombre+' · '+d.placa;
+  document.getElementById('doc-lic-num').value=d.licenciaNum||'';
+  document.getElementById('doc-lic-vence').value=d.licenciaVence||'';
+  document.getElementById('doc-ine-num').value=d.ineNum||'';
+  document.getElementById('doc-ine-vence').value=d.ineVence||'';
+  document.getElementById('doc-dom-vence').value=d.domicilioVence||'';
+  document.getElementById('doc-ingresos-status').value=d.ingresosStatus||'';
+  // Clear pending files
+  ['lic','ine','dom','ing'].forEach(t=>{
+    delete docFiles[t];
+    const area=document.getElementById('upload-'+t+'-area');
+    if(area){area.classList.remove('has-file');area.querySelector('.upload-text').textContent='Toca para tomar foto o subir archivo';area.querySelector('.upload-sub').textContent='JPG, PNG o PDF';}
+    const prev=document.getElementById('preview-'+t);
+    if(prev){prev.style.display='none';prev.innerHTML='';}
+  });
+  // Show existing photos
+  const docTypes = [{key:'lic',url:d.licenciaUrl},{key:'ine',url:d.ineUrl},{key:'dom',url:d.domicilioUrl},{key:'ing',url:d.ingresosUrl}];
+  docTypes.forEach(dt=>{
+    if(dt.url){
+      const area=document.getElementById('upload-'+dt.key+'-area');
+      const prev=document.getElementById('preview-'+dt.key);
+      if(area){area.classList.add('has-file');area.querySelector('.upload-text').textContent='✅ Documento guardado';}
+      if(prev){prev.style.display='block';prev.innerHTML=`<div class="doc-preview"><div style="font-size:2rem">🖼️</div><div><div class="doc-preview-name">Documento guardado</div><a class="doc-view-link" href="${dt.url}" target="_blank">Ver documento →</a></div></div>`;}
+    }
+  });
+  openModal('modal-docs');
+};
+
+window.saveDocs = async function() {
+  const btn=document.getElementById('btn-save-docs');
+  const prog=document.getElementById('upload-progress');
+  btn.disabled=true; btn.textContent='⏳ Guardando...'; prog.style.display='block';
+  try{
+    const data={
+      licenciaNum:document.getElementById('doc-lic-num').value.trim(),
+      licenciaVence:document.getElementById('doc-lic-vence').value,
+      ineNum:document.getElementById('doc-ine-num').value.trim(),
+      ineVence:document.getElementById('doc-ine-vence').value,
+      domicilioVence:document.getElementById('doc-dom-vence').value,
+      ingresosStatus:document.getElementById('doc-ingresos-status').value,
+      updatedAt:serverTimestamp()
+    };
+    // Upload photos if selected
+    if(docFiles['lic']) data.licenciaUrl=await uploadDoc(docsId,'licencia',docFiles['lic']);
+    if(docFiles['ine']) data.ineUrl=await uploadDoc(docsId,'ine',docFiles['ine']);
+    if(docFiles['dom']) data.domicilioUrl=await uploadDoc(docsId,'domicilio',docFiles['dom']);
+    if(docFiles['ing']) data.ingresosUrl=await uploadDoc(docsId,'ingresos',docFiles['ing']);
+    await updateDoc(doc(db,'drivers',docsId),data);
+    closeModal('modal-docs'); toast('✓ Documentos guardados con fotos');
+    if(editingId) renderDetailPanel(editingId);
+  }catch(e){
+    toast('Error al subir: '+e.message,'red');
+  }finally{
+    btn.disabled=false; btn.textContent='💾 Guardar documentos'; prog.style.display='none';
+  }
+};
+
+// LIQUIDAR
+window.openLiquidar = function(id) {
+  liquidarId=id;
+  const d=drivers.find(dr=>dr.id===id); const st=getDriverDebt(d);
+  const dep=Number(d.deposito||0); const saldo=st.totalDebt-dep;
+  const depAcordadoM = Number(d.depositoAcordado||d.deposito||0);
+  const depPagadoM = Number(d.depositoPagado!==undefined?d.depositoPagado:(d.deposito||0));
+  const depPendienteM = Math.max(0, depAcordadoM - depPagadoM);
+  const deudaRentasM = st.totalDebt - depPendienteM;
+  const saldoM = deudaRentasM + depPendienteM - depPagadoM;
+  document.getElementById('modal-liq-content').innerHTML=`
+    <div class="liquidar-box">
+      <div class="liq-row"><span class="text-muted">Chofer</span><span class="fw7">${d.nombre}</span></div>
+      <div class="liq-row"><span class="text-muted">Placa</span><span class="mono">${d.placa}</span></div>
+      <div class="liq-row"><span class="text-muted">Deuda por rentas</span><span class="mono text-red">${fmt(Math.max(0,deudaRentasM))}</span></div>
+      ${depPendienteM>0?`<div class="liq-row"><span class="text-muted">Depósito sin pagar</span><span class="mono text-red">+${fmt(depPendienteM)}</span></div>`:''}
+      <div class="liq-row"><span class="text-muted">(-) Depósito pagado</span><span class="mono text-green">-${fmt(depPagadoM)}</span></div>
+      <div class="liq-total"><span>Saldo final</span><span>${saldoM>0?fmt(saldoM)+' debe':saldoM<0?fmt(Math.abs(saldoM))+' devolver':'$0 — Saldado'}</span></div>
+    </div>
+    ${saldoM>0?`<div class="info-box info-red" style="margin-top:10px">Saldo pendiente: ${fmt(saldoM)}</div>`:saldoM<0?`<div class="info-box info-gold" style="margin-top:10px">Devolver ${fmt(Math.abs(saldoM))} al chofer.</div>`:''}`;
+  openModal('modal-liquidar');
+};
+
+window.confirmarLiquidar = async function() {
+  if(!confirm('¿Confirmas la liquidación? El chofer pasará a Inactivo.')) return;
+  try {
+    const d = drivers.find(dr=>dr.id===liquidarId);
+    const st = getDriverDebt(d);
+    const agregarBlacklist = document.getElementById('liq-blacklist')?.checked;
+    const recontrataria = document.getElementById('liq-recontrataria')?.checked;
+    const motivo = document.getElementById('liq-motivo')?.value || 'no_pago';
+    const depPagado = Number(d.depositoPagado!==undefined?d.depositoPagado:(d.deposito||0));
+    const depAcordado = Number(d.depositoAcordado||d.deposito||0);
+    const depPendiente = Math.max(0, depAcordado - depPagado);
+    const saldoFinal = st.totalDebt - depPendiente - depPagado + depPendiente;
+
+    await updateDoc(doc(db,'drivers',liquidarId),{
+      activo: false,
+      liquidadoEn: serverTimestamp(),
+      motivoSalida: motivo,
+      recontrataria: recontrataria,
+      saldoFinalLiquidacion: saldoFinal
+    });
+
+    if(agregarBlacklist) {
+      await addDoc(collection(db,'blacklist'),{
+        nombre: d.nombre,
+        tel: d.tel||'',
+        placa: d.placa,
+        deudaFinal: saldoFinal,
+        razon: motivo==='no_pago'?'No pagó':motivo==='conducta'?'Conducta inapropiada':motivo==='documentos'?'Documentos irregulares':motivo,
+        recontrataria: recontrataria,
+        fecha: new Date().toISOString().split('T')[0],
+        createdAt: serverTimestamp()
+      });
+      toast('✓ Chofer liquidado y agregado a blacklist');
+    } else {
+      toast('✓ Chofer liquidado');
+    }
+    closeModal('modal-liquidar');
+    editingId=null;
+    document.getElementById('detail-panel').style.display='none';
+  } catch(e) { toast('Error: '+e.message,'red'); }
+};
+
+// BLACKLIST
+window.openModal = function(id){ 
+  document.getElementById(id).classList.add('open'); 
+  if(id==='modal-blacklist') renderBlacklist();
+};
+
+function renderBlacklist() {
+  const el=document.getElementById('blacklist-content'); if(!el)return;
+  if(blacklist.length===0){ el.innerHTML=`<div class="empty" style="padding:30px"><div class="empty-icon">⛔</div><div>Sin choferes en blacklist</div></div>`; return; }
+  el.innerHTML=blacklist.map(b=>`<div class="pay-item"><div><div class="fw7 fs85">${b.nombre}</div><div class="pay-info">${b.placa||'—'} · ${b.tel||'—'} · ${b.fecha||'—'}</div><div style="font-size:0.68rem;color:var(--red);margin-top:2px">${b.razon||''} · Deuda: ${fmt(b.deudaFinal)}</div></div><button onclick="removeBlacklist('${b.id}')" class="del-btn btn-xs">Quitar</button></div>`).join('');
+}
+
+window.removeBlacklist = async function(id){ if(!confirm('¿Quitar de blacklist?'))return; await deleteDoc(doc(db,'blacklist',id)); toast('✓ Removido de blacklist'); };
+
+// ELIMINAR CHOFER
+window.eliminarChofer = async function(id) {
+  const d = drivers.find(dr=>dr.id===id);
+  if(!confirm(`¿Eliminar permanentemente a ${d?.nombre}?\n\nEsto borrará también todos sus pagos y registros. Esta acción NO se puede deshacer.`)) return;
+  try {
+    // Delete all payments
+    const dp = payments.filter(p=>p.driverId===id);
+    await Promise.all(dp.map(p=>deleteDoc(doc(db,'payments',p.id))));
+    // Delete dias sin cobro
+    const dsc = diasSinCobro.filter(d=>d.driverId===id);
+    await Promise.all(dsc.map(d=>deleteDoc(doc(db,'dias_sin_cobro',d.id))));
+    // Delete driver
+    await deleteDoc(doc(db,'drivers',id));
+    editingId=null;
+    document.getElementById('detail-panel').style.display='none';
+    toast('✓ Chofer eliminado permanentemente');
+  } catch(e) { toast('Error: '+e.message,'red'); }
+};
+
+// WHATSAPP
+window.sendWA = async function(tel,nombre,monto,driverId) {
+  const c=tel.replace(/\D/g,'');
+  window.open(`https://wa.me/52${c}?text=${encodeURIComponent(`Hola ${nombre.split(' ')[0]} 👋, tienes un saldo pendiente de ${fmt(monto)}. Por favor realiza tu pago. ¡Gracias! — LAGULEASE`)}`,'_blank');
+  // Log the WA send
+  if(driverId) {
+    try {
+      await addDoc(collection(db,'pagos_wa_log'),{
+        driverId, nombre, monto,
+        enviadoPor: auth.currentUser?.email||'—',
+        fecha: new Date().toISOString().split('T')[0],
+        createdAt: serverTimestamp()
+      });
+      toast('📱 WhatsApp enviado y registrado');
+    } catch(e) { toast('📱 WhatsApp abierto'); }
+  }
+};
+
+// MODALS
+window.closeModal = function(id){ 
+  const el = document.getElementById(id);
+  if(el) el.classList.remove('open');
+  if(id==='modal-chofer'){
+    window._saving=false;
+    const btn=document.getElementById('btn-chofer-next');
+    if(btn){btn.disabled=false;btn.textContent='Siguiente → Documentos';}
+  }
+};
+document.addEventListener('click',e=>{ if(e.target.classList.contains('overlay')) { e.target.classList.remove('open'); window._saving=false; } });
+
+// TOAST
+function toast(msg,type='gold') { const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; t.style.borderColor=type==='red'?'var(--red-border)':'var(--gold-border)'; t.style.color=type==='red'?'var(--red)':'var(--gold)'; clearTimeout(window._toastTimer); window._toastTimer=setTimeout(()=>t.style.display='none',2800); }
+</script>
+</body>
+</html>
