@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>LaguLease Admin</title>
+<title>LAGULEASE Admin</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f1117">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="LaguLease">
+<meta name="apple-mobile-web-app-title" content="LAGULEASE">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -18,7 +18,7 @@
 <nav class="nav">
   <div class="nav-logo">
     <div class="nav-logo-icon">🚗</div>
-    Lagu<span>Lease</span>
+    LAGU<span>LEASE</span>
   </div>
   <div class="nav-right">
     <div class="nav-user">
@@ -49,27 +49,73 @@
 <!-- ═══ MAIN ═══ -->
 <main>
 
-  <!-- RESUMEN -->
+  <!-- RESUMEN - DASHBOARD GRID -->
   <div class="page active" id="page-resumen">
-    <div style="height:16px"></div>
-    <div class="kpi-grid kpi-grid-5" id="kpi-row">
-      <div class="kpi-card"><div class="kpi-label">Flota activa</div><div class="kpi-value" id="kpi-flota">—</div><div class="kpi-card-accent" style="background:var(--blue)"></div></div>
-      <div class="kpi-card"><div class="kpi-label">Al corriente</div><div class="kpi-value green" id="kpi-corriente">—</div><div class="kpi-card-accent" style="background:var(--green)"></div></div>
-      <div class="kpi-card"><div class="kpi-label">Con deuda</div><div class="kpi-value red" id="kpi-pendientes">—</div><div class="kpi-card-accent" style="background:var(--red)"></div></div>
-      <div class="kpi-card"><div class="kpi-label">Cobrado semana</div><div class="kpi-value green" style="font-size:1.1rem" id="kpi-cobrado">—</div><div class="kpi-card-accent" style="background:var(--green)"></div></div>
-      <div class="kpi-card"><div class="kpi-label">Deuda acumulada</div><div class="kpi-value red" style="font-size:1.1rem" id="kpi-deuda">—</div><div class="kpi-card-accent" style="background:var(--red)"></div></div>
-    </div>
-    <div class="week-banner">
-      <div class="week-banner-title">Semana actual</div>
-      <div class="week-numbers">
-        <div><div class="week-num-label">Cobrado</div><div class="week-num-val" id="week-cobrado">—</div></div>
-        <div><div class="week-num-label">Por cobrar</div><div class="week-num-val warn" id="week-falta">—</div></div>
-        <div><div class="week-num-label">Meta semanal</div><div class="week-num-val dim" id="week-meta">—</div></div>
+    <div class="dashboard-header">
+      <div class="dashboard-logo">LAGULEASE</div>
+      <div class="dashboard-sub">Sistema de Administración de Flota</div>
+      <div class="dashboard-kpis">
+        <div class="dash-kpi"><div class="dash-kpi-val" id="kpi-flota">—</div><div class="dash-kpi-label">Carros activos</div></div>
+        <div class="dash-kpi-divider"></div>
+        <div class="dash-kpi"><div class="dash-kpi-val green" id="kpi-corriente">—</div><div class="dash-kpi-label">Al corriente</div></div>
+        <div class="dash-kpi-divider"></div>
+        <div class="dash-kpi"><div class="dash-kpi-val red" id="kpi-pendientes">—</div><div class="dash-kpi-label">Con deuda</div></div>
+        <div class="dash-kpi-divider"></div>
+        <div class="dash-kpi"><div class="dash-kpi-val green" id="kpi-cobrado">—</div><div class="dash-kpi-label">Cobrado semana</div></div>
+        <div class="dash-kpi-divider"></div>
+        <div class="dash-kpi"><div class="dash-kpi-val red" id="kpi-deuda">—</div><div class="dash-kpi-label">Deuda acumulada</div></div>
       </div>
-      <div class="progress-bar"><div class="progress-fill" id="week-bar"></div></div>
-      <div class="progress-label" id="week-pct">0% del objetivo</div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+    <div class="module-grid">
+      <div class="module-card" onclick="switchTab('choferes')">
+        <div class="module-icon">🚗</div>
+        <div class="module-name">Choferes</div>
+        <div class="module-desc">Gestión de arrendatarios</div>
+      </div>
+      <div class="module-card" onclick="switchTab('cobros')">
+        <div class="module-icon">💰</div>
+        <div class="module-name">Cobros</div>
+        <div class="module-desc">Pagos y cobranza semanal</div>
+      </div>
+      <div class="module-card" onclick="switchTab('flota')">
+        <div class="module-icon">🚙</div>
+        <div class="module-name">Flota</div>
+        <div class="module-desc">Control de vehículos</div>
+      </div>
+      <div class="module-card" onclick="switchTab('documentos')">
+        <div class="module-icon">📄</div>
+        <div class="module-name">Documentos</div>
+        <div class="module-desc">Licencias y vencimientos</div>
+        <span class="module-badge" id="module-docs-badge" style="display:none">!</span>
+      </div>
+      <div class="module-card" onclick="switchTab('servicios')">
+        <div class="module-icon">🔧</div>
+        <div class="module-name">Servicios</div>
+        <div class="module-desc">Mantenimiento por unidad</div>
+      </div>
+      <div class="module-card" onclick="switchTab('inventario')">
+        <div class="module-icon">📦</div>
+        <div class="module-name">Inventario</div>
+        <div class="module-desc">Refacciones y materiales</div>
+      </div>
+      <div class="module-card" onclick="switchTab('financiero')">
+        <div class="module-icon">📈</div>
+        <div class="module-name">Financiero</div>
+        <div class="module-desc">Estado de resultados</div>
+      </div>
+      <div class="module-card" onclick="switchTab('contratos')">
+        <div class="module-icon">📝</div>
+        <div class="module-name">Contratos</div>
+        <div class="module-desc">Generador de PDF</div>
+      </div>
+      <div class="module-card" onclick="switchTab('reportes')">
+        <div class="module-icon">📊</div>
+        <div class="module-name">Reportes</div>
+        <div class="module-desc">Exportar a Excel</div>
+      </div>
+    </div>
+    <!-- Alertas debajo del grid -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px">
       <div>
         <div class="label" style="margin-bottom:12px">⚠️ Alertas de cobranza</div>
         <div id="alertas-list"></div>
@@ -79,12 +125,16 @@
         <div id="ultimos-pagos"></div>
       </div>
     </div>
-    <!-- CHART - admin only -->
     <div class="admin-only" style="margin-top:24px">
       <div class="label" style="margin-bottom:12px">📈 Tendencia de ingresos</div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px">
         <canvas id="chart-ingresos" height="80"></canvas>
       </div>
+    </div>
+    <!-- Hidden KPI elements needed by JS -->
+    <div style="display:none">
+      <div id="week-cobrado"></div><div id="week-falta"></div><div id="week-meta"></div>
+      <div id="week-bar"></div><div id="week-pct"></div>
     </div>
   </div>
 
