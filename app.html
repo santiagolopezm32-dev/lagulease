@@ -33,16 +33,16 @@
 <!-- ═══ TABS ═══ -->
 <div class="tabs-wrapper">
   <div class="tabs" id="tabs-container">
-    <div class="tab active" data-tab="resumen" onclick="switchTab('resumen')">📊 Resumen</div>
-    <div class="tab" data-tab="choferes" onclick="switchTab('choferes')">🚗 Choferes</div>
-    <div class="tab" data-tab="cobros" onclick="switchTab('cobros')">💰 Cobros</div>
-    <div class="tab admin-only" data-tab="flota" onclick="switchTab('flota')">🚙 Flota</div>
-    <div class="tab" data-tab="documentos" onclick="switchTab('documentos')">📄 Docs <span class="tab-badge" id="tab-docs-badge" style="display:none">!</span></div>
-    <div class="tab" data-tab="servicios" onclick="switchTab('servicios')">🔧 Servicios</div>
-    <div class="tab admin-only" data-tab="inventario" onclick="switchTab('inventario')">📦 Inventario</div>
-    <div class="tab admin-only" data-tab="financiero" onclick="switchTab('financiero')">📈 Financiero</div>
-    <div class="tab admin-only" data-tab="contratos" onclick="switchTab('contratos')">📝 Contratos</div>
-    <div class="tab admin-only" data-tab="reportes" onclick="switchTab('reportes')">📊 Reportes</div>
+    <div class="tab active" data-tab="resumen">📊 Resumen</div>
+    <div class="tab" data-tab="choferes">🚗 Choferes</div>
+    <div class="tab" data-tab="cobros">💰 Cobros</div>
+    <div class="tab" data-tab="flota">🚙 Flota</div>
+    <div class="tab" data-tab="documentos">📄 Docs <span class="tab-badge" id="tab-docs-badge" style="display:none">!</span></div>
+    <div class="tab" data-tab="servicios">🔧 Servicios</div>
+    <div class="tab" data-tab="inventario">📦 Inventario</div>
+    <div class="tab" data-tab="financiero">📈 Financiero</div>
+    <div class="tab" data-tab="contratos">📝 Contratos</div>
+    <div class="tab" data-tab="reportes">📊 Reportes</div>
   </div>
 </div>
 
@@ -425,6 +425,17 @@
   </div>
 </div>
 
+<script>
+// Tab click handler - runs immediately before module loads
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('tabs-container').addEventListener('click', function(e) {
+    const tab = e.target.closest('[data-tab]');
+    if (!tab) return;
+    const name = tab.dataset.tab;
+    if (window.switchTab) window.switchTab(name);
+  });
+});
+</script>
 <script type="module" src="js/app.js"></script>
 </body>
 </html>
