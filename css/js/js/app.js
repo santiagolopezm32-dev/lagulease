@@ -20,7 +20,7 @@ let currentFilter = 'todos';
 let editingDriverId = null, payingDriverId = null, editingCarroId = null, editingDocDriverId = null;
 
 // Admin emails - add your email and asistente email here
-const ADMIN_EMAILS = ['santiagolopezm32@gmail.com'];
+const ADMIN_EMAILS = ['santiagolopezm32@gmail.com', 'santiagolopezm32-dev@gmail.com'];
 
 // ── Auth ──────────────────────────────────────────
 onAuthStateChanged(auth, user => {
@@ -45,8 +45,17 @@ function setupUI() {
 
   // Show/hide admin-only sections
   document.querySelectorAll('.admin-only').forEach(el => {
-    el.style.display = userRole === 'admin' ? '' : 'none';
+    el.style.display = ''; // All visible - role check happens per action
   });
+  // Hide financiero/reportes/contratos for asistente
+  if (userRole !== 'admin') {
+    ['financiero','contratos','reportes'].forEach(tab => {
+      const t = document.querySelector(`.tab[data-tab="${tab}"]`);
+      if (t) t.style.display = 'none';
+      const p = document.getElementById('page-' + tab);
+      if (p) p.style.display = 'none';
+    });
+  }
 }
 
 // ── Service Worker ────────────────────────────────
@@ -1145,3 +1154,4 @@ window.closeChecklist = function() {
 const now = new Date();
 const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 ['fin-month', 'rep-mes'].forEach(id => { const el = document.getElementById(id); if (el) el.value = monthStr; });
+
