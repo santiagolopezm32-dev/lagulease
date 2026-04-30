@@ -304,15 +304,15 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
     </div>
 
     <div class="pills" id="filter-pills">
-      <div class="pill active" onclick="setFilter('todos',this)">Todos</div>
-      <div class="pill" onclick="setFilter('al_corriente',this)">✅ Al corriente</div>
-      <div class="pill" onclick="setFilter('pendiente',this)">⏳ Pendiente</div>
-      <div class="pill" onclick="setFilter('atrasado',this)">🔴 Atrasado</div>
-      <div class="pill" onclick="setFilter('parcial',this)">🟡 Parcial</div>
-      <div class="pill" onclick="setFilter('tiempo_completo',this)">🟢 Tiempo completo</div>
-      <div class="pill" onclick="setFilter('medio_tiempo',this)">🟡 Medio tiempo</div>
-      <div class="pill" onclick="setFilter('particular',this)">⚪ Uso particular</div>
-      <div class="pill" onclick="setFilter('inactivos',this)">📁 Inactivos</div>
+      <div class="pill active" onclick="_setFilter('todos',this)">Todos</div>
+      <div class="pill" onclick="_setFilter('al_corriente',this)">✅ Al corriente</div>
+      <div class="pill" onclick="_setFilter('pendiente',this)">⏳ Pendiente</div>
+      <div class="pill" onclick="_setFilter('atrasado',this)">🔴 Atrasado</div>
+      <div class="pill" onclick="_setFilter('parcial',this)">🟡 Parcial</div>
+      <div class="pill" onclick="_setFilter('tiempo_completo',this)">🟢 Tiempo completo</div>
+      <div class="pill" onclick="_setFilter('medio_tiempo',this)">🟡 Medio tiempo</div>
+      <div class="pill" onclick="_setFilter('particular',this)">⚪ Uso particular</div>
+      <div class="pill" onclick="_setFilter('inactivos',this)">📁 Inactivos</div>
     </div>
 
     <!-- List -->
@@ -334,8 +334,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 
     <!-- Step indicator -->
     <div id="step-indicator" style="display:flex;gap:0;margin-bottom:20px;border-radius:8px;overflow:hidden;border:1px solid var(--border)">
-      <div id="step1-btn" style="flex:1;padding:10px;text-align:center;font-size:0.78rem;font-weight:700;background:var(--gold);color:#000;cursor:pointer" onclick="goToStep(1)">① Datos básicos</div>
-      <div id="step2-btn" style="flex:1;padding:10px;text-align:center;font-size:0.78rem;font-weight:700;background:var(--s2);color:var(--text3);cursor:pointer" onclick="goToStep(2)">② Documentos y fotos</div>
+      <div id="step1-btn" style="flex:1;padding:10px;text-align:center;font-size:0.78rem;font-weight:700;background:var(--gold);color:#000;cursor:pointer" onclick="_goToStep(1)">① Datos básicos</div>
+      <div id="step2-btn" style="flex:1;padding:10px;text-align:center;font-size:0.78rem;font-weight:700;background:var(--s2);color:var(--text3);cursor:pointer" onclick="_goToStep(2)">② Documentos y fotos</div>
     </div>
     <div id="step1-content">
     <div class="form-row">
@@ -883,7 +883,7 @@ window.renderChoferes = function() {
     const inactivoBadge=d.activo===false?`<span class="badge badge-gray">📁 Inactivo</span>${d.motivoSalida?` <span class="badge badge-red">${d.motivoSalida==='no_pago'?'No pagó':d.motivoSalida==='conducta'?'Conducta':d.motivoSalida==='voluntario'?'Voluntario':d.motivoSalida}</span>`:''}`:''
     const tipoBadge=d.tipo==='tiempo_completo'?`<span class="badge badge-green">🟢 Tiempo completo</span>`:d.tipo==='medio_tiempo'?`<span class="badge badge-yellow">🟡 Medio tiempo</span>`:`<span class="badge badge-gray">⚪ Uso particular</span>`;
     return `<div class="chofer-card ${st.status==='atrasado'?'urgent':st.status==='parcial'?'partial':''} ${isSelected?'':''}
-      " style="${isSelected?'border-color:var(--gold);background:rgba(201,168,76,0.04)':''}" onclick="toggleDetail('${d.id}')">
+      " style="${isSelected?'border-color:var(--gold);background:rgba(201,168,76,0.04)':''}" onclick="_toggleDetail('${d.id}')">
       <div class="av" style="background:${ci[0]};color:${ci[1]}">${initials(d.nombre)}</div>
       <div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
@@ -948,25 +948,25 @@ function renderDetailPanel(driverId) {
           ${d.ingresos?`<div style="font-size:0.7rem;color:var(--green);margin-top:2px">${fmt(d.ingresos)}/sem comprobados · ${d.viajes||0} viajes</div>`:''}
         </div>
         <div class="dp-actions">
-          <button class="btn btn-gold btn-sm" data-action="cobrar" data-id="${d.id}">💰 Cobrar</button>
-          <button class="btn btn-ghost btn-sm" data-action="editar" data-id="${d.id}">✏️ Editar</button>
-          <button class="btn btn-ghost btn-sm" data-action="docs" data-id="${d.id}">📄 Docs</button>
-          <button class="btn btn-ghost btn-sm" data-action="diassc" data-id="${d.id}">📅 Días s/cobro</button>
-          <button class="btn btn-danger btn-sm" data-action="liquidar" data-id="${d.id}">💼 Liquidar</button>
-          <button class="btn btn-danger btn-sm" data-action="eliminar" data-id="${d.id}">🗑️ Eliminar</button>
-          ${d.tel?`<button class="btn btn-ghost btn-sm" data-action="wa" data-id="${d.id}" data-tel="${d.tel}" data-nombre="${d.nombre}" data-monto="${st.totalDebt||st.due}">📱 WA</button>`:''}
+          <button class="btn btn-gold btn-sm" onclick="_openPayModal('${d.id}')">💰 Cobrar</button>
+          <button class="btn btn-ghost btn-sm" onclick="_openEditChofer('${d.id}')">✏️ Editar</button>
+          <button class="btn btn-ghost btn-sm" onclick="_openDocsModal('${d.id}')">📄 Docs</button>
+          <button class="btn btn-ghost btn-sm" onclick="_openDiasSinCobro('${d.id}')">📅 Días s/cobro</button>
+          <button class="btn btn-danger btn-sm" onclick="_openLiquidar('${d.id}')">💼 Liquidar</button>
+          <button class="btn btn-danger btn-sm" onclick="_eliminarChofer('${d.id}')">🗑️ Eliminar</button>
+          ${d.tel?`<button class="btn btn-ghost btn-sm" onclick="_sendWA('${d.tel}','${d.nombre}',${st.totalDebt||st.due},'${d.id}')">📱 WA</button>`:''}
         </div>
       </div>
 
       <div class="inner-tabs">
-        <div class="itab active" onclick="switchItab(this,'itab-perfil-${d.id}')">Perfil</div>
-        <div class="itab" onclick="switchItab(this,'itab-pagos-${d.id}')">Pagos</div>
-        <div class="itab" onclick="switchItab(this,'itab-docs-${d.id}')">Documentos</div>
-        <div class="itab" onclick="switchItab(this,'itab-score-${d.id}')">Score de riesgo</div>
-        <div class="itab" onclick="switchItab(this,'itab-dsc-${d.id}')">Días sin cobro</div>
-        <div class="itab" onclick="switchItab(this,'itab-liq-${d.id}')">Liquidación</div>
-        <div class="itab" onclick="switchItab(this,'itab-carros-${d.id}')">🚗 Carros asignados</div>
-        <div class="itab" onclick="switchItab(this,'itab-wa-${d.id}')">📱 Mensajes WA</div>
+        <div class="itab active" onclick="_switchItab(this,'itab-perfil-${d.id}')">Perfil</div>
+        <div class="itab" onclick="_switchItab(this,'itab-pagos-${d.id}')">Pagos</div>
+        <div class="itab" onclick="_switchItab(this,'itab-docs-${d.id}')">Documentos</div>
+        <div class="itab" onclick="_switchItab(this,'itab-score-${d.id}')">Score de riesgo</div>
+        <div class="itab" onclick="_switchItab(this,'itab-dsc-${d.id}')">Días sin cobro</div>
+        <div class="itab" onclick="_switchItab(this,'itab-liq-${d.id}')">Liquidación</div>
+        <div class="itab" onclick="_switchItab(this,'itab-carros-${d.id}')">🚗 Carros asignados</div>
+        <div class="itab" onclick="_switchItab(this,'itab-wa-${d.id}')">📱 Mensajes WA</div>
       </div>
 
       <!-- PERFIL -->
@@ -1003,7 +1003,7 @@ function renderDetailPanel(driverId) {
       <div class="itab-content" id="itab-pagos-${d.id}">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
           <div class="label" style="margin-bottom:0">Historial de pagos</div>
-          <button class="btn btn-gold btn-sm" data-action="cobrar" data-id="${d.id}">+ Registrar pago</button>
+          <button class="btn btn-gold btn-sm" onclick="_openPayModal('${d.id}')">+ Registrar pago</button>
         </div>
         ${renderPagosList(d.id)}
       </div>
@@ -1011,7 +1011,7 @@ function renderDetailPanel(driverId) {
       <!-- DOCUMENTOS -->
       <div class="itab-content" id="itab-docs-${d.id}">
         ${renderDocsView(d)}
-        <button class="btn btn-outline btn-sm mt16" data-action="docs" data-id="${d.id}">✏️ Actualizar documentos</button>
+        <button class="btn btn-outline btn-sm mt16" onclick="_openDocsModal('${d.id}')">✏️ Actualizar documentos</button>
       </div>
 
       <!-- SCORE -->
@@ -1023,7 +1023,7 @@ function renderDetailPanel(driverId) {
       <div class="itab-content" id="itab-dsc-${d.id}">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
           <div class="label" style="margin-bottom:0">Días sin cobro autorizados</div>
-          <button class="btn btn-gold btn-sm" data-action="diassc" data-id="${d.id}">+ Autorizar días</button>
+          <button class="btn btn-gold btn-sm" onclick="_openDiasSinCobro('${d.id}')">+ Autorizar días</button>
         </div>
         ${renderDscList(d.id)}
       </div>
@@ -1151,7 +1151,7 @@ function renderLiqView(d, st) {
       <div class="liq-row"><span class="text-muted">(-) Depósito en garantía</span><span class="mono fw7 text-green">-${fmt(dep)}</span></div>
       <div class="liq-total"><span>Saldo final del chofer</span><span class="mono">${saldo>0?fmt(saldo)+' debe':'$0 — Saldado con depósito'}</span></div>
       ${saldo>0?`<div class="info-box info-red" style="margin-top:12px">El depósito no alcanza a cubrir la deuda. Saldo pendiente: ${fmt(saldo)}</div>`:saldo<0?`<div class="info-box info-gold" style="margin-top:12px">El depósito cubre la deuda. Devolver ${fmt(Math.abs(saldo))} al chofer.</div>`:`<div class="info-box info-blue" style="margin-top:12px">El depósito cubre exactamente la deuda. Sin saldo pendiente.</div>`}
-      <button class="btn btn-danger" style="width:100%;margin-top:14px" data-action="liquidar" data-id="${d.id}">💼 Proceder a liquidar</button>
+      <button class="btn btn-danger" style="width:100%;margin-top:14px" onclick="_openLiquidar('${d.id}')">💼 Proceder a liquidar</button>
     </div>
   `;
 }
@@ -1167,29 +1167,6 @@ window.switchItab = function(el, contentId) {
 // CHOFER CRUD
 // Inline doc preview in add chofer form
 
-
-// ── EVENT DELEGATION for dynamic buttons ─────────────────
-document.addEventListener('click', function(e) {
-  const btn = e.target.closest('[data-action]');
-  if(!btn) return;
-  const action = btn.dataset.action;
-  const id = btn.dataset.id;
-  
-  switch(action) {
-    case 'cobrar': openPayModal(id); break;
-    case 'editar': openEditChofer(id); break;
-    case 'docs': openDocsModal(id); break;
-    case 'diassc': openDiasSinCobro(id); break;
-    case 'liquidar': openLiquidar(id); break;
-    case 'eliminar': eliminarChofer(id); break;
-    case 'wa':
-      sendWA(btn.dataset.tel, btn.dataset.nombre, Number(btn.dataset.monto), id);
-      break;
-    case 'dsc-del': deleteDsc(id); break;
-    case 'pay-del': deletePago(id); break;
-    case 'bl-del': removeBlacklist(id); break;
-  }
-});
 
 // ── STEP NAVIGATION ──────────────────────────────────────
 window.goToStep = function(step) {
@@ -1685,6 +1662,25 @@ document.addEventListener('click',e=>{ if(e.target.classList.contains('overlay')
 
 // TOAST
 function toast(msg,type='gold') { const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; t.style.borderColor=type==='red'?'var(--red-border)':'var(--gold-border)'; t.style.color=type==='red'?'var(--red)':'var(--gold)'; clearTimeout(window._toastTimer); window._toastTimer=setTimeout(()=>t.style.display='none',2800); }
+</script>
+
+<script>
+// Global wrappers - called from dynamic HTML
+function _openPayModal(id){ if(window.openPayModal) window.openPayModal(id); }
+function _openEditChofer(id){ if(window.openEditChofer) window.openEditChofer(id); }
+function _openDocsModal(id){ if(window.openDocsModal) window.openDocsModal(id); }
+function _openDiasSinCobro(id){ if(window.openDiasSinCobro) window.openDiasSinCobro(id); }
+function _openLiquidar(id){ if(window.openLiquidar) window.openLiquidar(id); }
+function _eliminarChofer(id){ if(window.eliminarChofer) window.eliminarChofer(id); }
+function _deleteDsc(id){ if(window.deleteDsc) window.deleteDsc(id); }
+function _deletePago(id){ if(window.deletePayment) window.deletePayment(id); }
+function _removeBlacklist(id){ if(window.removeBlacklist) window.removeBlacklist(id); }
+function _sendWA(tel,nombre,monto,id){ if(window.sendWA) window.sendWA(tel,nombre,monto,id); }
+function _toggleDetail(id){ if(window.toggleDetail) window.toggleDetail(id); }
+function _switchItab(el,id){ if(window.switchItab) window.switchItab(el,id); }
+function _setFilter(f,el){ if(window.setFilter) window.setFilter(f,el); }
+function _renderChoferes(){ if(window.renderChoferes) window.renderChoferes(); }
+function _goToStep(s){ if(window.goToStep) window.goToStep(s); }
 </script>
 </body>
 </html>
