@@ -642,11 +642,19 @@ function getDebt(driver){
     }
   }
 
-  // Semanas completas
+  // Semanas completas — solo semanas ya cerradas
   const lunesEntrega=getMondayOf(entrega);
   const primerLunes=new Date(lunesEntrega); primerLunes.setDate(lunesEntrega.getDate()+7); primerLunes.setHours(0,0,0,0);
   let cursor=new Date(primerLunes);
-  while(cursor<=hoyMonday&&cursor<=hoyNoon){ totalDue+=renta; cursor=new Date(cursor); cursor.setDate(cursor.getDate()+7); }
+  // cursor < hoyMonday (no <=) para no cobrar semana en curso como completa
+  while(cursor<hoyMonday){ totalDue+=renta; cursor=new Date(cursor); cursor.setDate(cursor.getDate()+7); }
+
+  // Semana en curso — cobrar solo días acumulados (lunes hasta hoy)
+  if(hoyMonday>=primerLunes){
+    const hoyMondayNoon=new Date(hoyMonday.getTime()+12*60*60*1000);
+    const diasCurso=Math.round((hoyNoon-hoyMondayNoon)/MS)+1;
+    totalDue+=Math.max(0,Math.min(diasCurso,7))*rentaDia;
+  }
 
   // Depósito pendiente
   const depAc=Number(driver.depositoAcordado||driver.deposito||0);
