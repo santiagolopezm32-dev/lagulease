@@ -257,6 +257,13 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
   <div class="topbar">
     <div class="topbar-title">👤 Choferes</div>
     <div class="flex gap8">
+      <select class="fi" id="periodo-sel" style="width:auto;font-size:0.75rem;padding:6px 10px" onchange="renderAll()">
+        <option value="semana">Esta semana</option>
+        <option value="mes">Este mes</option>
+        <option value="trimestre">Este trimestre</option>
+        <option value="año">Este año</option>
+        <option value="todo">Todo el tiempo</option>
+      </select>
       <button class="btn btn-ghost btn-sm" onclick="openBlacklist()">⛔ Blacklist</button>
       <button class="btn btn-gold btn-sm" onclick="openAddChofer()">+ Agregar chofer</button>
     </div>
@@ -427,7 +434,10 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
       <select class="fs" id="p-metodo"><option>Transferencia</option><option>Efectivo</option><option>CoDi</option><option>Otro</option></select>
     </div>
   </div>
-  <div class="fg"><label>Nota (opcional)</label><input class="fi" id="p-nota" placeholder="Pago parcial, abono..."></div>
+  <div class="form-row">
+    <div class="fg"><label>Fecha del pago</label><input class="fi" id="p-fecha" type="date"></div>
+    <div class="fg"><label>Nota (opcional)</label><input class="fi" id="p-nota" placeholder="Pago parcial, abono..."></div>
+  </div>
   <div class="modal-actions">
     <button class="btn btn-gold" style="flex:1" onclick="savePago()">✓ Confirmar pago</button>
     <button class="btn btn-ghost" onclick="closeModal('m-pago')">Cancelar</button>
@@ -610,7 +620,10 @@ function listen(){
 
 // ── Helpers ────────────────────────────────────────
 const fmt = n => '$'+Number(n||0).toLocaleString('es-MX');
-const fmtDate = ts => { if(!ts) return '—'; const d=ts.toDate?ts.toDate():new Date(ts); return d.toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'}); };
+const fmtDate = (ts,fechaManual) => { 
+  if(fechaManual) return new Date(fechaManual+'T12:00:00').toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'});
+  if(!ts) return '—'; const d=ts.toDate?ts.toDate():new Date(ts); return d.toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'}); 
+};
 const ini = n => (n||'').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
 const col = i => COLORS[i%COLORS.length];
 
@@ -676,7 +689,8 @@ function getDebt(driver){
   const thisWeekMs=hoyMonday.getTime();
   const thisWeekPaid=payments.filter(p=>{
     if(p.driverId!==driver.id) return false;
-    const pd=p.createdAt?.toDate?p.createdAt.toDate():new Date(p.createdAt||0);
+    // Use fechaManual if available, otherwise createdAt
+    const pd=p.fechaManual?new Date(p.fechaManual+'T12:00:00'):(p.createdAt?.toDate?p.createdAt.toDate():new Date(p.createdAt||0));
     return pd.getTime()>=thisWeekMs;
   }).reduce((s,p)=>s+Number(p.monto||0),0);
   const finPrimSem=new Date(entrega); finPrimSem.setDate(entrega.getDate()+(diaJS===0?7:7-diaJS));
@@ -729,17 +743,45 @@ function renderAll(){
   if(openId && drivers.find(d=>d.id===openId)) renderDetail(openId);
 }
 
+function getPeriodoStart(){
+  const hoy=new Date(); hoy.setHours(0,0,0,0);
+  const periodo=document.getElementById('periodo-sel')?.value||'semana';
+  if(periodo==='semana'){
+    const d=new Date(hoy); d.setDate(hoy.getDate()-hoy.getDay()+(hoy.getDay()===0?-6:1)); return d;
+  }
+  if(periodo==='mes') return new Date(hoy.getFullYear(),hoy.getMonth(),1);
+  if(periodo==='trimestre'){
+    const m=hoy.getMonth(); const q=Math.floor(m/3)*3;
+    return new Date(hoy.getFullYear(),q,1);
+  }
+  if(periodo==='año') return new Date(hoy.getFullYear(),0,1);
+  return new Date(0); // todo
+}
+
+function getPeriodoLabel(){
+  const periodo=document.getElementById('periodo-sel')?.value||'semana';
+  const labels={semana:'Cobrado semana',mes:'Cobrado mes',trimestre:'Cobrado trimestre',año:'Cobrado año',todo:'Cobrado total'};
+  return labels[periodo]||'Cobrado';
+}
+
 function renderKPIs(){
   const act=drivers.filter(d=>d.activo!==false);
   const sts=act.map(d=>getDebt(d));
-  const cobrado=sts.reduce((s,st)=>s+st.paid,0);
   const deuda=sts.reduce((s,st)=>s+st.totalDebt,0);
   const corriente=sts.filter(st=>st.status==='al_corriente').length;
+
+  // Cobrado en el periodo seleccionado
+  const periodoStart=getPeriodoStart();
+  const cobradoPeriodo=payments.filter(p=>{
+    const pd=p.fechaManual?new Date(p.fechaManual+'T12:00:00'):(p.createdAt?.toDate?p.createdAt.toDate():new Date(p.createdAt||0));
+    return pd>=periodoStart;
+  }).reduce((s,p)=>s+Number(p.monto||0),0);
+
   document.getElementById('kpi-row').innerHTML=`
     <div class="kpi blue"><div class="kpi-label">Flota activa</div><div class="kpi-val" style="color:var(--blue)">${act.length}</div></div>
     <div class="kpi green"><div class="kpi-label">Al corriente</div><div class="kpi-val" style="color:var(--green)">${corriente}</div></div>
     <div class="kpi red"><div class="kpi-label">Con deuda</div><div class="kpi-val" style="color:var(--red)">${act.length-corriente}</div></div>
-    <div class="kpi gold"><div class="kpi-label">Cobrado semana</div><div class="kpi-val text-gold" style="font-size:1.1rem">${fmt(cobrado)}</div></div>
+    <div class="kpi gold"><div class="kpi-label">${getPeriodoLabel()}</div><div class="kpi-val text-gold" style="font-size:1.1rem">${fmt(cobradoPeriodo)}</div></div>
     <div class="kpi red"><div class="kpi-label">Deuda acumulada</div><div class="kpi-val text-red" style="font-size:1.1rem">${fmt(deuda)}</div></div>
     <div class="kpi gray"><div class="kpi-label">Inactivos</div><div class="kpi-val" style="color:var(--text3)">${drivers.filter(d=>d.activo===false).length}</div></div>`;
 }
@@ -901,7 +943,7 @@ function renderPagos(id){
   const dp=payments.filter(p=>p.driverId===id);
   if(!dp.length) return '<div class="empty" style="padding:28px"><div class="empty-icon">💰</div><div>Sin pagos registrados</div></div>';
   return dp.map(p=>`<div class="pay-item">
-    <div><div class="fw7">${fmt(p.monto)}</div><div class="pay-info">${fmtDate(p.createdAt)} · ${p.metodo||''}${p.nota?' · '+p.nota:''}</div></div>
+    <div><div class="fw7">${fmt(p.monto)}</div><div class="pay-info">${fmtDate(p.createdAt,p.fechaManual)}${p.fechaManual?' ✎':''} · ${p.metodo||''}${p.nota?' · '+p.nota:''}</div></div>
     <button class="del-btn" onclick="delPago('${p.id}')">✕</button>
   </div>`).join('');
 }
@@ -1177,6 +1219,7 @@ function openPago(id){
   document.getElementById('m-pago-info').innerHTML=`<div class="fw7">${d.nombre} · <span class="mono">${d.placa}</span></div><div style="font-size:0.72rem;color:var(--text3);margin-top:4px">Renta: ${fmt(d.renta)}/sem · Deuda: <span class="${st.totalDebt>0?'text-red':'text-green'} fw7">${fmt(st.totalDebt)}</span>${st.weeksOwed>0?` · <span style="color:var(--red)">${st.weeksOwed} sem adeudadas</span>`:''}</div>`;
   document.getElementById('p-monto').value=st.totalDebt||d.renta;
   document.getElementById('p-nota').value='';
+  document.getElementById('p-fecha').value=new Date().toISOString().split('T')[0];
   openModal('m-pago');
 }
 
@@ -1184,7 +1227,14 @@ async function savePago(){
   const monto=Number(document.getElementById('p-monto').value);
   if(!monto||monto<=0){toast('⚠️ Ingresa un monto válido','red');return;}
   try{
-    await addDoc(collection(db,'payments'),{driverId:payingId,monto,metodo:document.getElementById('p-metodo').value,nota:document.getElementById('p-nota').value.trim(),createdAt:serverTimestamp()});
+    const fechaPago=document.getElementById('p-fecha').value;
+    await addDoc(collection(db,'payments'),{
+      driverId:payingId,monto,
+      metodo:document.getElementById('p-metodo').value,
+      nota:document.getElementById('p-nota').value.trim(),
+      fechaManual:fechaPago||null,
+      createdAt:serverTimestamp()
+    });
     closeModal('m-pago'); 
     toast('✓ Pago registrado');
     // Force re-render of detail if open
