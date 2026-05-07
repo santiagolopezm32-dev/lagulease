@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LAGULEASE — Flota</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#C9A84C;--gold2:#F5D78E;--gold3:#8B6914;
+  --gold-bg:rgba(201,168,76,0.08);--gold-border:rgba(201,168,76,0.18);
+  --bg:#080808;--s1:#0f0f0f;--s2:#161616;--s3:#1e1e1e;
+  --border:rgba(255,255,255,0.06);--border2:rgba(201,168,76,0.15);
+  --text:#f0ede8;--text2:#8a8680;--text3:#4a4845;
+  --red:#e05252;--red-bg:rgba(224,82,82,0.08);--red-border:rgba(224,82,82,0.2);
+  --green:#52c472;--green-bg:rgba(82,196,114,0.08);--green-border:rgba(82,196,114,0.2);
+  --yellow:#e8a020;--yellow-bg:rgba(232,160,32,0.08);--yellow-border:rgba(232,160,32,0.2);
+  --blue:#6b9fd4;--blue-bg:rgba(107,159,212,0.08);
+  --r:10px;--r-lg:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px;}
+.sidebar{width:220px;background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;}
+.logo-wrap{padding:22px 20px;border-bottom:1px solid var(--border);}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:4px;background:linear-gradient(135deg,var(--gold),var(--gold2),var(--gold3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo-sub{font-size:0.58rem;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-top:2px;}
+.nav{flex:1;padding:8px 0;overflow-y:auto;}
+.nav-sec{padding:14px 20px 4px;font-size:0.58rem;letter-spacing:2px;color:var(--text3);text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:0.82rem;font-weight:600;color:var(--text2);cursor:pointer;border-left:2px solid transparent;transition:all .15s;}
+.nav-item:hover{color:var(--text);background:var(--s2);}
+.nav-item.active{color:var(--gold);background:var(--gold-bg);border-left-color:var(--gold);}
+.nav-soon{margin-left:auto;font-size:0.58rem;color:var(--text3);background:var(--s3);padding:2px 6px;border-radius:4px;}
+.sidebar-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.user-av{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--gold3));display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;color:#000;flex-shrink:0;}
+.user-name{font-size:0.78rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.user-role{font-size:0.6rem;color:var(--gold);}
+.main{margin-left:220px;min-height:100vh;}
+.topbar{height:54px;background:var(--s1);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:50;}
+.topbar-title{font-size:0.95rem;font-weight:800;}
+.content{padding:22px 24px;}
+.btn{padding:9px 16px;border-radius:var(--r);font-family:'Outfit',sans-serif;font-weight:700;font-size:0.8rem;cursor:pointer;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold3));color:#000;}
+.btn-gold:hover{transform:translateY(-1px);}
+.btn-gold:disabled{opacity:0.6;transform:none;cursor:not-allowed;}
+.btn-ghost{background:var(--s2);border:1px solid var(--border);color:var(--text2);}
+.btn-ghost:hover{background:var(--s3);color:var(--text);}
+.btn-danger{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red);}
+.btn-sm{padding:6px 12px;font-size:0.75rem;border-radius:8px;}
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;}
+.kpi{background:var(--s1);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px 16px;position:relative;overflow:hidden;}
+.kpi::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;}
+.kpi.gold::after{background:linear-gradient(90deg,var(--gold),var(--gold2));}
+.kpi.green::after{background:var(--green);}
+.kpi.blue::after{background:var(--blue);}
+.kpi.yellow::after{background:var(--yellow);}
+.kpi-label{font-size:0.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+.kpi-val{font-size:1.4rem;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1;}
+.search-wrap{position:relative;flex:1;min-width:200px;}
+.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;font-size:0.8rem;}
+.search-input{width:100%;padding:9px 12px 9px 32px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:'Outfit',sans-serif;font-size:0.83rem;outline:none;}
+.search-input::placeholder{color:var(--text3);}
+.search-input:focus{border-color:var(--gold-border);}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.pill{padding:5px 12px;border-radius:20px;font-size:0.7rem;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--s2);color:var(--text3);transition:all .15s;}
+.pill:hover{border-color:var(--gold-border);color:var(--text2);}
+.pill.active{background:var(--gold);color:#000;border-color:var(--gold);}
+.car-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;}
+.car-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px;cursor:pointer;transition:all .15s;border-left:3px solid transparent;}
+.car-card:hover{border-color:var(--gold-border);transform:translateY(-1px);}
+.car-card.rentado{border-left-color:var(--green);}
+.car-card.disponible{border-left-color:var(--blue);}
+.car-card.taller{border-left-color:var(--yellow);}
+.car-card.pendiente{border-left-color:var(--red);}
+.car-card.selected{border-color:var(--gold)!important;background:rgba(201,168,76,0.04);}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:20px;font-size:0.63rem;font-weight:700;white-space:nowrap;}
+.badge-red{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);}
+.badge-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
+.badge-yellow{background:var(--yellow-bg);color:var(--yellow);border:1px solid var(--yellow-border);}
+.badge-blue{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(107,159,212,0.2);}
+.badge-gray{background:rgba(255,255,255,0.05);color:var(--text3);border:1px solid var(--border);}
+.s-rentado{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
+.s-disponible{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(107,159,212,0.2);}
+.s-taller{background:var(--yellow-bg);color:var(--yellow);border:1px solid var(--yellow-border);}
+.s-pendiente{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);}
+.detail-panel{background:var(--s1);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;margin-top:16px;}
+.dp-header{background:var(--s2);padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.dp-actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;}
+.tabs{display:flex;border-bottom:1px solid var(--border);overflow-x:auto;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{padding:12px 16px;font-size:0.76rem;font-weight:700;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;}
+.tab:hover{color:var(--text2);}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.tab-content{display:none;padding:20px;}
+.tab-content.active{display:block;}
+.stat-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.stat-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.stat-box{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:12px;text-align:center;}
+.stat-box.gold{border-color:var(--gold-border);background:var(--gold-bg);}
+.stat-box.green{border-color:var(--green-border);background:var(--green-bg);}
+.stat-lbl{font-size:0.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:4px;}
+.stat-val{font-size:1rem;font-weight:800;font-family:'JetBrains Mono',monospace;}
+.pay-item{display:flex;justify-content:space-between;align-items:center;padding:10px 13px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:6px;font-size:0.8rem;gap:10px;}
+.pay-info{font-size:0.67rem;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-top:2px;}
+.upload-area{background:var(--s2);border:1.5px dashed var(--border2);border-radius:var(--r);padding:12px;text-align:center;cursor:pointer;transition:all .2s;margin-top:4px;}
+.upload-area:hover{border-color:var(--gold);background:var(--gold-bg);}
+.upload-area.has-file{border-color:var(--green);border-style:solid;background:var(--green-bg);}
+.upload-icon{font-size:1.3rem;margin-bottom:3px;}
+.upload-text{font-size:0.74rem;font-weight:600;color:var(--text2);}
+.upload-sub{font-size:0.62rem;color:var(--text3);margin-top:2px;}
+.doc-preview{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;margin-top:6px;}
+.doc-view-link{font-size:0.72rem;color:var(--gold);text-decoration:none;font-weight:600;}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:500;align-items:flex-end;justify-content:center;}
+.overlay.open{display:flex;}
+.modal{background:var(--s1);border:1px solid var(--border2);border-radius:22px 22px 0 0;padding:26px 22px;width:100%;max-width:620px;max-height:92vh;overflow-y:auto;}
+.modal-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:-6px auto 18px;}
+.modal-title{font-size:1.05rem;font-weight:800;margin-bottom:18px;}
+.modal-actions{display:flex;gap:10px;margin-top:18px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fg{margin-bottom:14px;}
+.fg label{display:block;font-size:0.65rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+.fi,.fs{width:100%;padding:10px 13px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:'Outfit',sans-serif;font-size:0.86rem;outline:none;transition:all .15s;}
+.fi::placeholder{color:var(--text3);}
+.fi:focus,.fs:focus{border-color:var(--gold-border);}
+.fs option{background:var(--s2);}
+.form-divider{font-size:0.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin:14px 0 8px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.info-box{border-radius:var(--r);padding:11px 14px;font-size:0.78rem;line-height:1.6;margin-bottom:12px;border:1px solid;}
+.info-gold{background:var(--gold-bg);border-color:var(--gold-border);color:#d4b86a;}
+.info-blue{background:var(--blue-bg);border-color:rgba(107,159,212,0.2);color:#90b8d8;}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--s1);border:1px solid var(--gold-border);border-radius:var(--r-lg);padding:14px 18px;font-size:0.82rem;font-weight:600;color:var(--gold);z-index:9999;display:none;box-shadow:0 8px 32px rgba(0,0,0,.4);}
+.empty{text-align:center;padding:40px 20px;color:var(--text3);}
+.empty-icon{font-size:2.5rem;margin-bottom:10px;opacity:.3;}
+.mono{font-family:'JetBrains Mono',monospace;}
+.fw7{font-weight:700;}.fw8{font-weight:800;}
+.text-gold{color:var(--gold);}.text-red{color:var(--red);}.text-green{color:var(--green);}.text-muted{color:var(--text3);}
+.mt8{margin-top:8px;}.mt12{margin-top:12px;}.mt16{margin-top:16px;}.mb8{margin-bottom:8px;}
+.flex{display:flex;align-items:center;}.gap8{gap:8px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:700px){
+  .sidebar{display:none;}.main{margin-left:0;}
+  .kpi-row{grid-template-columns:repeat(2,1fr);}
+  .car-grid{grid-template-columns:1fr;}
+  .stat-grid-4,.stat-grid-3,.grid2,.form-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div style="display:flex">
+<aside class="sidebar">
+  <div class="logo-wrap">
+    <div class="logo">LAGULEASE</div>
+    <div class="logo-sub">Administración de Flota</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-sec">Principal</div>
+    <div class="nav-item" onclick="location.href='app.html'"><span>🏠</span> Dashboard</div>
+    <div class="nav-sec">Operación</div>
+    <div class="nav-item" onclick="location.href='ventas.html'"><span>📣</span> Ventas</div>
+    <div class="nav-item" onclick="location.href='choferes.html'"><span>👤</span> Choferes</div>
+    <div class="nav-item active"><span>🚙</span> Flota</div>
+    <div class="nav-item"><span>🔧</span> Taller <span class="nav-soon">pronto</span></div>
+    <div class="nav-sec">Admin</div>
+    <div class="nav-item" onclick="location.href='equipo.html'"><span>👥</span> Equipo</div>
+    <div class="nav-item"><span>💼</span> Finanzas <span class="nav-soon">pronto</span></div>
+    <div class="nav-item"><span>📊</span> Reportes <span class="nav-soon">pronto</span></div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-av" id="nav-av">SL</div>
+    <div style="flex:1;min-width:0">
+      <div class="user-name" id="nav-email">Admin</div>
+      <div class="user-role">ADMIN</div>
+    </div>
+  </div>
+</aside>
+
+<div class="main" style="flex:1">
+  <div class="topbar">
+    <div class="topbar-title">🚙 Flota</div>
+    <button class="btn btn-gold btn-sm" onclick="openAddCarro()">+ Agregar carro</button>
+  </div>
+  <div class="content">
+    <div class="kpi-row" id="kpi-row"></div>
+    <div style="display:flex;gap:10px;margin-bottom:12px">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" id="search-input" placeholder="Buscar placa, marca, modelo..." oninput="renderCarros()">
+      </div>
+    </div>
+    <div class="pills">
+      <div class="pill active" onclick="setFil('todos',this)">Todos</div>
+      <div class="pill" onclick="setFil('rentado',this)">🟢 Rentados</div>
+      <div class="pill" onclick="setFil('disponible',this)">🔵 Disponibles</div>
+      <div class="pill" onclick="setFil('taller',this)">🔧 En taller</div>
+      <div class="pill" onclick="setFil('pendiente',this)">⚠️ Pendientes</div>
+    </div>
+    <div class="car-grid" id="car-grid"></div>
+    <div id="detail" style="display:none"></div>
+  </div>
+</div>
+</div>
+
+<!-- MODAL CARRO -->
+<div class="overlay" id="m-carro" onclick="if(event.target===this)closeModal('m-carro')">
+<div class="modal">
+  <div class="modal-handle"></div>
+  <div class="modal-title" id="m-carro-title">Agregar carro</div>
+  <div class="form-row">
+    <div class="fg"><label>Placa *</label><input class="fi" id="c-placa" placeholder="ABC-1234" style="text-transform:uppercase"></div>
+    <div class="fg"><label>Estado</label>
+      <select class="fs" id="c-estado">
+        <option value="disponible">🔵 Disponible</option>
+        <option value="rentado">🟢 Rentado</option>
+        <option value="taller">🔧 En taller</option>
+        <option value="pendiente">⚠️ Pendiente</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="fg"><label>Marca</label><input class="fi" id="c-marca" placeholder="Toyota"></div>
+    <div class="fg"><label>Modelo</label><input class="fi" id="c-modelo" placeholder="Corolla"></div>
+  </div>
+  <div class="form-row">
+    <div class="fg"><label>Año</label><input class="fi" id="c-anio" type="number" placeholder="2020"></div>
+    <div class="fg"><label>Color</label><input class="fi" id="c-color" placeholder="Blanco"></div>
+  </div>
+  <div class="form-row">
+    <div class="fg"><label>No. de serie (VIN)</label><input class="fi" id="c-vin" placeholder="3VWFE21C04M000001"></div>
+    <div class="fg"><label>No. de motor</label><input class="fi" id="c-motor" placeholder="ABC123456"></div>
+  </div>
+  <div class="form-row">
+    <div class="fg"><label>Costo de adquisición ($)</label><input class="fi" id="c-costo" type="number" placeholder="0"></div>
+    <div class="fg"><label>Km al adquirir</label><input class="fi" id="c-km" type="number" placeholder="0"></div>
+  </div>
+  <div class="fg"><label>Notas</label><input class="fi" id="c-notas" placeholder="Observaciones..."></div>
+
+  <div class="form-divider" style="color:var(--gold)">📄 Documentos del carro</div>
+
+  <div class="form-row">
+    <div class="fg"><label>📄 Tarjeta circulación — Vencimiento</label><input class="fi" id="c-tc-vence" type="date"></div>
+    <div class="fg">
+      <label>Foto de tarjeta</label>
+      <div class="upload-area" id="ua-tc" onclick="document.getElementById('uf-tc').click()">
+        <div class="upload-icon">📷</div><div class="upload-text">Subir foto</div><div class="upload-sub">JPG, PNG o PDF</div>
+      </div>
+      <input type="file" id="uf-tc" accept="image/*,application/pdf" capture="environment" style="display:none" onchange="prevFile('tc',this)">
+      <div id="pv-tc"></div>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="fg"><label>🛡️ Póliza de seguro — Vencimiento</label><input class="fi" id="c-seg-vence" type="date"></div>
+    <div class="fg">
+      <label>Foto de póliza</label>
+      <div class="upload-area" id="ua-seg" onclick="document.getElementById('uf-seg').click()">
+        <div class="upload-icon">📷</div><div class="upload-text">Subir foto</div><div class="upload-sub">JPG, PNG o PDF</div>
+      </div>
+      <input type="file" id="uf-seg" accept="image/*,application/pdf" capture="environment" style="display:none" onchange="prevFile('seg',this)">
+      <div id="pv-seg"></div>
+    </div>
+  </div>
+  <div class="fg">
+    <label>🧾 Factura del carro</label>
+    <div class="upload-area" id="ua-fac" onclick="document.getElementById('uf-fac').click()">
+      <div class="upload-icon">📷</div><div class="upload-text">Subir factura</div><div class="upload-sub">JPG, PNG o PDF</div>
+    </div>
+    <input type="file" id="uf-fac" accept="image/*,application/pdf" capture="environment" style="display:none" onchange="prevFile('fac',this)">
+    <div id="pv-fac"></div>
+  </div>
+
+  <div class="modal-actions">
+    <button class="btn btn-gold" style="flex:1" id="btn-save-carro" onclick="saveCarro()">Guardar carro</button>
+    <button class="btn btn-ghost" onclick="closeModal('m-carro')">Cancelar</button>
+  </div>
+</div>
+</div>
+
+<!-- MODAL ESTADO -->
+<div class="overlay" id="m-estado" onclick="if(event.target===this)closeModal('m-estado')">
+<div class="modal">
+  <div class="modal-handle"></div>
+  <div class="modal-title" id="m-estado-title">Cambiar estado</div>
+  <div id="m-estado-content"></div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+const FB={apiKey:"AIzaSyDYb4YywzBh6EUAAQSDf7SJMzuPrDduEcE",authDomain:"flotamax-2994b.firebaseapp.com",projectId:"flotamax-2994b",storageBucket:"flotamax-2994b.firebasestorage.app",messagingSenderId:"160535924045",appId:"1:160535924045:web:7d69b52db7182d5f473b04"};
+const app=initializeApp(FB);
+const db=getFirestore(app);
+const auth=getAuth(app);
+const storage=getStorage(app);
+
+let carros=[], drivers=[];
+let currentFilter='todos', openId=null, editingId=null;
+let pendingFiles={};
+
+onAuthStateChanged(auth,user=>{
+  if(!user){window.location.href='index.html';return;}
+  document.getElementById('nav-av').textContent=user.email.slice(0,2).toUpperCase();
+  document.getElementById('nav-email').textContent=user.email.split('@')[0];
+  listen();
+});
+
+function listen(){
+  onSnapshot(collection(db,'drivers'),s=>{
+    drivers=s.docs.map(d=>({id:d.id,...d.data()}));
+    renderAll();
+  });
+  onSnapshot(collection(db,'flota'),s=>{
+    carros=s.docs.map(d=>({id:d.id,...d.data()}));
+    renderAll();
+  });
+}
+
+const fmt=n=>'$'+Number(n||0).toLocaleString('es-MX');
+
+function getChofer(placa){ return drivers.find(d=>d.placa===placa&&d.activo!==false)||null; }
+function getHistorial(placa){ return drivers.filter(d=>d.placa===placa&&d.activo===false); }
+
+function statusInfo(estado){
+  const m={rentado:{label:'🟢 Rentado',cls:'s-rentado'},disponible:{label:'🔵 Disponible',cls:'s-disponible'},taller:{label:'🔧 En taller',cls:'s-taller'},pendiente:{label:'⚠️ Pendiente',cls:'s-pendiente'}};
+  return m[estado]||m.disponible;
+}
+
+function docStatus(f){
+  if(!f) return '<span class="badge badge-gray">Sin registrar</span>';
+  const today=new Date(); today.setHours(0,0,0,0);
+  const dias=Math.ceil((new Date(f+'T12:00:00')-today)/(1000*60*60*24));
+  if(dias<0) return '<span class="badge badge-red">⛔ Vencida</span>';
+  if(dias<=30) return '<span class="badge badge-yellow">⚠️ '+dias+' días</span>';
+  return '<span class="badge badge-green">✅ '+dias+' días</span>';
+}
+
+function docAlerts(c){
+  const today=new Date(); today.setHours(0,0,0,0);
+  const a=[];
+  if(c.segVence){const d=Math.ceil((new Date(c.segVence+'T12:00:00')-today)/(1000*60*60*24));if(d<0)a.push('<span class="badge badge-red">⛔ Seguro vencido</span>');else if(d<=30)a.push('<span class="badge badge-yellow">⚠️ Seguro '+d+'d</span>');}
+  if(c.tcVence){const d=Math.ceil((new Date(c.tcVence+'T12:00:00')-today)/(1000*60*60*24));if(d<0)a.push('<span class="badge badge-red">⛔ Tarjeta vencida</span>');else if(d<=30)a.push('<span class="badge badge-yellow">⚠️ Tarjeta '+d+'d</span>');}
+  return a.length?'<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:8px">'+a.join('')+'</div>':'';
+}
+
+function renderAll(){ renderKPIs(); renderCarros(); if(openId&&carros.find(c=>c.id===openId)) renderDetail(openId); }
+
+function renderKPIs(){
+  const total=carros.length;
+  const rentados=carros.filter(c=>c.estado==='rentado').length;
+  const disponibles=carros.filter(c=>c.estado==='disponible').length;
+  const taller=carros.filter(c=>c.estado==='taller').length;
+  const ingSem=drivers.filter(d=>d.activo!==false).reduce((s,d)=>s+Number(d.renta||0),0);
+  document.getElementById('kpi-row').innerHTML=
+    '<div class="kpi blue"><div class="kpi-label">Flota total</div><div class="kpi-val" style="color:var(--blue)">'+total+'</div></div>'+
+    '<div class="kpi green"><div class="kpi-label">Rentados</div><div class="kpi-val" style="color:var(--green)">'+rentados+'</div><div style="font-size:0.65rem;color:var(--text3);margin-top:3px">'+(total?Math.round(rentados/total*100):0)+'% ocupación</div></div>'+
+    '<div class="kpi blue"><div class="kpi-label">Disponibles</div><div class="kpi-val" style="color:var(--blue)">'+disponibles+'</div></div>'+
+    '<div class="kpi yellow"><div class="kpi-label">En taller</div><div class="kpi-val" style="color:var(--yellow)">'+taller+'</div></div>'+
+    '<div class="kpi gold"><div class="kpi-label">Ingresos/sem</div><div class="kpi-val text-gold" style="font-size:1.1rem">'+fmt(ingSem)+'</div></div>';
+}
+
+function renderCarros(){
+  const q=(document.getElementById('search-input')?.value||'').toLowerCase();
+  let list=[...carros];
+
+  if(q) list=list.filter(c=>(c.placa||'').toLowerCase().includes(q)||(c.marca||'').toLowerCase().includes(q)||(c.modelo||'').toLowerCase().includes(q));
+  if(currentFilter!=='todos') list=list.filter(c=>c.estado===currentFilter);
+  const el=document.getElementById('car-grid');
+  if(!list.length){el.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🚙</div><div>Sin carros</div></div>';return;}
+  el.innerHTML=list.map(c=>{
+    const ch=getChofer(c.placa);
+    const st=statusInfo(c.estado);
+    const sel=openId===c.id;
+    return '<div class="car-card '+c.estado+(sel?' selected':'')+'" onclick="toggleDetail(\''+c.id+'\')">'+
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'+
+        '<div style="font-family:JetBrains Mono,monospace;font-size:1.1rem;font-weight:800;letter-spacing:2px">'+c.placa+'</div>'+
+        '<span class="badge '+st.cls+'">'+st.label+'</span>'+
+      '</div>'+
+      (c.marca||c.modelo?'<div style="font-size:0.75rem;color:var(--text2);margin-bottom:4px">'+[c.anio,c.marca,c.modelo,c.color].filter(Boolean).join(' · ')+'</div>':'')+
+      (ch?'<div style="font-size:0.85rem;font-weight:700;margin-bottom:2px">👤 '+ch.nombre+'</div><div style="font-size:0.68rem;color:var(--text3);">'+(ch.plataforma||'')+' · Desde '+(ch.inicio||'—')+'</div>':
+          '<div style="font-size:0.75rem;color:var(--text3)">Sin chofer asignado</div>')+
+      '<div style="margin-top:10px">'+
+        (ch?'<div style="font-size:0.9rem;font-weight:800;color:var(--gold)">'+fmt(ch.renta)+'/sem</div>':'<div style="font-size:0.8rem;color:var(--text3)">$0/sem</div>')+
+      '</div>'+
+      docAlerts(c)+
+    '</div>';
+  }).join('');
+}
+
+function toggleDetail(id){
+  if(openId===id){openId=null;document.getElementById('detail').style.display='none';renderCarros();return;}
+  openId=id;renderDetail(id);renderCarros();
+}
+
+function renderDetail(id){
+  const c=carros.find(x=>x.id===id);if(!c)return;
+  const ch=getChofer(c.placa);
+  const hist=getHistorial(c.placa);
+  const st=statusInfo(c.estado);
+  const det=document.getElementById('detail');
+  det.style.display='block';
+  const costoAdq=Number(c.costo||0);
+  const rentaSem=ch?Number(ch.renta||0):0;
+  const meses=ch&&ch.inicio?Math.floor((new Date()-new Date(ch.inicio+'T12:00:00'))/(1000*60*60*24*30)):0;
+  const ingTotal=rentaSem*4*meses;
+  const roi=costoAdq>0?Math.round(ingTotal/costoAdq*100):0;
+
+  det.innerHTML='<div class="detail-panel">'+
+    '<div class="dp-header">'+
+      '<div>'+
+        '<div style="font-family:JetBrains Mono,monospace;font-size:1.3rem;font-weight:800;letter-spacing:3px">'+c.placa+'</div>'+
+        '<div style="font-size:0.75rem;color:var(--text3);margin-top:3px">'+([c.anio,c.marca,c.modelo,c.color].filter(Boolean).join(' · ')||'Sin datos del vehículo')+'</div>'+
+        '<div style="margin-top:6px"><span class="badge '+st.cls+'">'+st.label+'</span></div>'+
+      '</div>'+
+      '<div class="dp-actions">'+
+        '<button class="btn btn-gold btn-sm" onclick="openEstado(\''+id+'\')">⇄ Estado</button>'+
+        '<button class="btn btn-ghost btn-sm" onclick="openEditCarro(\''+id+'\')">✏️ Editar</button>'+
+        '<button class="btn btn-danger btn-sm" onclick="eliminarCarro(\''+id+'\')">🗑️</button>'+
+      '</div>'+
+    '</div>'+
+    '<div class="tabs">'+
+      '<div class="tab active" onclick="swTab(this,\'ti-'+id+'\')">Info</div>'+
+      '<div class="tab" onclick="swTab(this,\'tdoc-'+id+'\')">📄 Documentos</div>'+
+      '<div class="tab" onclick="swTab(this,\'tch-'+id+'\')">Chofer actual</div>'+
+      '<div class="tab" onclick="swTab(this,\'this2-'+id+'\')">Historial ('+hist.length+')</div>'+
+      '<div class="tab" onclick="swTab(this,\'tfin-'+id+'\')">Financiero</div>'+
+    '</div>'+
+    '<div class="tab-content active" id="ti-'+id+'">'+
+      '<div class="grid2">'+
+        '<div>'+
+          '<div style="font-size:0.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Datos del vehículo</div>'+
+          '<div class="pay-item"><span class="text-muted">Placa</span><span class="mono fw7">'+c.placa+'</span></div>'+
+          '<div class="pay-item"><span class="text-muted">Marca / Modelo</span><span>'+(c.marca||'—')+' '+(c.modelo||'')+'</span></div>'+
+          '<div class="pay-item"><span class="text-muted">Año</span><span>'+(c.anio||'—')+'</span></div>'+
+          '<div class="pay-item"><span class="text-muted">Color</span><span>'+(c.color||'—')+'</span></div>'+
+        '</div>'+
+        '<div>'+
+          '<div style="font-size:0.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Datos técnicos</div>'+
+          '<div class="pay-item"><span class="text-muted">No. de serie</span><span class="mono" style="font-size:0.7rem">'+(c.vin||'—')+'</span></div>'+
+          '<div class="pay-item"><span class="text-muted">No. de motor</span><span class="mono" style="font-size:0.7rem">'+(c.motor||'—')+'</span></div>'+
+          '<div class="pay-item"><span class="text-muted">Km al adquirir</span><span class="mono">'+(c.km?Number(c.km).toLocaleString('es-MX')+' km':'—')+'</span></div>'+
+          '<div class="pay-item"><span class="text-muted">Costo adquisición</span><span class="mono">'+(c.costo?fmt(c.costo):'—')+'</span></div>'+
+        '</div>'+
+      '</div>'+
+      (c.notas?'<div class="info-box info-blue" style="margin-top:12px">📝 '+c.notas+'</div>':'')+
+    '</div>'+
+    '<div class="tab-content" id="tdoc-'+id+'">'+
+      '<div class="stat-grid-3">'+
+        '<div class="stat-box"><div class="stat-lbl">📄 Tarjeta circulación</div><div style="font-size:0.78rem;font-weight:700;margin:6px 0">'+(c.tcVence||'No registrada')+'</div>'+docStatus(c.tcVence)+'<div style="margin-top:8px">'+(c.tcUrl?'<a class="doc-view-link" href="'+c.tcUrl+'" target="_blank">📎 Ver tarjeta →</a>':'<span style="font-size:0.65rem;color:var(--text3)">Sin foto</span>')+'</div></div>'+
+        '<div class="stat-box"><div class="stat-lbl">🛡️ Póliza de seguro</div><div style="font-size:0.78rem;font-weight:700;margin:6px 0">'+(c.segVence||'No registrada')+'</div>'+docStatus(c.segVence)+'<div style="margin-top:8px">'+(c.segUrl?'<a class="doc-view-link" href="'+c.segUrl+'" target="_blank">📎 Ver póliza →</a>':'<span style="font-size:0.65rem;color:var(--text3)">Sin foto</span>')+'</div></div>'+
+        '<div class="stat-box"><div class="stat-lbl">🧾 Factura</div><div style="font-size:0.78rem;font-weight:700;margin:6px 0">'+(c.facUrl?'Guardada':'No registrada')+'</div><div style="margin-top:8px">'+(c.facUrl?'<a class="doc-view-link" href="'+c.facUrl+'" target="_blank">📎 Ver factura →</a>':'<span style="font-size:0.65rem;color:var(--text3)">Sin foto</span>')+'</div></div>'+
+      '</div>'+
+      '<button class="btn btn-ghost btn-sm" style="margin-top:12px" onclick="openEditCarro(\''+id+'\')">✏️ Actualizar documentos</button>'+
+    '</div>'+
+    '<div class="tab-content" id="tch-'+id+'">'+
+      (ch?
+        '<div class="stat-grid-4">'+
+          '<div class="stat-box gold"><div class="stat-lbl">Renta/sem</div><div class="stat-val text-gold">'+fmt(ch.renta)+'</div></div>'+
+          '<div class="stat-box"><div class="stat-lbl">Plataforma</div><div class="stat-val" style="font-size:0.75rem">'+(ch.plataforma||'—')+'</div></div>'+
+          '<div class="stat-box"><div class="stat-lbl">Viajes</div><div class="stat-val">'+(ch.viajes||'—')+'</div></div>'+
+          '<div class="stat-box"><div class="stat-lbl">Desde</div><div class="stat-val" style="font-size:0.72rem">'+(ch.inicio||'—')+'</div></div>'+
+        '</div>'+
+        '<div class="pay-item"><span class="text-muted">Nombre</span><span class="fw7">'+ch.nombre+'</span></div>'+
+        '<div class="pay-item"><span class="text-muted">Teléfono</span><span class="mono">'+(ch.tel||'—')+'</span></div>'+
+        '<div class="pay-item"><span class="text-muted">Ingresos/sem</span><span class="mono '+(Number(ch.ingresos)>=6300?'text-green':'text-red')+'">'+(ch.ingresos?fmt(ch.ingresos):'—')+'</span></div>'+
+        '<button class="btn btn-ghost btn-sm" style="margin-top:12px" onclick="location.href=\'choferes.html\'">Ver en Choferes →</button>'
+        :'<div class="empty" style="padding:28px"><div class="empty-icon">👤</div><div>Sin chofer asignado</div></div>'
+      )+
+    '</div>'+
+    '<div class="tab-content" id="this2-'+id+'">'+
+      (ch?'<div class="pay-item" style="border-color:var(--green-border)"><div><div class="fw7">'+ch.nombre+'</div><div class="pay-info">Desde '+(ch.inicio||'—')+' · '+fmt(ch.renta)+'/sem</div></div><span class="badge badge-green">Activo</span></div>':'')+
+      hist.map(h=>'<div class="pay-item"><div><div class="fw7">'+h.nombre+'</div><div class="pay-info">Desde '+(h.inicio||'—')+' · '+fmt(h.renta)+'/sem · '+(h.motivoSalida||'—')+'</div></div><span class="badge badge-gray">Inactivo</span></div>').join('')+
+      (!ch&&!hist.length?'<div class="empty" style="padding:28px"><div class="empty-icon">📋</div><div>Sin historial</div></div>':'')+
+    '</div>'+
+    '<div class="tab-content" id="tfin-'+id+'">'+
+      '<div class="stat-grid-4">'+
+        '<div class="stat-box gold"><div class="stat-lbl">Renta/sem</div><div class="stat-val text-gold">'+fmt(rentaSem)+'</div></div>'+
+        '<div class="stat-box green"><div class="stat-lbl">Ingresos estimados</div><div class="stat-val text-green" style="font-size:0.82rem">'+fmt(ingTotal)+'</div><div style="font-size:0.6rem;color:var(--text3)">'+meses+' meses</div></div>'+
+        '<div class="stat-box"><div class="stat-lbl">Costo adquisición</div><div class="stat-val">'+fmt(costoAdq)+'</div></div>'+
+        '<div class="stat-box '+(roi>=100?'green':'')+'"><div class="stat-lbl">ROI estimado</div><div class="stat-val" style="color:'+(roi>=100?'var(--green)':roi>=50?'var(--gold)':'var(--red)')+'">'+roi+'%</div></div>'+
+      '</div>'+
+      '<div class="info-box info-blue">ROI e ingresos son estimados basados en la renta actual y el tiempo del chofer activo.</div>'+
+    '</div>'+
+  '</div>';
+
+  det.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function swTab(el,id){
+  const panel=el.closest('.detail-panel');
+  panel.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  panel.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+
+function setFil(f,el){currentFilter=f;document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));el.classList.add('active');renderCarros();}
+
+function prevFile(tipo,input){
+  const file=input.files[0];if(!file)return;
+  pendingFiles[tipo]=file;
+  const area=document.getElementById('ua-'+tipo);
+  area.classList.add('has-file');
+  area.querySelector('.upload-text').textContent='✅ '+file.name;
+  area.querySelector('.upload-sub').textContent=(file.size/1024).toFixed(0)+' KB';
+  const pv=document.getElementById('pv-'+tipo);
+  if(file.type.startsWith('image/')){
+    const reader=new FileReader();
+    reader.onload=e=>{pv.innerHTML='<div class="doc-preview"><img src="'+e.target.result+'" style="width:44px;height:44px;object-fit:cover;border-radius:6px"><div style="font-size:0.72rem">'+file.name+'</div></div>';};
+    reader.readAsDataURL(file);
+  } else {
+    pv.innerHTML='<div class="doc-preview"><span style="font-size:1.8rem">📄</span><div style="font-size:0.72rem">'+file.name+'</div></div>';
+  }
+}
+
+async function uploadFile(carroId,tipo,file){
+  if(!file)return null;
+  const ext=file.name.split('.').pop();
+  const r=ref(storage,'carros/'+carroId+'/'+tipo+'_'+Date.now()+'.'+ext);
+  await uploadBytes(r,file);
+  return await getDownloadURL(r);
+}
+
+function resetForm(){
+  ['c-placa','c-marca','c-modelo','c-color','c-vin','c-motor','c-notas'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('c-anio').value='';
+  document.getElementById('c-costo').value='0';
+  document.getElementById('c-km').value='0';
+  document.getElementById('c-estado').value='disponible';
+  document.getElementById('c-tc-vence').value='';
+  document.getElementById('c-seg-vence').value='';
+  pendingFiles={};
+  ['tc','seg','fac'].forEach(t=>{
+    const a=document.getElementById('ua-'+t);
+    if(a){a.classList.remove('has-file');a.querySelector('.upload-text').textContent='Subir foto';a.querySelector('.upload-sub').textContent='JPG, PNG o PDF';}
+    const p=document.getElementById('pv-'+t);if(p)p.innerHTML='';
+    const inp=document.getElementById('uf-'+t);if(inp)inp.value='';
+  });
+}
+
+function openAddCarro(){editingId=null;document.getElementById('m-carro-title').textContent='Agregar carro';resetForm();openModal('m-carro');}
+
+function openEditCarro(id){
+  editingId=id;
+  const c=carros.find(x=>x.id===id);if(!c)return;
+  document.getElementById('m-carro-title').textContent='Editar carro';
+  resetForm();
+  document.getElementById('c-placa').value=c.placa||'';
+  document.getElementById('c-marca').value=c.marca||'';
+  document.getElementById('c-modelo').value=c.modelo||'';
+  document.getElementById('c-anio').value=c.anio||'';
+  document.getElementById('c-color').value=c.color||'';
+  document.getElementById('c-vin').value=c.vin||'';
+  document.getElementById('c-motor').value=c.motor||'';
+  document.getElementById('c-costo').value=c.costo||0;
+  document.getElementById('c-km').value=c.km||0;
+  document.getElementById('c-estado').value=c.estado||'disponible';
+  document.getElementById('c-notas').value=c.notas||'';
+  document.getElementById('c-tc-vence').value=c.tcVence||'';
+  document.getElementById('c-seg-vence').value=c.segVence||'';
+  ['tc','seg','fac'].forEach(t=>{
+    const url=t==='tc'?c.tcUrl:t==='seg'?c.segUrl:c.facUrl;
+    const a=document.getElementById('ua-'+t);
+    const p=document.getElementById('pv-'+t);
+    if(url&&a){a.classList.add('has-file');a.querySelector('.upload-text').textContent='✅ Guardado';}
+    if(url&&p)p.innerHTML='<div class="doc-preview"><span style="font-size:1.8rem">🖼️</span><a class="doc-view-link" href="'+url+'" target="_blank">Ver →</a></div>';
+  });
+  openModal('m-carro');
+}
+
+async function saveCarro(){
+  const placa=document.getElementById('c-placa').value.trim().toUpperCase();
+  if(!placa){toast('⚠️ Falta la placa','red');return;}
+  const btn=document.getElementById('btn-save-carro');
+  btn.disabled=true;btn.textContent='⏳ Guardando...';
+  const data={
+    placa,estado:document.getElementById('c-estado').value,
+    marca:document.getElementById('c-marca').value.trim(),
+    modelo:document.getElementById('c-modelo').value.trim(),
+    anio:document.getElementById('c-anio').value,
+    color:document.getElementById('c-color').value.trim(),
+    vin:document.getElementById('c-vin').value.trim(),
+    motor:document.getElementById('c-motor').value.trim(),
+    costo:Number(document.getElementById('c-costo').value||0),
+    km:Number(document.getElementById('c-km').value||0),
+    tcVence:document.getElementById('c-tc-vence').value,
+    segVence:document.getElementById('c-seg-vence').value,
+    notas:document.getElementById('c-notas').value.trim(),
+    updatedAt:serverTimestamp()
+  };
+  try{
+    const tempId=editingId||'car_'+Date.now();
+    if(pendingFiles['tc']){btn.textContent='⏳ Subiendo tarjeta...';data.tcUrl=await uploadFile(tempId,'tarjeta',pendingFiles['tc']);}
+    if(pendingFiles['seg']){btn.textContent='⏳ Subiendo seguro...';data.segUrl=await uploadFile(tempId,'seguro',pendingFiles['seg']);}
+    if(pendingFiles['fac']){btn.textContent='⏳ Subiendo factura...';data.facUrl=await uploadFile(tempId,'factura',pendingFiles['fac']);}
+    btn.textContent='⏳ Guardando datos...';
+    if(editingId){await updateDoc(doc(db,'flota',editingId),data);toast('✓ Carro actualizado');}
+    else{data.createdAt=serverTimestamp();await addDoc(collection(db,'flota'),data);toast('✓ Carro agregado');}
+    closeModal('m-carro');
+  }catch(e){toast('Error: '+e.message,'red');}
+  finally{btn.disabled=false;btn.textContent='Guardar carro';}
+}
+
+async function eliminarCarro(id){
+  if(!confirm('¿Eliminar este carro permanentemente?'))return;
+  try{await deleteDoc(doc(db,'flota',id));openId=null;document.getElementById('detail').style.display='none';toast('✓ Carro eliminado');}
+  catch(e){toast('Error: '+e.message,'red');}
+}
+
+function openEstado(id){
+  const c=carros.find(x=>x.id===id);if(!c)return;
+  const st=statusInfo(c.estado);
+  document.getElementById('m-estado-title').textContent='Estado — '+c.placa;
+  document.getElementById('m-estado-content').innerHTML=
+    '<div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:14px">Estado actual: <span class="badge '+st.cls+'">'+st.label+'</span></div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">'+
+      '<button class="btn '+(c.estado==='disponible'?'btn-gold':'btn-ghost')+'" onclick="cambiarEstado(\''+id+'\',\'disponible\')">🔵 Disponible</button>'+
+      '<button class="btn '+(c.estado==='rentado'?'btn-gold':'btn-ghost')+'" onclick="cambiarEstado(\''+id+'\',\'rentado\')">🟢 Rentado</button>'+
+      '<button class="btn '+(c.estado==='taller'?'btn-gold':'btn-ghost')+'" onclick="cambiarEstado(\''+id+'\',\'taller\')">🔧 En taller</button>'+
+      '<button class="btn '+(c.estado==='pendiente'?'btn-gold':'btn-ghost')+'" onclick="cambiarEstado(\''+id+'\',\'pendiente\')">⚠️ Pendiente</button>'+
+    '</div>'+
+    '<button class="btn btn-ghost" style="width:100%" onclick="closeModal(\'m-estado\')">Cancelar</button>';
+  openModal('m-estado');
+}
+
+async function cambiarEstado(id,estado){
+  try{await updateDoc(doc(db,'flota',id),{estado,estadoDesde:serverTimestamp(),updatedAt:serverTimestamp()});closeModal('m-estado');toast('✓ Estado actualizado');}
+  catch(e){toast('Error: '+e.message,'red');}
+}
+
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id)?.classList.remove('open');}
+
+function toast(msg,type='gold'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.display='block';
+  t.style.borderColor=type==='red'?'var(--red-border)':'var(--gold-border)';
+  t.style.color=type==='red'?'var(--red)':'var(--gold)';
+  clearTimeout(window._tt);window._tt=setTimeout(()=>t.style.display='none',2800);
+}
+
+Object.assign(window,{
+  renderCarros,setFil,toggleDetail,swTab,
+  openAddCarro,openEditCarro,saveCarro,eliminarCarro,
+  openEstado,cambiarEstado,prevFile,
+  openModal,closeModal,toast
+});
+</script>
+</body>
+</html>
