@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LAGULEASE — Equipo</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#C9A84C;--gold2:#F5D78E;--gold3:#8B6914;
+  --gold-bg:rgba(201,168,76,0.08);--gold-border:rgba(201,168,76,0.18);
+  --bg:#080808;--s1:#0f0f0f;--s2:#161616;--s3:#1e1e1e;
+  --border:rgba(255,255,255,0.06);--border2:rgba(201,168,76,0.15);
+  --text:#f0ede8;--text2:#8a8680;--text3:#4a4845;
+  --red:#e05252;--red-bg:rgba(224,82,82,0.08);--red-border:rgba(224,82,82,0.2);
+  --green:#52c472;--green-bg:rgba(82,196,114,0.08);--green-border:rgba(82,196,114,0.2);
+  --yellow:#e8a020;--yellow-bg:rgba(232,160,32,0.08);--yellow-border:rgba(232,160,32,0.2);
+  --blue:#6b9fd4;--blue-bg:rgba(107,159,212,0.08);
+  --r:10px;--r-lg:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px;}
+
+.sidebar{width:220px;background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;}
+.logo-wrap{padding:22px 20px;border-bottom:1px solid var(--border);}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:4px;background:linear-gradient(135deg,var(--gold),var(--gold2),var(--gold3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo-sub{font-size:0.58rem;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-top:2px;}
+.nav{flex:1;padding:8px 0;}
+.nav-sec{padding:14px 20px 4px;font-size:0.58rem;letter-spacing:2px;color:var(--text3);text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:0.82rem;font-weight:600;color:var(--text2);cursor:pointer;border-left:2px solid transparent;transition:all .15s;}
+.nav-item:hover{color:var(--text);background:var(--s2);}
+.nav-item.active{color:var(--gold);background:var(--gold-bg);border-left-color:var(--gold);}
+.nav-soon{margin-left:auto;font-size:0.58rem;color:var(--text3);background:var(--s3);padding:2px 6px;border-radius:4px;}
+.sidebar-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.user-av{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--gold3));display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;color:#000;flex-shrink:0;}
+.user-name{font-size:0.78rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.user-role{font-size:0.6rem;color:var(--gold);}
+
+.main{margin-left:220px;min-height:100vh;}
+.topbar{height:54px;background:var(--s1);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:50;}
+.topbar-title{font-size:0.95rem;font-weight:800;}
+.content{padding:22px 24px;}
+
+.btn{padding:9px 16px;border-radius:var(--r);font-family:'Outfit',sans-serif;font-weight:700;font-size:0.8rem;cursor:pointer;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold3));color:#000;}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(201,168,76,0.3);}
+.btn-gold:disabled{opacity:0.6;transform:none;cursor:not-allowed;}
+.btn-ghost{background:var(--s2);border:1px solid var(--border);color:var(--text2);}
+.btn-ghost:hover{background:var(--s3);color:var(--text);}
+.btn-danger{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red);}
+.btn-sm{padding:6px 12px;font-size:0.75rem;border-radius:8px;}
+.btn-xs{padding:4px 9px;font-size:0.7rem;border-radius:6px;}
+
+/* RECLUTADOR CARD */
+.rec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-bottom:24px;}
+.rec-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;transition:all .15s;}
+.rec-card:hover{border-color:var(--gold-border);}
+.rec-card.inactive{opacity:0.6;}
+.rec-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+.rec-av{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.05rem;flex-shrink:0;}
+.rec-name{font-size:1rem;font-weight:800;margin-bottom:3px;}
+.rec-email{font-size:0.7rem;color:var(--text3);font-family:'JetBrains Mono',monospace;}
+.rec-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
+.rec-stat{background:var(--s2);border-radius:var(--r);padding:10px;text-align:center;}
+.rec-stat-val{font-size:0.95rem;font-weight:800;font-family:'JetBrains Mono',monospace;}
+.rec-stat-lbl{font-size:0.58rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-top:3px;}
+.progress-wrap{margin-bottom:14px;}
+.progress-track{background:rgba(255,255,255,0.05);border-radius:4px;height:5px;overflow:hidden;margin-top:5px;}
+.progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .8s ease;}
+.rec-actions{display:flex;gap:8px;}
+
+/* TABLA RANKING */
+.ranking-table{background:var(--s1);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;margin-bottom:24px;}
+.ranking-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.ranking-title{font-size:0.82rem;font-weight:800;}
+.ranking-row{display:grid;grid-template-columns:32px 1fr repeat(5,80px);align-items:center;padding:12px 18px;border-bottom:1px solid var(--border);font-size:0.8rem;gap:10px;}
+.ranking-row:last-child{border-bottom:none;}
+.ranking-row.header{background:var(--s2);font-size:0.65rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);}
+.rank-num{font-weight:800;font-family:'JetBrains Mono',monospace;text-align:center;}
+
+/* MODALS */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:500;align-items:flex-end;justify-content:center;}
+.overlay.open{display:flex;}
+.modal{background:var(--s1);border:1px solid var(--border2);border-radius:22px 22px 0 0;padding:26px 22px;width:100%;max-width:580px;max-height:92vh;overflow-y:auto;}
+.modal-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:-6px auto 18px;}
+.modal-title{font-size:1.05rem;font-weight:800;margin-bottom:18px;}
+.modal-actions{display:flex;gap:10px;margin-top:18px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fg{margin-bottom:14px;}
+.fg label{display:block;font-size:0.65rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+.fi,.fs{width:100%;padding:10px 13px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:'Outfit',sans-serif;font-size:0.86rem;outline:none;transition:all .15s;}
+.fi::placeholder{color:var(--text3);}
+.fi:focus,.fs:focus{border-color:var(--gold-border);}
+.fs option{background:var(--s2);}
+.info-box{border-radius:var(--r);padding:11px 14px;font-size:0.78rem;line-height:1.6;margin-bottom:12px;border:1px solid;}
+.info-gold{background:var(--gold-bg);border-color:var(--gold-border);color:#d4b86a;}
+.info-red{background:var(--red-bg);border-color:var(--red-border);color:#e88080;}
+.info-blue{background:var(--blue-bg);border-color:rgba(107,159,212,0.2);color:#90b8d8;}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:0.63rem;font-weight:700;}
+.badge-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
+.badge-gray{background:rgba(255,255,255,0.05);color:var(--text3);border:1px solid var(--border);}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--s1);border:1px solid var(--gold-border);border-radius:var(--r-lg);padding:14px 18px;font-size:0.82rem;font-weight:600;color:var(--gold);z-index:9999;display:none;box-shadow:0 8px 32px rgba(0,0,0,.4);}
+.empty{text-align:center;padding:48px 20px;color:var(--text3);}
+.empty-icon{font-size:2.5rem;margin-bottom:10px;opacity:.3;}
+.mono{font-family:'JetBrains Mono',monospace;}
+.fw7{font-weight:700;}.fw8{font-weight:800;}
+.text-gold{color:var(--gold);}.text-red{color:var(--red);}.text-green{color:var(--green);}.text-muted{color:var(--text3);}
+.mt8{margin-top:8px;}.mt16{margin-top:16px;}.mb8{margin-bottom:8px;}.mb16{margin-bottom:16px;}
+.flex{display:flex;align-items:center;}.gap8{gap:8px;}
+
+@media(max-width:700px){
+  .sidebar{display:none;}.main{margin-left:0;}
+  .rec-stats{grid-template-columns:repeat(2,1fr);}
+  .ranking-row{grid-template-columns:32px 1fr repeat(2,70px);}
+  .ranking-row .hide-mobile{display:none;}
+  .form-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div style="display:flex">
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo-wrap">
+    <div class="logo">LAGULEASE</div>
+    <div class="logo-sub">Administración de Flota</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-sec">Principal</div>
+    <div class="nav-item" onclick="location.href='app.html'"><span>🏠</span> Dashboard</div>
+    <div class="nav-sec">Operación</div>
+    <div class="nav-item" onclick="location.href='ventas.html'"><span>📣</span> Ventas</div>
+    <div class="nav-item" onclick="location.href='choferes.html'"><span>👤</span> Choferes</div>
+    <div class="nav-item"><span>🚙</span> Flota <span class="nav-soon">pronto</span></div>
+    <div class="nav-item"><span>🔧</span> Taller <span class="nav-soon">pronto</span></div>
+    <div class="nav-sec">Admin</div>
+    <div class="nav-item active"><span>👥</span> Equipo</div>
+    <div class="nav-item"><span>💼</span> Finanzas <span class="nav-soon">pronto</span></div>
+    <div class="nav-item"><span>📊</span> Reportes <span class="nav-soon">pronto</span></div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-av" id="nav-av">SL</div>
+    <div style="flex:1;min-width:0">
+      <div class="user-name" id="nav-email">Admin</div>
+      <div class="user-role">ADMIN</div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main" style="flex:1">
+  <div class="topbar">
+    <div class="topbar-title">👥 Equipo — Reclutadores</div>
+    <button class="btn btn-gold btn-sm" onclick="openAddRec()">+ Agregar reclutador</button>
+  </div>
+  <div class="content">
+    <div id="rec-grid" class="rec-grid"></div>
+    <div id="ranking-section"></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ MODAL AGREGAR/EDITAR RECLUTADOR ═══ -->
+<div class="overlay" id="m-rec" onclick="if(event.target===this)closeModal('m-rec')">
+<div class="modal">
+  <div class="modal-handle"></div>
+  <div class="modal-title" id="m-rec-title">Agregar reclutador</div>
+  <div class="info-box info-blue">El reclutador necesitará una cuenta en Firebase Auth para acceder al sistema. Créala en <strong>console.firebase.google.com</strong> → Authentication → Add user.</div>
+  <div class="form-row">
+    <div class="fg"><label>Nombre completo *</label><input class="fi" id="r-nombre" placeholder="Juan García"></div>
+    <div class="fg"><label>Email (igual que Firebase Auth) *</label><input class="fi" id="r-email" placeholder="juan@lagulease.com" type="email"></div>
+  </div>
+  <div class="form-row">
+    <div class="fg"><label>Teléfono</label><input class="fi" id="r-tel" placeholder="8112345678" type="tel"></div>
+    <div class="fg"><label>Comisión por entrega ($)</label><input class="fi" id="r-comision" type="number" placeholder="3000" value="3000"></div>
+  </div>
+  <div class="form-row">
+    <div class="fg"><label>Meta semanal (entregas)</label><input class="fi" id="r-meta" type="number" placeholder="2" value="2"></div>
+    <div class="fg"><label>Color de identificación</label>
+      <select class="fs" id="r-color">
+        <option value="#6b9fd4">🔵 Azul</option>
+        <option value="#52c472">🟢 Verde</option>
+        <option value="#C9A84C">🟡 Dorado</option>
+        <option value="#a78bfa">🟣 Morado</option>
+        <option value="#e05252">🔴 Rojo</option>
+        <option value="#34d399">🩵 Turquesa</option>
+      </select>
+    </div>
+  </div>
+  <div class="fg"><label>Notas</label><input class="fi" id="r-notas" placeholder="Observaciones..."></div>
+  <div class="modal-actions">
+    <button class="btn btn-gold" style="flex:1" id="btn-save-rec" onclick="saveRec()">Guardar reclutador</button>
+    <button class="btn btn-ghost" onclick="closeModal('m-rec')">Cancelar</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══ MODAL DETALLE RECLUTADOR ═══ -->
+<div class="overlay" id="m-rec-det" onclick="if(event.target===this)closeModal('m-rec-det')">
+<div class="modal">
+  <div class="modal-handle"></div>
+  <div class="modal-title" id="m-rec-det-title">Detalle reclutador</div>
+  <div id="m-rec-det-content"></div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const FB={apiKey:"AIzaSyDYb4YywzBh6EUAAQSDf7SJMzuPrDduEcE",authDomain:"flotamax-2994b.firebaseapp.com",projectId:"flotamax-2994b",storageBucket:"flotamax-2994b.firebasestorage.app",messagingSenderId:"160535924045",appId:"1:160535924045:web:7d69b52db7182d5f473b04"};
+const app=initializeApp(FB);
+const db=getFirestore(app);
+const auth=getAuth(app);
+
+let reclutadores=[], leads=[];
+let editingId=null;
+
+// ── Auth ───────────────────────────────────────────
+onAuthStateChanged(auth, user=>{
+  if(!user){window.location.href='index.html';return;}
+  // Only admin can access this page
+  if(user.email!=='santiagolopezm32@gmail.com'){
+    window.location.href='ventas.html'; return;
+  }
+  document.getElementById('nav-av').textContent=user.email.slice(0,2).toUpperCase();
+  document.getElementById('nav-email').textContent=user.email.split('@')[0];
+  listen();
+});
+
+function listen(){
+  onSnapshot(collection(db,'reclutadores'), s=>{
+    reclutadores=s.docs.map(d=>({id:d.id,...d.data()}));
+    renderAll();
+  });
+  onSnapshot(query(collection(db,'leads'),orderBy('createdAt','desc')), s=>{
+    leads=s.docs.map(d=>({id:d.id,...d.data()}));
+    renderAll();
+  });
+}
+
+// ── Helpers ────────────────────────────────────────
+const fmt=n=>'$'+Number(n||0).toLocaleString('es-MX');
+const fmtDate=ts=>{if(!ts)return'—';const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'});};
+const ini=n=>(n||'').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+
+function getLunes(){
+  const l=new Date(); l.setHours(0,0,0,0); l.setDate(l.getDate()-l.getDay()+(l.getDay()===0?-6:1)); return l;
+}
+
+function getRecStats(r){
+  const lunes=getLunes();
+  const misLeads=leads.filter(l=>l.reclutadorId===r.id);
+  const entregadosSem=misLeads.filter(l=>{
+    if(l.etapa!=='entregado') return false;
+    const d=l.entregadoEn?.toDate?l.entregadoEn.toDate():null;
+    return d&&d>=lunes;
+  }).length;
+  const totalEntregados=misLeads.filter(l=>l.etapa==='entregado').length;
+  const enPipeline=misLeads.filter(l=>l.etapa!=='entregado'&&l.etapa!=='rechazado').length;
+  const rechazados=misLeads.filter(l=>l.etapa==='rechazado').length;
+  const totalLeads=misLeads.length||1;
+  const conversion=Math.round(totalEntregados/totalLeads*100);
+  const meta=r.metaSem||2;
+  const comision=r.comision||3000;
+  const comisionSem=entregadosSem*comision;
+  const comisionTotal=totalEntregados*comision;
+  const pct=Math.min(100,Math.round(entregadosSem/meta*100));
+  return {entregadosSem,totalEntregados,enPipeline,rechazados,conversion,meta,comision,comisionSem,comisionTotal,pct};
+}
+
+// ── Render ─────────────────────────────────────────
+function renderAll(){ renderGrid(); renderRanking(); }
+
+function renderGrid(){
+  const el=document.getElementById('rec-grid');
+  if(!reclutadores.length){
+    el.innerHTML=`<div style="grid-column:1/-1"><div class="empty"><div class="empty-icon">👥</div><div>No hay reclutadores registrados</div><button class="btn btn-gold" style="margin-top:16px" onclick="openAddRec()">+ Agregar primer reclutador</button></div></div>`;
+    return;
+  }
+  el.innerHTML=reclutadores.map(r=>{
+    const st=getRecStats(r);
+    const color=r.color||'#6b9fd4';
+    const bgColor=color+'22';
+    return `<div class="rec-card${r.activo===false?' inactive':''}">
+      <div class="rec-header">
+        <div class="rec-av" style="background:${bgColor};color:${color}">${ini(r.nombre)}</div>
+        <div style="flex:1">
+          <div class="rec-name">${r.nombre}</div>
+          <div class="rec-email">${r.email||'Sin email'}</div>
+          <div style="margin-top:4px">${r.activo===false?'<span class="badge badge-gray">Inactivo</span>':'<span class="badge badge-green">Activo</span>'}</div>
+        </div>
+        <button class="btn btn-ghost btn-xs" onclick="openDetRec('${r.id}')">Ver detalle</button>
+      </div>
+      <div class="rec-stats">
+        <div class="rec-stat"><div class="rec-stat-val text-gold">${st.entregadosSem}</div><div class="rec-stat-lbl">Esta sem</div></div>
+        <div class="rec-stat"><div class="rec-stat-val" style="color:var(--green)">${st.totalEntregados}</div><div class="rec-stat-lbl">Total</div></div>
+        <div class="rec-stat"><div class="rec-stat-val" style="color:var(--blue)">${st.enPipeline}</div><div class="rec-stat-lbl">Pipeline</div></div>
+        <div class="rec-stat"><div class="rec-stat-val" style="color:var(--gold)">${st.conversion}%</div><div class="rec-stat-lbl">Conversión</div></div>
+      </div>
+      <div class="progress-wrap">
+        <div style="display:flex;justify-content:space-between;font-size:0.68rem;color:var(--text3)">
+          <span>Meta semanal</span>
+          <span class="mono">${st.entregadosSem}/${st.meta} · ${fmt(st.comisionSem)}</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" style="width:${st.pct}%;background:linear-gradient(90deg,${color},${color}88)"></div></div>
+      </div>
+      <div class="rec-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openEditRec('${r.id}')">✏️ Editar</button>
+        <button class="btn btn-ghost btn-sm" onclick="toggleActivo('${r.id}',${r.activo!==false})">${r.activo===false?'✅ Activar':'⏸️ Desactivar'}</button>
+        <button class="btn btn-danger btn-sm" onclick="eliminarRec('${r.id}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderRanking(){
+  if(!reclutadores.length){document.getElementById('ranking-section').innerHTML='';return;}
+  const ranked=[...reclutadores].map(r=>({...r,...getRecStats(r)})).sort((a,b)=>b.totalEntregados-a.totalEntregados);
+  document.getElementById('ranking-section').innerHTML=`
+    <div class="ranking-table">
+      <div class="ranking-header">
+        <div class="ranking-title">🏆 Ranking de reclutadores</div>
+        <span style="font-size:0.7rem;color:var(--text3)">Por total de entregas</span>
+      </div>
+      <div class="ranking-row header">
+        <div>#</div><div>Nombre</div>
+        <div class="hide-mobile">Esta sem</div>
+        <div>Total</div>
+        <div class="hide-mobile">Pipeline</div>
+        <div class="hide-mobile">Conversión</div>
+        <div>Comisión total</div>
+      </div>
+      ${ranked.map((r,i)=>{
+        const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+        const color=r.color||'#6b9fd4';
+        return `<div class="ranking-row">
+          <div class="rank-num" style="color:${color}">${medal||i+1}</div>
+          <div>
+            <div style="font-weight:700;font-size:0.85rem">${r.nombre}</div>
+            <div style="font-size:0.65rem;color:var(--text3)">${fmt(r.comision)}/entrega</div>
+          </div>
+          <div class="mono fw7 hide-mobile" style="color:var(--gold)">${r.entregadosSem}</div>
+          <div class="mono fw7" style="color:var(--green)">${r.totalEntregados}</div>
+          <div class="mono hide-mobile" style="color:var(--blue)">${r.enPipeline}</div>
+          <div class="hide-mobile"><span style="color:${r.conversion>=30?'var(--green)':r.conversion>=15?'var(--yellow)':'var(--red)'}">${r.conversion}%</span></div>
+          <div class="mono fw7 text-gold">${fmt(r.comisionTotal)}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+// ── Detalle reclutador ─────────────────────────────
+function openDetRec(id){
+  const r=reclutadores.find(x=>x.id===id); if(!r) return;
+  const st=getRecStats(r);
+  const color=r.color||'#6b9fd4';
+  const misLeads=leads.filter(l=>l.reclutadorId===id);
+  const lunes=getLunes();
+
+  // Motivos de rechazo
+  const rechazados=misLeads.filter(l=>l.etapa==='rechazado');
+  const motivoCount={};
+  rechazados.forEach(l=>{ motivoCount[l.motivoRechazo||'otro']=(motivoCount[l.motivoRechazo||'otro']||0)+1; });
+
+  // Leads por origen
+  const origenCount={};
+  misLeads.forEach(l=>{ origenCount[l.origen||'otro']=(origenCount[l.origen||'otro']||0)+1; });
+
+  document.getElementById('m-rec-det-title').textContent=r.nombre;
+  document.getElementById('m-rec-det-content').innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
+      <div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:12px;text-align:center">
+        <div style="font-size:1.1rem;font-weight:800;color:var(--gold);font-family:'JetBrains Mono',monospace">${st.entregadosSem}</div>
+        <div style="font-size:0.6rem;color:var(--text3);text-transform:uppercase;margin-top:3px">Esta semana</div>
+      </div>
+      <div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:12px;text-align:center">
+        <div style="font-size:1.1rem;font-weight:800;color:var(--green);font-family:'JetBrains Mono',monospace">${st.totalEntregados}</div>
+        <div style="font-size:0.6rem;color:var(--text3);text-transform:uppercase;margin-top:3px">Total entregas</div>
+      </div>
+      <div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:12px;text-align:center">
+        <div style="font-size:1.1rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:${color}">${st.conversion}%</div>
+        <div style="font-size:0.6rem;color:var(--text3);text-transform:uppercase;margin-top:3px">Conversión</div>
+      </div>
+      <div style="background:var(--s2);border:1px solid var(--gold-border);border-radius:var(--r);padding:12px;text-align:center">
+        <div style="font-size:1rem;font-weight:800;color:var(--gold);font-family:'JetBrains Mono',monospace">${fmt(st.comisionTotal)}</div>
+        <div style="font-size:0.6rem;color:var(--text3);text-transform:uppercase;margin-top:3px">Comisión total</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+      <div>
+        <div style="font-size:0.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Motivos de rechazo</div>
+        ${Object.keys(motivoCount).length?Object.entries(motivoCount).map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--s2);border-radius:6px;margin-bottom:4px;font-size:0.75rem"><span style="color:var(--text2)">${k.replace(/_/g,' ')}</span><span class="mono fw7 text-red">${v}</span></div>`).join(''):'<div style="font-size:0.75rem;color:var(--text3)">Sin rechazos</div>'}
+      </div>
+      <div>
+        <div style="font-size:0.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Leads por origen</div>
+        ${Object.keys(origenCount).length?Object.entries(origenCount).map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--s2);border-radius:6px;margin-bottom:4px;font-size:0.75rem"><span style="color:var(--text2)">${k}</span><span class="mono fw7 text-gold">${v}</span></div>`).join(''):'<div style="font-size:0.75rem;color:var(--text3)">Sin leads</div>'}
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('m-rec-det');openEditRec('${r.id}')">✏️ Editar</button>
+      <button class="btn btn-ghost btn-sm" onclick="toggleActivo('${r.id}',${r.activo!==false})">${r.activo===false?'✅ Activar':'⏸️ Desactivar'}</button>
+    </div>`;
+  openModal('m-rec-det');
+}
+
+// ── CRUD ───────────────────────────────────────────
+function openAddRec(){
+  editingId=null;
+  document.getElementById('m-rec-title').textContent='Agregar reclutador';
+  ['r-nombre','r-tel','r-notas'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('r-email').value='';
+  document.getElementById('r-comision').value='3000';
+  document.getElementById('r-meta').value='2';
+  document.getElementById('r-color').value='#6b9fd4';
+  openModal('m-rec');
+}
+
+function openEditRec(id){
+  editingId=id;
+  const r=reclutadores.find(x=>x.id===id); if(!r) return;
+  document.getElementById('m-rec-title').textContent='Editar reclutador';
+  document.getElementById('r-nombre').value=r.nombre||'';
+  document.getElementById('r-email').value=r.email||'';
+  document.getElementById('r-tel').value=r.tel||'';
+  document.getElementById('r-comision').value=r.comision||3000;
+  document.getElementById('r-meta').value=r.metaSem||2;
+  document.getElementById('r-color').value=r.color||'#6b9fd4';
+  document.getElementById('r-notas').value=r.notas||'';
+  openModal('m-rec');
+}
+
+async function saveRec(){
+  const nombre=document.getElementById('r-nombre').value.trim();
+  const email=document.getElementById('r-email').value.trim().toLowerCase();
+  if(!nombre){toast('⚠️ Falta el nombre','red');return;}
+  if(!email){toast('⚠️ Falta el email','red');return;}
+
+  const data={
+    nombre,email,
+    tel:document.getElementById('r-tel').value.trim(),
+    comision:Number(document.getElementById('r-comision').value||3000),
+    metaSem:Number(document.getElementById('r-meta').value||2),
+    color:document.getElementById('r-color').value,
+    notas:document.getElementById('r-notas').value.trim(),
+    activo:true,
+    updatedAt:serverTimestamp()
+  };
+
+  const btn=document.getElementById('btn-save-rec');
+  btn.disabled=true; btn.textContent='⏳ Guardando...';
+  try{
+    if(editingId){
+      await updateDoc(doc(db,'reclutadores',editingId),data);
+      toast('✓ Reclutador actualizado');
+    } else {
+      data.createdAt=serverTimestamp();
+      await addDoc(collection(db,'reclutadores'),data);
+      toast('✓ Reclutador agregado. Recuerda crear su cuenta en Firebase Auth.');
+    }
+    closeModal('m-rec');
+  }catch(e){toast('Error: '+e.message,'red');}
+  finally{btn.disabled=false;btn.textContent='Guardar reclutador';}
+}
+
+async function toggleActivo(id,activo){
+  try{
+    await updateDoc(doc(db,'reclutadores',id),{activo:!activo,updatedAt:serverTimestamp()});
+    toast(activo?'⏸️ Reclutador desactivado':'✅ Reclutador activado');
+    closeModal('m-rec-det');
+  }catch(e){toast('Error: '+e.message,'red');}
+}
+
+async function eliminarRec(id){
+  const r=reclutadores.find(x=>x.id===id);
+  const misLeads=leads.filter(l=>l.reclutadorId===id).length;
+  if(!confirm(`¿Eliminar a ${r?.nombre}?\n\nTiene ${misLeads} leads registrados. Los leads quedarán sin reclutador asignado.`))return;
+  try{
+    await deleteDoc(doc(db,'reclutadores',id));
+    toast('✓ Reclutador eliminado');
+  }catch(e){toast('Error: '+e.message,'red');}
+}
+
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id)?.classList.remove('open');}
+
+function toast(msg,type='gold'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.display='block';
+  t.style.borderColor=type==='red'?'var(--red-border)':'var(--gold-border)';
+  t.style.color=type==='red'?'var(--red)':'var(--gold)';
+  clearTimeout(window._tt);window._tt=setTimeout(()=>t.style.display='none',3000);
+}
+
+Object.assign(window,{
+  openAddRec,openEditRec,saveRec,eliminarRec,toggleActivo,
+  openDetRec,openModal,closeModal,toast
+});
+</script>
+</body>
+</html>
