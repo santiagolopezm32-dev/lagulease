@@ -257,7 +257,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
   <div class="topbar">
     <div class="topbar-title">👤 Choferes</div>
     <div class="flex gap8">
-      <select class="fi" id="periodo-sel" style="width:auto;font-size:0.75rem;padding:6px 10px" onchange="renderAll()">
+      <select class="fi" id="periodo-sel" style="width:auto;font-size:0.75rem;padding:6px 10px" onchange="renderKPIs()">
         <option value="semana">Esta semana</option>
         <option value="mes">Este mes</option>
         <option value="trimestre">Este trimestre</option>
@@ -428,6 +428,22 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
   <div class="modal-handle"></div>
   <div class="modal-title" id="m-pago-title">Registrar pago</div>
   <div id="m-pago-info" style="background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:13px;margin-bottom:15px;font-size:0.83rem;"></div>
+  <div class="fg"><label>Tipo de pago *</label>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px" id="tipo-pago-btns">
+      <button type="button" class="btn btn-gold" id="tp-renta" onclick="setTipoPago('renta')" style="justify-content:center;font-size:0.75rem">💰 Renta</button>
+      <button type="button" class="btn btn-ghost" id="tp-deposito" onclick="setTipoPago('deposito')" style="justify-content:center;font-size:0.75rem">🔐 Depósito</button>
+      <button type="button" class="btn btn-ghost" id="tp-mixto" onclick="setTipoPago('mixto')" style="justify-content:center;font-size:0.75rem">📋 Mixto</button>
+    </div>
+  </div>
+  <!-- MIXTO extra fields -->
+  <div id="mixto-fields" style="display:none">
+    <div class="info-box info-blue">Especifica cuánto va a renta y cuánto a depósito.</div>
+    <div class="form-row">
+      <div class="fg"><label>Monto para renta ($)</label><input class="fi" id="p-monto-renta" type="number" placeholder="0" oninput="updateMixtoTotal()"></div>
+      <div class="fg"><label>Monto para depósito ($)</label><input class="fi" id="p-monto-dep" type="number" placeholder="0" oninput="updateMixtoTotal()"></div>
+    </div>
+    <div id="mixto-total" style="font-size:0.78rem;color:var(--gold);margin-bottom:8px;font-family:'JetBrains Mono',monospace"></div>
+  </div>
   <div class="form-row">
     <div class="fg"><label>Monto ($) *</label><input class="fi" id="p-monto" type="number"></div>
     <div class="fg"><label>Método</label>
@@ -603,10 +619,12 @@ onAuthStateChanged(auth, user => {
 function listen(){
   onSnapshot(collection(db,'drivers'), s=>{ 
     drivers=s.docs.map(d=>({id:d.id,...d.data()})); 
+    window._drivers=drivers;
     renderAll(); 
   });
   onSnapshot(query(collection(db,'payments'),orderBy('createdAt','desc')), s=>{ 
     payments=s.docs.map(d=>({id:d.id,...d.data()})); 
+    window._payments=payments;
     renderAll(); 
   });
   onSnapshot(query(collection(db,'dias_sin_cobro'),orderBy('createdAt','desc')), s=>{ 
@@ -622,7 +640,9 @@ function listen(){
 const fmt = n => '$'+Number(n||0).toLocaleString('es-MX');
 const fmtDate = (ts,fechaManual) => { 
   if(fechaManual) return new Date(fechaManual+'T12:00:00').toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'});
-  if(!ts) return '—'; const d=ts.toDate?ts.toDate():new Date(ts); return d.toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'}); 
+  if(!ts) return '—';
+  const d=ts.toDate?ts.toDate():ts.seconds?new Date(ts.seconds*1000):new Date(ts);
+  return d.toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'}); 
 };
 const ini = n => (n||'').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
 const col = i => COLORS[i%COLORS.length];
@@ -669,11 +689,14 @@ function getDebt(driver){
     totalDue+=Math.max(0,Math.min(diasCurso,7))*rentaDia;
   }
 
-  // Depósito pendiente
+  // Depósito pendiente — solo suma si no hay pagos de tipo deposito registrados
   const depAc=Number(driver.depositoAcordado||driver.deposito||0);
   const depPa=Number(driver.depositoPagado!==undefined?driver.depositoPagado:(driver.deposito||0));
   const depPend=Math.max(0,depAc-depPa);
-  totalDue+=depPend;
+  // Si el depósito pendiente ya está cubierto por pagos tipo deposito, no sumarlo doble
+  const pagosDep=payments.filter(p=>p.driverId===driver.id&&p.tipo==='deposito').reduce((s,p)=>s+Number(p.monto||0),0);
+  const depPendReal=Math.max(0,depPend-pagosDep);
+  totalDue+=depPendReal;
 
   // Días sin cobro
   diasSinCobro.filter(d=>d.driverId===driver.id).forEach(dsc=>{
@@ -683,14 +706,19 @@ function getDebt(driver){
   });
   totalDue=Math.max(0,totalDue);
 
-  const totalPaid=payments.filter(p=>p.driverId===driver.id).reduce((s,p)=>s+Number(p.monto||0),0);
+  // Solo contar pagos de renta (no depósitos) contra la deuda de rentas
+  const totalPaid=payments.filter(p=>p.driverId===driver.id&&p.tipo!=='deposito').reduce((s,p)=>s+Number(p.monto||0),0);
   const totalDebt=Math.max(0,totalDue-totalPaid);
   const weeksOwed=Math.floor(totalDebt/renta);
   const thisWeekMs=hoyMonday.getTime();
   const thisWeekPaid=payments.filter(p=>{
     if(p.driverId!==driver.id) return false;
-    // Use fechaManual if available, otherwise createdAt
-    const pd=p.fechaManual?new Date(p.fechaManual+'T12:00:00'):(p.createdAt?.toDate?p.createdAt.toDate():new Date(p.createdAt||0));
+    if(p.tipo==='deposito') return false; // no contar depósitos en pago semanal
+    let pd;
+    if(p.fechaManual) pd=new Date(p.fechaManual+'T12:00:00');
+    else if(p.createdAt?.toDate) pd=p.createdAt.toDate();
+    else if(p.createdAt?.seconds) pd=new Date(p.createdAt.seconds*1000);
+    else pd=new Date(p.createdAt||0);
     return pd.getTime()>=thisWeekMs;
   }).reduce((s,p)=>s+Number(p.monto||0),0);
   const finPrimSem=new Date(entrega); finPrimSem.setDate(entrega.getDate()+(diaJS===0?7:7-diaJS));
@@ -698,7 +726,7 @@ function getDebt(driver){
   if(totalDebt===0) status='al_corriente';
   else if(thisWeekPaid>0&&thisWeekPaid<renta) status='parcial';
   else if(weeksOwed>=2) status='atrasado';
-  return {status,paid:thisWeekPaid,due:renta-thisWeekPaid,weeksOwed,totalDebt,finPrimSem,depPend};
+  return {status,paid:thisWeekPaid,due:renta-thisWeekPaid,weeksOwed,totalDebt,finPrimSem,depPend:depPendReal};
 }
 
 function calcScore(d){
@@ -770,18 +798,21 @@ function renderKPIs(){
   const deuda=sts.reduce((s,st)=>s+st.totalDebt,0);
   const corriente=sts.filter(st=>st.status==='al_corriente').length;
 
-  // Cobrado en el periodo seleccionado
+  // Cobrado en el periodo seleccionado (separado por tipo)
   const periodoStart=getPeriodoStart();
-  const cobradoPeriodo=payments.filter(p=>{
+  const pagosPeriodo=payments.filter(p=>{
     const pd=p.fechaManual?new Date(p.fechaManual+'T12:00:00'):(p.createdAt?.toDate?p.createdAt.toDate():new Date(p.createdAt||0));
     return pd>=periodoStart;
-  }).reduce((s,p)=>s+Number(p.monto||0),0);
+  });
+  const cobradoRenta=pagosPeriodo.filter(p=>!p.tipo||p.tipo==='renta').reduce((s,p)=>s+Number(p.monto||0),0);
+  const cobradoDep=pagosPeriodo.filter(p=>p.tipo==='deposito').reduce((s,p)=>s+Number(p.monto||0),0);
+  const cobradoPeriodo=cobradoRenta+cobradoDep;
 
   document.getElementById('kpi-row').innerHTML=`
     <div class="kpi blue"><div class="kpi-label">Flota activa</div><div class="kpi-val" style="color:var(--blue)">${act.length}</div></div>
     <div class="kpi green"><div class="kpi-label">Al corriente</div><div class="kpi-val" style="color:var(--green)">${corriente}</div></div>
     <div class="kpi red"><div class="kpi-label">Con deuda</div><div class="kpi-val" style="color:var(--red)">${act.length-corriente}</div></div>
-    <div class="kpi gold"><div class="kpi-label">${getPeriodoLabel()}</div><div class="kpi-val text-gold" style="font-size:1.1rem">${fmt(cobradoPeriodo)}</div></div>
+    <div class="kpi gold"><div class="kpi-label">${getPeriodoLabel()}</div><div class="kpi-val text-gold" style="font-size:1.1rem">${fmt(cobradoPeriodo)}</div><div style="font-size:0.6rem;color:var(--text3);margin-top:3px">Renta: ${fmt(cobradoRenta)} · Dep: ${fmt(cobradoDep)}</div></div>
     <div class="kpi red"><div class="kpi-label">Deuda acumulada</div><div class="kpi-val text-red" style="font-size:1.1rem">${fmt(deuda)}</div></div>
     <div class="kpi gray"><div class="kpi-label">Inactivos</div><div class="kpi-val" style="color:var(--text3)">${drivers.filter(d=>d.activo===false).length}</div></div>`;
 }
@@ -942,25 +973,36 @@ function renderDetail(id){
 function renderPagos(id){
   const dp=payments.filter(p=>p.driverId===id);
   if(!dp.length) return '<div class="empty" style="padding:28px"><div class="empty-icon">💰</div><div>Sin pagos registrados</div></div>';
-  return dp.map(p=>`<div class="pay-item">
-    <div><div class="fw7">${fmt(p.monto)}</div><div class="pay-info">${fmtDate(p.createdAt,p.fechaManual)}${p.fechaManual?' ✎':''} · ${p.metodo||''}${p.nota?' · '+p.nota:''}</div></div>
+  return dp.map(p=>{
+    const tipoBadge=p.tipo==='deposito'?'<span class="badge badge-blue" style="font-size:0.58rem">🔐 Dep</span>':p.tipo==='renta'?'<span class="badge badge-gold" style="font-size:0.58rem">💰 Renta</span>':'<span class="badge badge-gray" style="font-size:0.58rem">💰 Renta</span>';
+    return `<div class="pay-item">
+    <div><div class="fw7 flex gap8">${fmt(p.monto)} ${tipoBadge}</div><div class="pay-info">${fmtDate(p.createdAt,p.fechaManual)}${p.fechaManual?' ✎':''} · ${p.metodo||''}${p.nota?' · '+p.nota:''}</div></div>
     <button class="del-btn" onclick="delPago('${p.id}')">✕</button>
-  </div>`).join('');
+  </div>`;}).join('');
 }
 
 function renderDocsView(d){
   const today=new Date(); today.setHours(0,0,0,0);
-  function ds(f){ if(!f) return '<span class="badge badge-gray">Sin registrar</span>'; const v=new Date(f+'T12:00:00'),dias=Math.ceil((v-today)/(1000*60*60*24)); if(dias<0) return '<span class="badge badge-red">⛔ Vencida</span>'; if(dias<=30) return `<span class="badge badge-yellow">⚠️ ${dias} días</span>`; return `<span class="badge badge-green">✅ ${dias} días</span>`; }
-  function fl(url,lbl){ return url?`<a class="doc-view-link" href="${url}" target="_blank">📎 Ver ${lbl} →</a>`:'<span style="font-size:0.65rem;color:var(--text3)">Sin foto</span>'; }
-  return `<div class="stat-grid-3">
-    <div class="stat-box"><div class="stat-lbl">🪪 Licencia</div><div style="font-size:0.78rem;font-weight:700;margin:6px 0">${d.licenciaVence||'No registrada'}</div>${ds(d.licenciaVence)}<div class="mt8">${fl(d.licenciaUrl,'licencia')}</div></div>
-    <div class="stat-box"><div class="stat-lbl">🆔 INE</div><div style="font-size:0.78rem;font-weight:700;margin:6px 0">${d.ineVence||'No registrada'}</div>${ds(d.ineVence)}<div class="mt8">${fl(d.ineUrl,'INE')}</div></div>
-    <div class="stat-box"><div class="stat-lbl">🏠 Domicilio</div><div style="font-size:0.78rem;font-weight:700;margin:6px 0">${d.domicilioVence||'No registrado'}</div>${ds(d.domicilioVence)}<div class="mt8">${fl(d.domicilioUrl,'domicilio')}</div></div>
-  </div>
-  <div class="pay-item mt12"><span class="text-muted">Capturas de ingresos</span>
-    <div class="flex gap8"><span class="badge ${d.ingresosStatus==='validado'?'badge-green':d.ingresosStatus==='invalido'?'badge-red':'badge-gray'}">${d.ingresosStatus==='validado'?'✅ Validadas':d.ingresosStatus==='invalido'?'❌ No válidas':'Sin validar'}</span>${d.ingresosUrl?`<a class="doc-view-link" href="${d.ingresosUrl}" target="_blank">📎 Ver →</a>`:''}</div>
-  </div>`;
+  function ds(f){
+    if(!f) return '<span class="badge badge-gray">Sin registrar</span>';
+    const v=new Date(f+'T12:00:00'),dias=Math.ceil((v-today)/(1000*60*60*24));
+    if(dias<0) return '<span class="badge badge-red">⛔ Vencida</span>';
+    if(dias<=30) return '<span class="badge badge-yellow">⚠️ '+dias+' días</span>';
+    return '<span class="badge badge-green">✅ '+dias+' días</span>';
+  }
+  function fl(url,lbl){
+    return url?'<a class="doc-view-link" href="'+url+'" target="_blank">📎 Ver '+lbl+' →</a>':'<span style="font-size:0.65rem;color:var(--text3)">Sin foto</span>';
+  }
+  return '<div class="stat-grid-3">'+
+    '<div class="stat-box"><div class="stat-lbl">🪪 Licencia</div><div style="font-size:0.78rem;font-weight:700;margin:6px 0">'+(d.licenciaVence||'No registrada')+'</div>'+ds(d.licenciaVence)+'<div class="mt8">'+fl(d.licenciaUrl,'licencia')+'</div></div>'+
+    '<div class="stat-box"><div class="stat-lbl">🆔 INE</div><div style="font-size:0.78rem;font-weight:700;margin:6px 0">'+(d.ineVence||'No registrada')+'</div>'+ds(d.ineVence)+'<div class="mt8">'+fl(d.ineUrl,'INE')+'</div></div>'+
+    '<div class="stat-box"><div class="stat-lbl">🏠 Domicilio</div><div style="font-size:0.78rem;font-weight:700;margin:6px 0">'+(d.domicilioVence||'No registrado')+'</div>'+ds(d.domicilioVence)+'<div class="mt8">'+fl(d.domicilioUrl,'domicilio')+'</div></div>'+
+  '</div>'+
+  '<div class="pay-item mt12"><span class="text-muted">Capturas de ingresos</span>'+
+    '<div class="flex gap8"><span class="badge '+(d.ingresosStatus==='validado'?'badge-green':d.ingresosStatus==='invalido'?'badge-red':'badge-gray')+'">'+(d.ingresosStatus==='validado'?'✅ Validadas':d.ingresosStatus==='invalido'?'❌ No válidas':'Sin validar')+'</span>'+(d.ingresosUrl?'<a class="doc-view-link" href="'+d.ingresosUrl+'" target="_blank">📎 Ver →</a>':'')+'</div>'+
+  '</div>';
 }
+
 
 function renderScore(d,sc){
   const factors=[
@@ -1204,8 +1246,28 @@ async function saveChofer(){
     if(pendingFiles['dom']){btn.textContent='⏳ Subiendo domicilio...';data.domicilioUrl=await uploadFile(tempId,'domicilio',pendingFiles['dom']);}
     if(pendingFiles['ing']){btn.textContent='⏳ Subiendo capturas...';data.ingresosUrl=await uploadFile(tempId,'ingresos',pendingFiles['ing']);}
     btn.textContent='⏳ Guardando datos...';
-    if(editingId){ await updateDoc(doc(db,'drivers',editingId),data); toast('✓ Chofer actualizado'); }
-    else{ data.createdAt=serverTimestamp(); await addDoc(collection(db,'drivers'),data); toast('✓ Chofer agregado'); }
+    if(editingId){ 
+      await updateDoc(doc(db,'drivers',editingId),data); 
+      toast('✓ Chofer actualizado'); 
+    } else { 
+      data.createdAt=serverTimestamp(); 
+      const newDriver=await addDoc(collection(db,'drivers'),data);
+      // Si hay depósito pagado al crear, registrarlo como pago con fecha de entrega
+      const depPagadoInicial=Number(document.getElementById('f-dep-pagado').value||0);
+      if(depPagadoInicial>0){
+        const fechaEntrega=document.getElementById('f-inicio').value;
+        await addDoc(collection(db,'payments'),{
+          driverId:newDriver.id,
+          monto:depPagadoInicial,
+          tipo:'deposito',
+          metodo:'—',
+          nota:'Depósito inicial al entregar el carro',
+          fechaManual:fechaEntrega||null,
+          createdAt:serverTimestamp()
+        });
+      }
+      toast('✓ Chofer agregado'); 
+    }
     closeModal('m-chofer');
   }catch(e){ toast('Error: '+e.message,'red'); }
   finally{ saving=false; btn.disabled=false; btn.textContent='💾 Guardar chofer'; }
@@ -1229,15 +1291,16 @@ async function savePago(){
   try{
     const fechaPago=document.getElementById('p-fecha').value;
     await addDoc(collection(db,'payments'),{
-      driverId:payingId,monto,
+      driverId:payingId,
+      monto,
+      tipo:'renta',
       metodo:document.getElementById('p-metodo').value,
       nota:document.getElementById('p-nota').value.trim(),
       fechaManual:fechaPago||null,
       createdAt:serverTimestamp()
     });
-    closeModal('m-pago'); 
+    closeModal('m-pago');
     toast('✓ Pago registrado');
-    // Force re-render of detail if open
     if(openId===payingId) setTimeout(()=>renderDetail(openId),300);
   }catch(e){toast('Error: '+e.message,'red');}
 }
@@ -1427,7 +1490,7 @@ function toast(msg,type='gold'){
 
 // ── Expose all functions to window ────────────────
 Object.assign(window,{
-  renderLiqModal,calcMeses,calcSaldoLiq,
+  renderAll,renderKPIs,renderLiqModal,calcMeses,calcSaldoLiq,
   renderList,setFil,toggleDetail,swTab,goStep,updateHint,updateDepHint,
   prevFile,prevEditFile,openAddChofer,openEditar,saveChofer,
   openPago,savePago,delPago,openDSC,saveDSC,delDSC,
