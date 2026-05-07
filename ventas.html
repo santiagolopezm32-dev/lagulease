@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LAGULEASE — Ventas</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#C9A84C;--gold2:#F5D78E;--gold3:#8B6914;
+  --gold-bg:rgba(201,168,76,0.08);--gold-border:rgba(201,168,76,0.18);
+  --bg:#080808;--s1:#0f0f0f;--s2:#161616;--s3:#1e1e1e;
+  --border:rgba(255,255,255,0.06);--border2:rgba(201,168,76,0.15);
+  --text:#f0ede8;--text2:#8a8680;--text3:#4a4845;
+  --red:#e05252;--red-bg:rgba(224,82,82,0.08);--red-border:rgba(224,82,82,0.2);
+  --green:#52c472;--green-bg:rgba(82,196,114,0.08);--green-border:rgba(82,196,114,0.2);
+  --yellow:#e8a020;--yellow-bg:rgba(232,160,32,0.08);--yellow-border:rgba(232,160,32,0.2);
+  --blue:#6b9fd4;--blue-bg:rgba(107,159,212,0.08);
+  --r:10px;--r-lg:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px;}
+
+.sidebar{width:220px;background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;}
+.logo-wrap{padding:22px 20px;border-bottom:1px solid var(--border);}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:4px;background:linear-gradient(135deg,var(--gold),var(--gold2),var(--gold3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo-sub{font-size:0.58rem;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-top:2px;}
+.nav{flex:1;padding:8px 0;overflow-y:auto;}
+.nav-sec{padding:14px 20px 4px;font-size:0.58rem;letter-spacing:2px;color:var(--text3);text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:0.82rem;font-weight:600;color:var(--text2);cursor:pointer;border-left:2px solid transparent;transition:all .15s;}
+.nav-item:hover{color:var(--text);background:var(--s2);}
+.nav-item.active{color:var(--gold);background:var(--gold-bg);border-left-color:var(--gold);}
+.nav-soon{margin-left:auto;font-size:0.58rem;color:var(--text3);background:var(--s3);padding:2px 6px;border-radius:4px;}
+.sidebar-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.user-av{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--gold3));display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;color:#000;flex-shrink:0;}
+.user-name{font-size:0.78rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.user-role{font-size:0.6rem;color:var(--gold);}
+
+.main{margin-left:220px;min-height:100vh;}
+.topbar{height:54px;background:var(--s1);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:50;}
+.topbar-title{font-size:0.95rem;font-weight:800;}
+.content{padding:22px 24px;}
+
+.btn{padding:9px 16px;border-radius:var(--r);font-family:'Outfit',sans-serif;font-weight:700;font-size:0.8rem;cursor:pointer;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold3));color:#000;}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(201,168,76,0.3);}
+.btn-gold:disabled{opacity:0.6;transform:none;cursor:not-allowed;}
+.btn-ghost{background:var(--s2);border:1px solid var(--border);color:var(--text2);}
+.btn-ghost:hover{background:var(--s3);color:var(--text);}
+.btn-danger{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red);}
+.btn-sm{padding:6px 12px;font-size:0.75rem;border-radius:8px;}
+.btn-xs{padding:4px 9px;font-size:0.7rem;border-radius:6px;}
+
+/* KPIs */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;}
+.kpi{background:var(--s1);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px 16px;position:relative;overflow:hidden;}
+.kpi::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;}
+.kpi.gold::after{background:linear-gradient(90deg,var(--gold),var(--gold2));}
+.kpi.green::after{background:var(--green);}
+.kpi.red::after{background:var(--red);}
+.kpi.blue::after{background:var(--blue);}
+.kpi.gray::after{background:var(--text3);}
+.kpi-label{font-size:0.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+.kpi-val{font-size:1.4rem;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1;}
+
+/* ALVARO CARD */
+.alvaro-card{background:var(--s1);border:1px solid var(--gold-border);border-radius:var(--r-lg);padding:18px 20px;margin-bottom:20px;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;}
+.alvaro-av{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#1a3a1a,#22c55e);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem;color:#22c55e;}
+.alvaro-name{font-size:1rem;font-weight:800;margin-bottom:3px;}
+.alvaro-role{font-size:0.7rem;color:var(--text3);}
+.alvaro-stats{display:flex;gap:20px;flex-wrap:wrap;}
+.alvaro-stat{text-align:center;}
+.alvaro-stat-val{font-size:1.1rem;font-weight:800;font-family:'JetBrains Mono',monospace;}
+.alvaro-stat-lbl{font-size:0.6rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+.progress-wrap{margin-top:10px;}
+.progress-track{background:rgba(255,255,255,0.05);border-radius:4px;height:6px;overflow:hidden;margin-top:4px;}
+.progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .8s ease;}
+
+/* PIPELINE */
+.pipeline{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;}
+.stage{background:var(--s1);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;}
+.stage-header{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.stage-title{font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;}
+.stage-count{font-size:0.72rem;font-weight:800;font-family:'JetBrains Mono',monospace;background:var(--s2);padding:2px 8px;border-radius:20px;}
+.stage-body{padding:10px;min-height:120px;max-height:400px;overflow-y:auto;}
+
+/* LEAD CARD */
+.lead-card{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:8px;cursor:pointer;transition:all .15s;position:relative;}
+.lead-card:hover{border-color:var(--gold-border);background:var(--s3);}
+.lead-card.bl-alert{border-color:var(--red-border);background:var(--red-bg);}
+.lead-name{font-size:0.82rem;font-weight:700;margin-bottom:4px;}
+.lead-meta{font-size:0.65rem;color:var(--text3);font-family:'JetBrains Mono',monospace;}
+.lead-time{font-size:0.62rem;margin-top:4px;}
+.lead-time.urgent{color:var(--red);}
+.lead-time.ok{color:var(--green);}
+.lead-time.warn{color:var(--yellow);}
+.lead-actions{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:0.6rem;font-weight:700;white-space:nowrap;}
+.badge-gold{background:var(--gold-bg);color:var(--gold);border:1px solid var(--gold-border);}
+.badge-red{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);}
+.badge-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
+.badge-yellow{background:var(--yellow-bg);color:var(--yellow);border:1px solid var(--yellow-border);}
+.badge-blue{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(107,159,212,0.2);}
+.badge-gray{background:rgba(255,255,255,0.05);color:var(--text3);border:1px solid var(--border);}
+
+/* MODALS */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:500;align-items:flex-end;justify-content:center;}
+.overlay.open{display:flex;}
+.modal{background:var(--s1);border:1px solid var(--border2);border-radius:22px 22px 0 0;padding:26px 22px;width:100%;max-width:620px;max-height:92vh;overflow-y:auto;}
+.modal-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:-6px auto 18px;}
+.modal-title{font-size:1.05rem;font-weight:800;margin-bottom:18px;}
+.modal-actions{display:flex;gap:10px;margin-top:18px;}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fg{margin-bottom:14px;}
+.fg label{display:block;font-size:0.65rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+.fi,.fs{width:100%;padding:10px 13px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:'Outfit',sans-serif;font-size:0.86rem;outline:none;transition:all .15s;}
+.fi::placeholder{color:var(--text3);}
+.fi:focus,.fs:focus{border-color:var(--gold-border);}
+.fs option{background:var(--s2);}
+.form-divider{font-size:0.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin:16px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+
+.info-box{border-radius:var(--r);padding:11px 14px;font-size:0.78rem;line-height:1.6;margin-bottom:12px;border:1px solid;}
+.info-gold{background:var(--gold-bg);border-color:var(--gold-border);color:#d4b86a;}
+.info-red{background:var(--red-bg);border-color:var(--red-border);color:#e88080;}
+.info-green{background:var(--green-bg);border-color:var(--green-border);color:#7de8a0;}
+.info-blue{background:var(--blue-bg);border-color:rgba(107,159,212,0.2);color:#90b8d8;}
+
+.pay-item{display:flex;justify-content:space-between;align-items:center;padding:10px 13px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:6px;font-size:0.8rem;gap:10px;}
+.pay-info{font-size:0.67rem;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-top:2px;}
+.del-btn{background:none;border:none;cursor:pointer;color:var(--text3);padding:4px 7px;border-radius:5px;font-size:0.78rem;}
+.del-btn:hover{background:var(--red-bg);color:var(--red);}
+
+
+.upload-area{background:var(--s2);border:1.5px dashed var(--border2);border-radius:var(--r);padding:14px;text-align:center;cursor:pointer;transition:all .2s;}
+.upload-area:hover{border-color:var(--gold);background:var(--gold-bg);}
+.upload-area.has-file{border-color:var(--green);border-style:solid;background:var(--green-bg);}
+.upload-icon{font-size:1.4rem;margin-bottom:4px;}
+.upload-text{font-size:0.76rem;font-weight:600;color:var(--text2);}
+.upload-sub{font-size:0.63rem;color:var(--text3);margin-top:2px;}
+.doc-preview{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;margin-top:6px;}
+.doc-preview img{width:44px;height:44px;object-fit:cover;border-radius:6px;}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--s1);border:1px solid var(--gold-border);border-radius:var(--r-lg);padding:14px 18px;font-size:0.82rem;font-weight:600;color:var(--gold);z-index:9999;display:none;box-shadow:0 8px 32px rgba(0,0,0,.4);}
+.empty{text-align:center;padding:32px 12px;color:var(--text3);font-size:0.78rem;}
+
+.mono{font-family:'JetBrains Mono',monospace;}
+.fw7{font-weight:700;}.fw8{font-weight:800;}
+.text-gold{color:var(--gold);}.text-red{color:var(--red);}.text-green{color:var(--green);}.text-muted{color:var(--text3);}
+.mt8{margin-top:8px;}.mt12{margin-top:12px;}.mt16{margin-top:16px;}.mb8{margin-bottom:8px;}.mb12{margin-bottom:12px;}
+.flex{display:flex;align-items:center;}.gap8{gap:8px;}.gap6{gap:6px;}
+
+@media(max-width:900px){
+  .pipeline{grid-template-columns:repeat(2,1fr);}
+  .kpi-row{grid-template-columns:repeat(3,1fr);}
+}
+@media(max-width:700px){
+  .sidebar{display:none;}.main{margin-left:0;}
+  .pipeline{grid-template-columns:1fr;}
+  .kpi-row{grid-template-columns:repeat(2,1fr);}
+  .alvaro-card{grid-template-columns:auto 1fr;}
+  .form-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div style="display:flex">
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo-wrap">
+    <div class="logo">LAGULEASE</div>
+    <div class="logo-sub">Administración de Flota</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-sec">Principal</div>
+    <div class="nav-item" onclick="location.href='app.html'"><span>🏠</span> Dashboard</div>
+    <div class="nav-sec">Operación</div>
+    <div class="nav-item active"><span>📣</span> Ventas</div>
+    <div class="nav-item" onclick="location.href='choferes.html'"><span>👤</span> Choferes</div>
+    <div class="nav-item"><span>🚙</span> Flota <span class="nav-soon">pronto</span></div>
+    <div class="nav-item"><span>🔧</span> Taller <span class="nav-soon">pronto</span></div>
+    <div class="nav-sec">Admin</div>
+    <div class="nav-item" onclick="location.href='equipo.html'"><span>👥</span> Equipo</div>
+    <div class="nav-item"><span>💼</span> Finanzas <span class="nav-soon">pronto</span></div>
+    <div class="nav-item"><span>📊</span> Reportes <span class="nav-soon">pronto</span></div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-av" id="nav-av">SL</div>
+    <div style="flex:1;min-width:0">
+      <div class="user-name" id="nav-email">Admin</div>
+      <div class="user-role" id="nav-role">ADMIN</div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main" style="flex:1">
+  <div class="topbar">
+    <div class="topbar-title">📣 Ventas — Pipeline</div>
+    <div class="flex gap8">
+      <button class="btn btn-ghost btn-sm" onclick="openConfig()">⚙️ Configurar metas</button>
+      <button class="btn btn-gold btn-sm" onclick="openAddLead()">+ Agregar prospecto</button>
+    </div>
+  </div>
+  <div class="content">
+    <!-- KPIs -->
+    <div class="kpi-row" id="kpi-row"></div>
+    <!-- Álvaro card -->
+    <div id="alvaro-card"></div>
+    <!-- Pipeline -->
+    <div class="pipeline" id="pipeline"></div>
+    <!-- Rechazados -->
+    <div id="rechazados-section"></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ MODAL AGREGAR LEAD ═══ -->
+<div class="overlay" id="m-lead" onclick="if(event.target===this)closeModal('m-lead')">
+<div class="modal">
+  <div class="modal-handle"></div>
+  <div class="modal-title" id="m-lead-title">Agregar prospecto</div>
+  <div id="bl-alert-box" style="display:none" class="info-box info-red">⛔ <strong>ALERTA BLACKLIST:</strong> Este prospecto coincide con alguien bloqueado. Verifica antes de continuar.</div>
+  <div class="form-row">
+    <div class="fg"><label>Nombre completo *</label><input class="fi" id="l-nombre" placeholder="Juan García" oninput="checkBL()"></div>
+    <div class="fg"><label>Teléfono * (10 dígitos)</label><input class="fi" id="l-tel" placeholder="8112345678" type="tel" maxlength="10" oninput="checkBL()"></div>
+  </div>
+  <div class="form-row">
+    <div class="fg"><label>Viajes realizados</label><input class="fi" id="l-viajes" type="number" placeholder="1020"></div>
+    <div class="fg"><label>Ingresos/sem ($)</label><input class="fi" id="l-ingresos" type="number" placeholder="6300"></div>
+  </div>
+  <div class="form-row">
+    <div class="fg"><label>Plataforma</label>
+      <select class="fs" id="l-plataforma"><option>Uber</option><option>DiDi</option><option>Uber + DiDi</option><option>Otro</option></select>
+    </div>
+    <div class="fg"><label>Origen del lead</label>
+      <select class="fs" id="l-origen">
+        <option value="facebook">📘 Facebook Ads</option>
+        <option value="referido">👥 Referido</option>
+        <option value="organico">🌱 Orgánico</option>
+        <option value="otro">Otro</option>
+      </select>
+    </div>
+  </div>
+  <div class="fg" id="fg-reclutador">
+    <label>Reclutador *</label>
+    <select class="fs" id="l-reclutador"></select>
+  </div>
+  <div class="fg"><label>Campaña de Facebook (opcional)</label><input class="fi" id="l-campana" placeholder="Ej: Gana más con Uber — Mayo 2026"></div>
+  <div class="fg"><label>Notas</label><input class="fi" id="l-notas" placeholder="Observaciones..."></div>
+  <div class="modal-actions">
+    <button class="btn btn-gold" style="flex:1" id="btn-save-lead" onclick="saveLead()">Guardar prospecto</button>
+    <button class="btn btn-ghost" onclick="closeModal('m-lead')">Cancelar</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══ MODAL DETALLE LEAD ═══ -->
+<div class="overlay" id="m-detalle" onclick="if(event.target===this)closeModal('m-detalle')">
+<div class="modal">
+  <div class="modal-handle"></div>
+  <div class="modal-title" id="m-det-title">Detalle del prospecto</div>
+  <div id="m-det-content"></div>
+</div>
+</div>
+
+<!-- ═══ MODAL MOVER ETAPA ═══ -->
+<div class="overlay" id="m-etapa" onclick="if(event.target===this)closeModal('m-etapa')">
+<div class="modal">
+  <div class="modal-handle"></div>
+  <div class="modal-title" id="m-etapa-title">Mover etapa</div>
+  <div id="m-etapa-content"></div>
+</div>
+</div>
+
+<!-- ═══ MODAL RECHAZAR ═══ -->
+<div class="overlay" id="m-rechazar" onclick="if(event.target===this)closeModal('m-rechazar')">
+<div class="modal">
+  <div class="modal-handle"></div>
+  <div class="modal-title">❌ Rechazar prospecto</div>
+  <div class="info-box info-red">El prospecto pasará a Rechazados y ya no aparecerá en el pipeline.</div>
+  <div id="m-rechazar-info" style="background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:14px;font-weight:700;font-size:0.88rem;"></div>
+  <div class="fg"><label>Motivo de rechazo *</label>
+    <select class="fs" id="r-motivo">
+      <option value="pocos_viajes">Pocos viajes (menos de 1,020)</option>
+      <option value="bajos_ingresos">Ingresos bajos (menos de $6,300)</option>
+      <option value="documentos">Documentos inválidos o incompletos</option>
+      <option value="no_contesto">No contestó / desapareció</option>
+      <option value="cambio_opinion">Cambió de opinión</option>
+      <option value="blacklist">En blacklist</option>
+      <option value="otro">Otro</option>
+    </select>
+  </div>
+  <div class="fg"><label>Notas adicionales</label><input class="fi" id="r-notas" placeholder="Detalle del motivo..."></div>
+  <div class="modal-actions">
+    <button class="btn btn-danger" style="flex:1" onclick="confirmarRechazar()">❌ Confirmar rechazo</button>
+    <button class="btn btn-ghost" onclick="closeModal('m-rechazar')">Cancelar</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══ MODAL ENTREGAR ═══ -->
+<div class="overlay" id="m-entregar" onclick="if(event.target===this)closeModal('m-entregar')">
+<div class="modal">
+  <div class="modal-handle"></div>
+  <div class="modal-title">🚗 Entregar carro — Crear chofer</div>
+  <div class="info-box info-gold">Al confirmar, se creará automáticamente el chofer en Choferes con todos sus documentos.</div>
+  <div id="m-entregar-info" style="background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:14px;font-size:0.88rem;"></div>
+
+  <!-- Step indicator -->
+  <div style="display:flex;margin-bottom:18px;border-radius:8px;overflow:hidden;border:1px solid var(--border)">
+    <div id="e-step1-btn" style="flex:1;padding:10px;text-align:center;font-size:0.78rem;font-weight:700;background:var(--gold);color:#000;cursor:pointer" onclick="goEStep(1)">① Datos del carro</div>
+    <div id="e-step2-btn" style="flex:1;padding:10px;text-align:center;font-size:0.78rem;font-weight:700;background:var(--s2);color:var(--text3);cursor:pointer" onclick="goEStep(2)">② Documentos y fotos</div>
+  </div>
+
+  <!-- PASO 1 -->
+  <div id="e-step1">
+    <div class="form-row">
+      <div class="fg"><label>Placa del carro *</label><input class="fi" id="e-placa" placeholder="ABC-1234" style="text-transform:uppercase"></div>
+      <div class="fg"><label>Renta semanal ($) *</label><input class="fi" id="e-renta" type="number" value="5000"></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Fecha de entrega *</label><input class="fi" id="e-fecha" type="date"></div>
+      <div class="fg"><label>Uso del vehículo</label>
+        <select class="fs" id="e-tipo">
+          <option value="tiempo_completo">🟢 Tiempo completo</option>
+          <option value="medio_tiempo">🟡 Medio tiempo</option>
+          <option value="particular">⚪ Uso particular</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Depósito acordado ($)</label><input class="fi" id="e-dep-ac" type="number" value="0"></div>
+      <div class="fg"><label>Depósito pagado ($)</label><input class="fi" id="e-dep-pa" type="number" value="0"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-gold" style="flex:1" onclick="goEStep(2)">Siguiente → Documentos</button>
+      <button class="btn btn-ghost" onclick="closeModal('m-entregar')">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- PASO 2 -->
+  <div id="e-step2" style="display:none">
+    <div class="info-box info-gold">Todos los documentos y fotos son obligatorios para crear el chofer.</div>
+
+    <div style="font-size:0.7rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">🪪 Licencia de conducir</div>
+    <div class="form-row">
+      <div class="fg"><label>No. de licencia *</label><input class="fi" id="e-lic-num" placeholder="NL-1234567"></div>
+      <div class="fg"><label>Vencimiento *</label><input class="fi" id="e-lic-vence" type="date"></div>
+    </div>
+    <div class="fg">
+      <label>Foto de licencia *</label>
+      <div class="upload-area" id="eua-lic" onclick="document.getElementById('euf-lic').click()">
+        <div class="upload-icon">📷</div><div class="upload-text">Toca para tomar foto o subir archivo</div><div class="upload-sub">JPG, PNG o PDF</div>
+      </div>
+      <input type="file" id="euf-lic" accept="image/*,application/pdf" capture="environment" style="display:none" onchange="prevEFile('lic',this)">
+      <div id="epv-lic"></div>
+    </div>
+
+    <div style="font-size:0.7rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;margin-top:8px">🆔 INE</div>
+    <div class="form-row">
+      <div class="fg"><label>No. de INE *</label><input class="fi" id="e-ine-num" placeholder="LOAM800101..."></div>
+      <div class="fg"><label>Vencimiento *</label><input class="fi" id="e-ine-vence" type="date"></div>
+    </div>
+    <div class="fg">
+      <label>Foto de INE *</label>
+      <div class="upload-area" id="eua-ine" onclick="document.getElementById('euf-ine').click()">
+        <div class="upload-icon">📷</div><div class="upload-text">Toca para tomar foto o subir archivo</div><div class="upload-sub">JPG, PNG o PDF</div>
+      </div>
+      <input type="file" id="euf-ine" accept="image/*,application/pdf" capture="environment" style="display:none" onchange="prevEFile('ine',this)">
+      <div id="epv-ine"></div>
+    </div>
+
+    <div style="font-size:0.7rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;margin-top:8px">🏠 Comprobante de domicilio</div>
+    <div class="fg"><label>Válido hasta *</label><input class="fi" id="e-dom-vence" type="date"></div>
+    <div class="fg">
+      <label>Foto del comprobante *</label>
+      <div class="upload-area" id="eua-dom" onclick="document.getElementById('euf-dom').click()">
+        <div class="upload-icon">📷</div><div class="upload-text">Toca para tomar foto o subir archivo</div><div class="upload-sub">JPG, PNG o PDF</div>
+      </div>
+      <input type="file" id="euf-dom" accept="image/*,application/pdf" capture="environment" style="display:none" onchange="prevEFile('dom',this)">
+      <div id="epv-dom"></div>
+    </div>
+
+    <div style="font-size:0.7rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;margin-top:8px">💵 Capturas de ingresos</div>
+    <div class="fg"><label>Estado *</label>
+      <select class="fs" id="e-ing-status">
+        <option value="">Sin validar</option>
+        <option value="validado">✅ Validadas y correctas</option>
+        <option value="invalido">❌ No válidas</option>
+        <option value="pendiente">⏳ Pendiente revisión</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>Foto de capturas *</label>
+      <div class="upload-area" id="eua-ing" onclick="document.getElementById('euf-ing').click()">
+        <div class="upload-icon">📷</div><div class="upload-text">Toca para tomar foto o subir archivo</div><div class="upload-sub">JPG o PNG</div>
+      </div>
+      <input type="file" id="euf-ing" accept="image/*" capture="environment" style="display:none" onchange="prevEFile('ing',this)">
+      <div id="epv-ing"></div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-gold" style="flex:1" id="btn-entregar" onclick="confirmarEntrega()">🚗 Confirmar entrega y crear chofer</button>
+      <button class="btn btn-ghost" onclick="goEStep(1)">← Atrás</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ MODAL CONFIG METAS ═══ -->
+<div class="overlay" id="m-config" onclick="if(event.target===this)closeModal('m-config')">
+<div class="modal">
+  <div class="modal-handle"></div>
+  <div class="modal-title">⚙️ Configurar metas de Álvaro</div>
+  <div class="form-row">
+    <div class="fg"><label>Meta semanal de entregas</label><input class="fi" id="cfg-meta-sem" type="number" placeholder="2"></div>
+    <div class="fg"><label>Comisión por entrega ($)</label><input class="fi" id="cfg-comision" type="number" placeholder="3000"></div>
+  </div>
+  <div class="fg"><label>Tiempo máximo de respuesta (horas)</label><input class="fi" id="cfg-resp-hrs" type="number" placeholder="2" value="2"></div>
+  <div class="modal-actions">
+    <button class="btn btn-gold" style="flex:1" onclick="saveConfig()">Guardar configuración</button>
+    <button class="btn btn-ghost" onclick="closeModal('m-config')">Cancelar</button>
+  </div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, where, serverTimestamp, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+const FB={apiKey:"AIzaSyDYb4YywzBh6EUAAQSDf7SJMzuPrDduEcE",authDomain:"flotamax-2994b.firebaseapp.com",projectId:"flotamax-2994b",storageBucket:"flotamax-2994b.firebasestorage.app",messagingSenderId:"160535924045",appId:"1:160535924045:web:7d69b52db7182d5f473b04"};
+const app=initializeApp(FB);
+const db=getFirestore(app);
+const auth=getAuth(app);
+const storage=getStorage(app);
+
+// ── State ──────────────────────────────────────────
+let leads=[], blacklist=[], reclutadores=[], config={metaSem:2,comision:3000,respHrs:2};
+let currentUser=null, isAdmin=false;
+let editingLeadId=null, rechazandoId=null, entregandoId=null;
+
+const ETAPAS=['nuevo','contactado','documentos','aprobado','entregado'];
+const ETAPA_INFO={
+  nuevo:{label:'Nuevo lead',icon:'📣',color:'var(--blue)'},
+  contactado:{label:'Contactado',icon:'📞',color:'var(--yellow)'},
+  documentos:{label:'Documentos',icon:'📄',color:'var(--gold)'},
+  aprobado:{label:'Aprobado',icon:'✅',color:'var(--green)'},
+  entregado:{label:'Entregado',icon:'🚗',color:'var(--green)'},
+};
+
+// ── Auth ───────────────────────────────────────────
+onAuthStateChanged(auth, async user=>{
+  if(!user){window.location.href='index.html';return;}
+  currentUser=user;
+  document.getElementById('nav-av').textContent=user.email.slice(0,2).toUpperCase();
+  document.getElementById('nav-email').textContent=user.email.split('@')[0];
+  isAdmin=user.email==='santiagolopezm32@gmail.com';
+  if(!isAdmin) document.getElementById('nav-role').textContent='CAPTURISTA';
+  listen();
+  loadConfig();
+});
+
+function listen(){
+  onSnapshot(query(collection(db,'leads'),orderBy('createdAt','desc')), s=>{
+    leads=s.docs.map(d=>({id:d.id,...d.data()}));
+    renderAll();
+  });
+  onSnapshot(collection(db,'blacklist'), s=>{
+    blacklist=s.docs.map(d=>({id:d.id,...d.data()}));
+  });
+  onSnapshot(collection(db,'reclutadores'), s=>{
+    reclutadores=s.docs.map(d=>({id:d.id,...d.data()}));
+    renderAll();
+  });
+}
+
+async function loadConfig(){
+  try{
+    const snap=await getDoc(doc(db,'config','ventas'));
+    if(snap.exists()) config={...config,...snap.data()};
+  }catch(e){}
+}
+
+// ── Helpers ────────────────────────────────────────
+const fmt=n=>'$'+Number(n||0).toLocaleString('es-MX');
+const fmtDate=ts=>{if(!ts)return'—';const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'});};
+const fmtTime=ts=>{if(!ts)return'—';const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});};
+
+function horasDesde(ts){
+  if(!ts) return null;
+  const d=ts.toDate?ts.toDate():new Date(ts);
+  return Math.floor((new Date()-d)/(1000*60*60));
+}
+
+function timeLabel(hrs){
+  if(hrs===null) return '';
+  if(hrs<1) return 'Hace menos de 1h';
+  if(hrs<24) return `Hace ${hrs}h`;
+  const dias=Math.floor(hrs/24);
+  return `Hace ${dias} día${dias>1?'s':''}`;
+}
+
+function timeClass(hrs, etapa){
+  if(hrs===null||etapa!=='nuevo') return '';
+  if(hrs<=config.respHrs) return 'ok';
+  if(hrs<=config.respHrs*2) return 'warn';
+  return 'urgent';
+}
+
+function checkBLMatch(nombre, tel){
+  const n=(nombre||'').toLowerCase();
+  const t=(tel||'').replace(/\D/g,'');
+  return blacklist.some(b=>{
+    const bn=(b.nombre||'').toLowerCase();
+    const bt=(b.tel||'').replace(/\D/g,'');
+    return (n.length>2&&bn.includes(n))||(t.length>=6&&bt.includes(t));
+  });
+}
+
+function origenBadge(o){
+  const m={facebook:'<span class="badge badge-blue">📘 Facebook</span>',referido:'<span class="badge badge-green">👥 Referido</span>',organico:'<span class="badge badge-gold">🌱 Orgánico</span>'};
+  return m[o]||'<span class="badge badge-gray">Otro</span>';
+}
+
+// ── Render ─────────────────────────────────────────
+function renderAll(){ renderKPIs(); renderAlvaro(); renderPipeline(); renderRechazados(); }
+
+function renderKPIs(){
+  const activos=leads.filter(l=>l.etapa!=='rechazado'&&l.etapa!=='entregado');
+  const entregadosSem=leads.filter(l=>{
+    if(l.etapa!=='entregado') return false;
+    const d=l.entregadoEn?.toDate?l.entregadoEn.toDate():null;
+    if(!d) return false;
+    const lunes=new Date(); lunes.setHours(0,0,0,0); lunes.setDate(lunes.getDate()-lunes.getDay()+(lunes.getDay()===0?-6:1));
+    return d>=lunes;
+  }).length;
+  const conversion=leads.filter(l=>l.etapa==='entregado').length;
+  const totalLeads=leads.filter(l=>l.etapa!=='rechazado').length||1;
+  const urgentes=activos.filter(l=>l.etapa==='nuevo'&&horasDesde(l.createdAt)>config.respHrs*2).length;
+
+  document.getElementById('kpi-row').innerHTML=`
+    <div class="kpi blue"><div class="kpi-label">En pipeline</div><div class="kpi-val" style="color:var(--blue)">${activos.length}</div></div>
+    <div class="kpi green"><div class="kpi-label">Entregados semana</div><div class="kpi-val" style="color:var(--green)">${entregadosSem}</div><div style="font-size:0.65rem;color:var(--text3);margin-top:4px">Meta: ${config.metaSem}</div></div>
+    <div class="kpi gold"><div class="kpi-label">Comisión semana</div><div class="kpi-val text-gold" style="font-size:1.1rem">${fmt(entregadosSem*config.comision)}</div></div>
+    <div class="kpi ${urgentes>0?'red':'gray'}"><div class="kpi-label">Sin contactar +${config.respHrs*2}h</div><div class="kpi-val" style="color:${urgentes>0?'var(--red)':'var(--text3)'}">${urgentes}</div></div>
+    <div class="kpi gold"><div class="kpi-label">Tasa conversión</div><div class="kpi-val text-gold">${Math.round(leads.filter(l=>l.etapa==='entregado').length/totalLeads*100)}%</div></div>`;
+}
+
+function getLunes(){
+  const l=new Date(); l.setHours(0,0,0,0); l.setDate(l.getDate()-l.getDay()+(l.getDay()===0?-6:1)); return l;
+}
+
+function renderAlvaro(){
+  const el=document.getElementById('alvaro-card');
+  if(!reclutadores.length){
+    el.innerHTML=`<div style="background:var(--s1);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between">
+      <span style="font-size:0.82rem;color:var(--text3)">No hay reclutadores registrados aún.</span>
+      <button class="btn btn-gold btn-sm" onclick="location.href='equipo.html'">+ Agregar reclutador</button>
+    </div>`;
+    return;
+  }
+  const lunes=getLunes();
+  // Show only my reclutador if not admin, else show all
+  const lista=isAdmin?reclutadores:reclutadores.filter(r=>r.email===currentUser?.email);
+
+  el.innerHTML=lista.map(r=>{
+    const misLeads=leads.filter(l=>l.reclutadorId===r.id);
+    const entregadosSem=misLeads.filter(l=>{
+      if(l.etapa!=='entregado') return false;
+      const d=l.entregadoEn?.toDate?l.entregadoEn.toDate():null;
+      return d&&d>=lunes;
+    }).length;
+    const totalEntregados=misLeads.filter(l=>l.etapa==='entregado').length;
+    const meta=r.metaSem||config.metaSem||2;
+    const comision=r.comision||config.comision||3000;
+    const pct=Math.min(100,Math.round(entregadosSem/meta*100));
+    const ini=(r.nombre||'').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+    return `<div class="alvaro-card" style="margin-bottom:10px">
+      <div class="alvaro-av" style="background:linear-gradient(135deg,#1a2a3a,${r.color||'#6b9fd4'});color:${r.color||'#6b9fd4'}">${ini}</div>
+      <div style="flex:1">
+        <div class="alvaro-name">${r.nombre}</div>
+        <div class="alvaro-role">Reclutador · ${fmt(comision)}/entrega</div>
+        <div class="progress-wrap">
+          <div style="display:flex;justify-content:space-between;font-size:0.68rem;color:var(--text3)">
+            <span>Meta semanal</span><span class="mono">${entregadosSem} / ${meta} entregas</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+        </div>
+      </div>
+      <div class="alvaro-stats">
+        <div class="alvaro-stat"><div class="alvaro-stat-val text-gold">${fmt(entregadosSem*comision)}</div><div class="alvaro-stat-lbl">Comisión sem</div></div>
+        <div class="alvaro-stat"><div class="alvaro-stat-val" style="color:var(--green)">${totalEntregados}</div><div class="alvaro-stat-lbl">Total</div></div>
+        <div class="alvaro-stat"><div class="alvaro-stat-val" style="color:${pct>=100?'var(--green)':'var(--yellow)'}">${pct}%</div><div class="alvaro-stat-lbl">Meta</div></div>
+        <div class="alvaro-stat"><div class="alvaro-stat-val" style="color:var(--blue)">${misLeads.filter(l=>l.etapa!=='entregado'&&l.etapa!=='rechazado').length}</div><div class="alvaro-stat-lbl">En pipeline</div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderPipeline(){
+  const el=document.getElementById('pipeline');
+  const etapasActivas=['nuevo','contactado','documentos','aprobado','entregado'];
+  // Filter by reclutador if not admin
+  const myRec=!isAdmin?reclutadores.find(r=>r.email===currentUser?.email):null;
+  el.innerHTML=etapasActivas.map(etapa=>{
+    let list=leads.filter(l=>l.etapa===etapa);
+    if(myRec) list=list.filter(l=>l.reclutadorId===myRec.id);
+    const info=ETAPA_INFO[etapa];
+    return `<div class="stage">
+      <div class="stage-header">
+        <div class="stage-title" style="color:${info.color}">${info.icon} ${info.label}</div>
+        <div class="stage-count" style="color:${info.color}">${list.length}</div>
+      </div>
+      <div class="stage-body">
+        ${list.length===0?'<div class="empty">Sin prospectos</div>':list.map(l=>renderLeadCard(l,etapa)).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderLeadCard(l, etapa){
+  const hrs=horasDesde(l.createdAt);
+  const blMatch=checkBLMatch(l.nombre,l.tel);
+  const rec=reclutadores.find(r=>r.id===l.reclutadorId);
+  const cumpleFiltros=Number(l.viajes||0)>=1020&&Number(l.ingresos||0)>=6300;
+  return `<div class="lead-card${blMatch?' bl-alert':''}" onclick="openDetalle('${l.id}')">
+    ${blMatch?'<div style="font-size:0.68rem;color:var(--red);font-weight:700;margin-bottom:4px">⛔ ALERTA BLACKLIST</div>':''}
+    <div class="lead-name">${l.nombre}</div>
+    <div class="lead-meta">
+      ${l.tel?`📱 ${l.tel}`:''}
+      ${l.viajes?` · ${l.viajes} viajes`:''}
+    </div>
+    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:5px">
+      ${isAdmin&&rec?`<span class="badge badge-blue">👤 ${rec.nombre.split(' ')[0]}</span>`:''}
+      ${origenBadge(l.origen)}
+      ${l.viajes&&Number(l.viajes)>=1020?'<span class="badge badge-green">✅ Viajes</span>':''}
+      ${l.ingresos&&Number(l.ingresos)>=6300?'<span class="badge badge-green">✅ Ingresos</span>':''}
+      ${l.viajes&&Number(l.viajes)<1020?'<span class="badge badge-red">❌ Viajes</span>':''}
+      ${l.ingresos&&Number(l.ingresos)<6300&&l.ingresos?'<span class="badge badge-red">❌ Ingresos</span>':''}
+    </div>
+    ${etapa==='nuevo'?`<div class="lead-time ${timeClass(hrs,etapa)}">${timeLabel(hrs)}</div>`:''}
+    <div class="lead-actions" onclick="event.stopPropagation()">
+      ${etapa!=='entregado'?`<button class="btn btn-gold btn-xs" onclick="openMoverEtapa('${l.id}')">⇄ Etapa</button>`:''}
+      ${l.tel?`<button class="btn btn-ghost btn-xs" onclick="sendWA('${l.tel}','${l.nombre}')">📱 WA</button>`:''}
+      ${etapa!=='entregado'?`<button class="btn btn-danger btn-xs" onclick="openRechazar('${l.id}')">✕</button>`:''}
+    </div>
+  </div>`;
+}
+
+function renderRechazados(){
+  const myRec2=!isAdmin?reclutadores.find(r=>r.email===currentUser?.email):null;
+  let list=leads.filter(l=>l.etapa==='rechazado');
+  if(myRec2) list=list.filter(l=>l.reclutadorId===myRec2.id);
+  if(!list.length){document.getElementById('rechazados-section').innerHTML='';return;}
+  const motivos={};
+  list.forEach(l=>{ motivos[l.motivoRechazo||'otro']=(motivos[l.motivoRechazo||'otro']||0)+1; });
+  document.getElementById('rechazados-section').innerHTML=`
+    <div style="margin-top:8px">
+      <div style="font-size:0.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:12px">📊 RECHAZADOS (${list.length})</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        ${Object.entries(motivos).map(([k,v])=>`<span class="badge badge-red">${k.replace('_',' ')}: ${v}</span>`).join('')}
+      </div>
+      ${list.slice(0,5).map(l=>`<div class="pay-item">
+        <div><div class="fw7" style="font-size:0.82rem">${l.nombre}</div><div class="pay-info">${l.tel||'—'} · ${l.motivoRechazo||'—'} · ${fmtDate(l.rechazadoEn)}</div>${l.notasRechazo?`<div class="pay-info">${l.notasRechazo}</div>`:''}</div>
+        <button class="del-btn" onclick="eliminarLead('${l.id}')">✕</button>
+      </div>`).join('')}
+      ${list.length>5?`<div style="font-size:0.72rem;color:var(--text3);text-align:center;padding:8px">+${list.length-5} más</div>`:''}
+    </div>`;
+}
+
+// ── Lead detail ────────────────────────────────────
+function openDetalle(id){
+  const l=leads.find(x=>x.id===id); if(!l) return;
+  const blMatch=checkBLMatch(l.nombre,l.tel);
+  document.getElementById('m-det-title').textContent=l.nombre;
+  document.getElementById('m-det-content').innerHTML=`
+    ${blMatch?'<div class="info-box info-red">⛔ <strong>ALERTA BLACKLIST</strong> — Este prospecto coincide con alguien bloqueado.</div>':''}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+      <div class="pay-item"><span class="text-muted">Teléfono</span><span class="mono">${l.tel||'—'}</span></div>
+      <div class="pay-item"><span class="text-muted">Plataforma</span><span>${l.plataforma||'—'}</span></div>
+      <div class="pay-item"><span class="text-muted">Viajes</span><span class="mono ${Number(l.viajes)>=1020?'text-green':'text-red'}">${l.viajes||'—'}</span></div>
+      <div class="pay-item"><span class="text-muted">Ingresos/sem</span><span class="mono ${Number(l.ingresos)>=6300?'text-green':'text-red'}">${l.ingresos?fmt(l.ingresos):'—'}</span></div>
+      <div class="pay-item"><span class="text-muted">Origen</span>${origenBadge(l.origen)}</div>
+      <div class="pay-item"><span class="text-muted">Etapa</span><span class="badge badge-gold">${ETAPA_INFO[l.etapa]?.icon||''} ${ETAPA_INFO[l.etapa]?.label||l.etapa}</span></div>
+    </div>
+    ${l.campana?`<div class="pay-item mb8"><span class="text-muted">Campaña</span><span style="font-size:0.78rem">${l.campana}</span></div>`:''}
+    ${l.notas?`<div class="info-box info-blue">📝 ${l.notas}</div>`:''}
+    <div style="font-size:0.68rem;color:var(--text3);margin-bottom:14px">Agregado: ${fmtDate(l.createdAt)} ${fmtTime(l.createdAt)}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      ${l.etapa!=='entregado'&&l.etapa!=='rechazado'?`<button class="btn btn-gold btn-sm" onclick="closeModal('m-detalle');openMoverEtapa('${l.id}')">⇄ Cambiar etapa</button>`:''}
+      ${l.tel?`<button class="btn btn-ghost btn-sm" onclick="sendWA('${l.tel}','${l.nombre}')">📱 WA</button>`:''}
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('m-detalle');openEditLead('${l.id}')">✏️ Editar</button>
+      ${l.etapa!=='entregado'&&l.etapa!=='rechazado'?`<button class="btn btn-danger btn-sm" onclick="closeModal('m-detalle');openRechazar('${l.id}')">❌ Rechazar</button>`:''}
+      ${isAdmin?`<button class="btn btn-danger btn-sm" onclick="closeModal('m-detalle');eliminarLead('${l.id}')">🗑️ Eliminar</button>`:''}
+    </div>`;
+  openModal('m-detalle');
+}
+
+// ── Mover etapa ────────────────────────────────────
+function openMoverEtapa(id){
+  const l=leads.find(x=>x.id===id); if(!l) return;
+  const idxActual=ETAPAS.indexOf(l.etapa);
+  const siguiente=ETAPAS[idxActual+1];
+  const anterior=idxActual>0?ETAPAS[idxActual-1]:null;
+
+  document.getElementById('m-etapa-title').textContent='Cambiar etapa — '+l.nombre;
+  
+  let html=`<div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:14px;font-size:0.85rem">
+    <span class="text-muted">Etapa actual:</span> <strong>${ETAPA_INFO[l.etapa]?.icon} ${ETAPA_INFO[l.etapa]?.label}</strong>
+  </div>`;
+
+  // Forward button
+  if(siguiente&&siguiente!=='rechazado'){
+    if(siguiente==='entregado'){
+      if(isAdmin){
+        html+=`<button class="btn btn-gold" style="width:100%;margin-bottom:8px;justify-content:center" onclick="closeModal('m-etapa');openEntregar('${l.id}')">
+          🚗 Confirmar entrega → Crear chofer
+        </button>`;
+      } else {
+        html+=`<div class="info-box info-red">⛔ Solo el admin puede confirmar entregas.</div>`;
+      }
+    } else {
+      html+=`<button class="btn btn-gold" style="width:100%;margin-bottom:8px;justify-content:center" onclick="confirmarMover('${l.id}','${siguiente}')">
+        → Avanzar a ${ETAPA_INFO[siguiente]?.icon} ${ETAPA_INFO[siguiente]?.label}
+      </button>`;
+    }
+  }
+
+  // Backward button
+  if(anterior&&anterior!=='entregado'){
+    html+=`<button class="btn btn-ghost" style="width:100%;margin-bottom:8px;justify-content:center" onclick="confirmarMover('${l.id}','${anterior}')">
+      ← Regresar a ${ETAPA_INFO[anterior]?.icon} ${ETAPA_INFO[anterior]?.label}
+    </button>`;
+  }
+
+  // Delete button (admin only)
+  if(isAdmin){
+    html+=`<button class="btn btn-danger" style="width:100%;margin-bottom:8px;justify-content:center" onclick="closeModal('m-etapa');eliminarLead('${l.id}')">
+      🗑️ Eliminar prospecto permanentemente
+    </button>`;
+  }
+
+  // Reject button
+  if(l.etapa!=='entregado'){
+    html+=`<button class="btn btn-ghost" style="width:100%;justify-content:center;border-color:var(--red-border);color:var(--red)" onclick="closeModal('m-etapa');openRechazar('${l.id}')">
+      ❌ Marcar como rechazado
+    </button>`;
+  }
+
+  html+=`<div class="modal-actions"><button class="btn btn-ghost" style="flex:1" onclick="closeModal('m-etapa')">Cancelar</button></div>`;
+  document.getElementById('m-etapa-content').innerHTML=html;
+  openModal('m-etapa');
+}
+
+async function confirmarMover(id,etapa){
+  try{
+    await updateDoc(doc(db,'leads',id),{etapa,updatedAt:serverTimestamp()});
+    closeModal('m-etapa');
+    toast(`✓ Movido a ${ETAPA_INFO[etapa]?.label}`);
+  }catch(e){toast('Error: '+e.message,'red');}
+}
+
+// ── Entregar ───────────────────────────────────────
+let entregaPendingFiles={};
+
+function goEStep(n){
+  document.getElementById('e-step1').style.display=n===1?'block':'none';
+  document.getElementById('e-step2').style.display=n===2?'block':'none';
+  document.getElementById('e-step1-btn').style.background=n===1?'var(--gold)':'var(--s2)';
+  document.getElementById('e-step1-btn').style.color=n===1?'#000':'var(--text3)';
+  document.getElementById('e-step2-btn').style.background=n===2?'var(--gold)':'var(--s2)';
+  document.getElementById('e-step2-btn').style.color=n===2?'#000':'var(--text3)';
+  if(n===2){
+    const placa=document.getElementById('e-placa').value.trim();
+    const renta=Number(document.getElementById('e-renta').value);
+    const fecha=document.getElementById('e-fecha').value;
+    if(!placa){toast('⚠️ Falta la placa','red');goEStep(1);return;}
+    if(!renta){toast('⚠️ Falta la renta','red');goEStep(1);return;}
+    if(!fecha){toast('⚠️ Falta la fecha de entrega','red');goEStep(1);return;}
+  }
+}
+
+function prevEFile(tipo,input){
+  const file=input.files[0]; if(!file) return;
+  entregaPendingFiles[tipo]=file;
+  const area=document.getElementById('eua-'+tipo);
+  area.classList.add('has-file');
+  area.querySelector('.upload-text').textContent='✅ '+file.name;
+  area.querySelector('.upload-sub').textContent=(file.size/1024).toFixed(0)+' KB';
+  const pv=document.getElementById('epv-'+tipo);
+  if(file.type.startsWith('image/')){
+    const reader=new FileReader();
+    reader.onload=e=>{ pv.innerHTML=`<div class="doc-preview"><img src="${e.target.result}"><div style="font-size:0.72rem;font-weight:600">${file.name}</div></div>`; };
+    reader.readAsDataURL(file);
+  } else {
+    pv.innerHTML=`<div class="doc-preview"><span style="font-size:1.8rem">📄</span><div style="font-size:0.72rem;font-weight:600">${file.name}</div></div>`;
+  }
+}
+
+async function uploadEFile(driverId,tipo,file){
+  if(!file) return null;
+  const ext=file.name.split('.').pop();
+  const r=ref(storage,`docs/${driverId}/${tipo}_${Date.now()}.${ext}`);
+  await uploadBytes(r,file);
+  return await getDownloadURL(r);
+}
+
+function openEntregar(id){
+  entregandoId=id;
+  entregaPendingFiles={};
+  const l=leads.find(x=>x.id===id);
+  document.getElementById('m-entregar-info').innerHTML=`<div class="fw7">${l.nombre}</div><div style="font-size:0.72rem;color:var(--text3);margin-top:3px">📱 ${l.tel||'—'} · ${l.viajes||'—'} viajes · ${l.ingresos?fmt(l.ingresos)+'/sem':'—'}</div>`;
+  document.getElementById('e-placa').value='';
+  document.getElementById('e-renta').value='5000';
+  document.getElementById('e-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('e-dep-ac').value='0';
+  document.getElementById('e-dep-pa').value='0';
+  // Clear doc fields
+  ['e-lic-num','e-lic-vence','e-ine-num','e-ine-vence','e-dom-vence'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const is=document.getElementById('e-ing-status');if(is)is.value='';
+  ['lic','ine','dom','ing'].forEach(t=>{
+    const a=document.getElementById('eua-'+t);
+    if(a){a.classList.remove('has-file');a.querySelector('.upload-text').textContent='Toca para tomar foto o subir archivo';}
+    const p=document.getElementById('epv-'+t);if(p)p.innerHTML='';
+    const inp=document.getElementById('euf-'+t);if(inp)inp.value='';
+  });
+  // Reset to step 1
+  goEStep(1);
+  openModal('m-entregar');
+}
+
+async function confirmarEntrega(){
+  // Validate docs
+  const licNum=document.getElementById('e-lic-num').value.trim();
+  const licVence=document.getElementById('e-lic-vence').value;
+  const ineNum=document.getElementById('e-ine-num').value.trim();
+  const ineVence=document.getElementById('e-ine-vence').value;
+  const domVence=document.getElementById('e-dom-vence').value;
+  const ingStatus=document.getElementById('e-ing-status').value;
+
+  if(!licNum){toast('⚠️ Falta el número de licencia','red');return;}
+  if(!licVence){toast('⚠️ Falta vencimiento de licencia','red');return;}
+  if(!ineNum){toast('⚠️ Falta el número de INE','red');return;}
+  if(!ineVence){toast('⚠️ Falta vencimiento de INE','red');return;}
+  if(!domVence){toast('⚠️ Falta la fecha del comprobante de domicilio','red');return;}
+  if(ingStatus!=='validado'){toast('⚠️ Las capturas deben estar validadas','red');return;}
+  if(!entregaPendingFiles['lic']){toast('⚠️ Falta la foto de licencia','red');return;}
+  if(!entregaPendingFiles['ine']){toast('⚠️ Falta la foto de INE','red');return;}
+  if(!entregaPendingFiles['dom']){toast('⚠️ Falta la foto del comprobante','red');return;}
+  if(!entregaPendingFiles['ing']){toast('⚠️ Falta la foto de capturas de ingresos','red');return;}
+
+  const btn=document.getElementById('btn-entregar');
+  btn.disabled=true;
+
+  try{
+    const l=leads.find(x=>x.id===entregandoId);
+    const placa=document.getElementById('e-placa').value.trim().toUpperCase();
+    const renta=Number(document.getElementById('e-renta').value);
+    const fecha=document.getElementById('e-fecha').value;
+    const tempId='drv_'+Date.now();
+
+    // Upload photos
+    btn.textContent='⏳ Subiendo licencia...';
+    const licUrl=await uploadEFile(tempId,'licencia',entregaPendingFiles['lic']);
+    btn.textContent='⏳ Subiendo INE...';
+    const ineUrl=await uploadEFile(tempId,'ine',entregaPendingFiles['ine']);
+    btn.textContent='⏳ Subiendo domicilio...';
+    const domUrl=await uploadEFile(tempId,'domicilio',entregaPendingFiles['dom']);
+    btn.textContent='⏳ Subiendo capturas...';
+    const ingUrl=await uploadEFile(tempId,'ingresos',entregaPendingFiles['ing']);
+
+    btn.textContent='⏳ Creando chofer...';
+    // Create driver with all docs
+    await addDoc(collection(db,'drivers'),{
+      nombre:l.nombre,tel:l.tel||'',placa,renta,
+      inicio:fecha,
+      tipo:document.getElementById('e-tipo').value,
+      plataforma:l.plataforma||'Uber',
+      viajes:Number(l.viajes||0),
+      ingresos:Number(l.ingresos||0),
+      depositoAcordado:Number(document.getElementById('e-dep-ac').value||0),
+      depositoPagado:Number(document.getElementById('e-dep-pa').value||0),
+      deposito:Number(document.getElementById('e-dep-ac').value||0),
+      licenciaNum:licNum,licenciaVence:licVence,licenciaUrl:licUrl,
+      ineNum,ineVence,ineUrl,
+      domicilioVence:domVence,domicilioUrl:domUrl,
+      ingresosStatus:ingStatus,ingresosUrl:ingUrl,
+      notas:`Ingresó por ${l.origen||'Facebook'}${l.campana?' · '+l.campana:''}`,
+      activo:true,leadId:entregandoId,
+      createdAt:serverTimestamp(),updatedAt:serverTimestamp()
+    });
+    // Update lead
+    await updateDoc(doc(db,'leads',entregandoId),{
+      etapa:'entregado',placa,renta,
+      entregadoEn:serverTimestamp(),updatedAt:serverTimestamp()
+    });
+    closeModal('m-entregar');
+    toast('🚗 ¡Chofer creado con todos sus documentos!');
+  }catch(e){toast('Error: '+e.message,'red');}
+  finally{btn.disabled=false;btn.textContent='🚗 Confirmar entrega y crear chofer';}
+}
+
+// ── Rechazar ───────────────────────────────────────
+function openRechazar(id){
+  rechazandoId=id;
+  const l=leads.find(x=>x.id===id);
+  document.getElementById('m-rechazar-info').textContent=l.nombre+' · '+(l.tel||'—');
+  document.getElementById('r-notas').value='';
+  openModal('m-rechazar');
+}
+
+async function confirmarRechazar(){
+  try{
+    await updateDoc(doc(db,'leads',rechazandoId),{
+      etapa:'rechazado',
+      motivoRechazo:document.getElementById('r-motivo').value,
+      notasRechazo:document.getElementById('r-notas').value.trim(),
+      rechazadoEn:serverTimestamp(),updatedAt:serverTimestamp()
+    });
+    closeModal('m-rechazar');
+    toast('✓ Prospecto rechazado');
+  }catch(e){toast('Error: '+e.message,'red');}
+}
+
+// ── Add/Edit lead ──────────────────────────────────
+function openAddLead(){
+  editingLeadId=null;
+  document.getElementById('m-lead-title').textContent='Agregar prospecto';
+  ['l-nombre','l-tel','l-viajes','l-ingresos','l-notas','l-campana'].forEach(id=>{document.getElementById(id).value='';});
+  document.getElementById('l-origen').value='facebook';
+  document.getElementById('l-plataforma').value='Uber';
+  // Fill reclutador select
+  const rsel=document.getElementById('l-reclutador');
+  rsel.innerHTML='<option value="">Sin asignar</option>'+reclutadores.filter(r=>r.activo!==false).map(r=>`<option value="${r.id}">${r.nombre}</option>`).join('');
+  // If current user is a reclutador, auto-select them
+  if(!isAdmin){
+    const myRec=reclutadores.find(r=>r.email===currentUser?.email);
+    if(myRec) rsel.value=myRec.id;
+  }
+  document.getElementById('fg-reclutador').style.display=isAdmin?'block':'none';
+  document.getElementById('bl-alert-box').style.display='none';
+  openModal('m-lead');
+}
+
+function openEditLead(id){
+  editingLeadId=id;
+  const l=leads.find(x=>x.id===id); if(!l) return;
+  document.getElementById('m-lead-title').textContent='Editar prospecto';
+  document.getElementById('l-nombre').value=l.nombre||'';
+  document.getElementById('l-tel').value=l.tel||'';
+  document.getElementById('l-viajes').value=l.viajes||'';
+  document.getElementById('l-ingresos').value=l.ingresos||'';
+  document.getElementById('l-notas').value=l.notas||'';
+  document.getElementById('l-campana').value=l.campana||'';
+  document.getElementById('l-origen').value=l.origen||'facebook';
+  document.getElementById('l-plataforma').value=l.plataforma||'Uber';
+  const rsel2=document.getElementById('l-reclutador');
+  rsel2.innerHTML='<option value="">Sin asignar</option>'+reclutadores.filter(r=>r.activo!==false).map(r=>`<option value="${r.id}">${r.nombre}</option>`).join('');
+  rsel2.value=l.reclutadorId||'';
+  document.getElementById('fg-reclutador').style.display=isAdmin?'block':'none';
+  checkBL();
+  openModal('m-lead');
+}
+
+function checkBL(){
+  const nombre=document.getElementById('l-nombre').value;
+  const tel=document.getElementById('l-tel').value;
+  const match=checkBLMatch(nombre,tel);
+  document.getElementById('bl-alert-box').style.display=match?'block':'none';
+}
+
+async function saveLead(){
+  const nombre=document.getElementById('l-nombre').value.trim();
+  const tel=document.getElementById('l-tel').value.trim().replace(/\D/g,'');
+  if(!nombre){toast('⚠️ Falta el nombre','red');return;}
+  if(tel&&tel.length!==10){toast('⚠️ Teléfono debe tener 10 dígitos','red');return;}
+
+  const data={
+    nombre,tel,
+    viajes:Number(document.getElementById('l-viajes').value||0),
+    ingresos:Number(document.getElementById('l-ingresos').value||0),
+    plataforma:document.getElementById('l-plataforma').value,
+    origen:document.getElementById('l-origen').value,
+    reclutadorId:document.getElementById('l-reclutador').value||null,
+    reclutadorNombre:reclutadores.find(r=>r.id===document.getElementById('l-reclutador').value)?.nombre||null,
+    campana:document.getElementById('l-campana').value.trim(),
+    notas:document.getElementById('l-notas').value.trim(),
+    updatedAt:serverTimestamp()
+  };
+
+  try{
+    if(editingLeadId){
+      await updateDoc(doc(db,'leads',editingLeadId),data);
+      toast('✓ Prospecto actualizado');
+    } else {
+      data.etapa='nuevo';
+      data.creadoPor=currentUser?.email||'—';
+      data.createdAt=serverTimestamp();
+      await addDoc(collection(db,'leads'),data);
+      toast('✓ Prospecto agregado');
+    }
+    closeModal('m-lead');
+  }catch(e){toast('Error: '+e.message,'red');}
+}
+
+async function eliminarLead(id){
+  if(!confirm('¿Eliminar este prospecto permanentemente?'))return;
+  try{ await deleteDoc(doc(db,'leads',id)); toast('✓ Eliminado'); }
+  catch(e){toast('Error: '+e.message,'red');}
+}
+
+// ── Config ─────────────────────────────────────────
+function openConfig(){
+  document.getElementById('cfg-meta-sem').value=config.metaSem||2;
+  document.getElementById('cfg-comision').value=config.comision||3000;
+  document.getElementById('cfg-resp-hrs').value=config.respHrs||2;
+  openModal('m-config');
+}
+
+async function saveConfig(){
+  config={
+    metaSem:Number(document.getElementById('cfg-meta-sem').value||2),
+    comision:Number(document.getElementById('cfg-comision').value||3000),
+    respHrs:Number(document.getElementById('cfg-resp-hrs').value||2)
+  };
+  try{
+    await updateDoc(doc(db,'config','ventas'),{...config,updatedAt:serverTimestamp()})
+      .catch(async ()=>await addDoc(collection(db,'config'),{...config,id:'ventas'}));
+    closeModal('m-config');
+    toast('✓ Configuración guardada');
+    renderAll();
+  }catch(e){toast('Error: '+e.message,'red');}
+}
+
+// ── WA ─────────────────────────────────────────────
+function sendWA(tel,nombre){
+  const c=tel.replace(/\D/g,'');
+  window.open(`https://wa.me/52${c}?text=${encodeURIComponent(`Hola ${nombre.split(' ')[0]} 👋, te contactamos de LAGULEASE. Tenemos carros disponibles para renta con opción a compra para choferes de Uber/DiDi. ¿Te interesa? ¡Escríbenos!`)}`,'_blank');
+}
+
+// ── Modal helpers ──────────────────────────────────
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id)?.classList.remove('open');}
+
+// ── Toast ──────────────────────────────────────────
+function toast(msg,type='gold'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.display='block';
+  t.style.borderColor=type==='red'?'var(--red-border)':'var(--gold-border)';
+  t.style.color=type==='red'?'var(--red)':'var(--gold)';
+  clearTimeout(window._tt);window._tt=setTimeout(()=>t.style.display='none',3000);
+}
+
+// ── Expose to window ───────────────────────────────
+Object.assign(window,{
+  goEStep,prevEFile,
+  openAddLead,openEditLead,saveLead,eliminarLead,
+  openDetalle,openMoverEtapa,confirmarMover,
+  openEntregar,confirmarEntrega,
+  openRechazar,confirmarRechazar,
+  openConfig,saveConfig,
+  sendWA,checkBL,openModal,closeModal,toast
+});
+</script>
+</body>
+</html>
